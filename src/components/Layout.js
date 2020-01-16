@@ -20,4 +20,5 @@ export default Layout;
 const StyledMainContent = styled.main`
   max-width: 100rem;
   margin: 0 auto;
+  padding-top: 12rem;
 `;

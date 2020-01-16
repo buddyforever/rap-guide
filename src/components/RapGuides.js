@@ -10,15 +10,29 @@ export const Home = () => {
 
   return (
     <StyledContent>
-      <div className="callout">
-        <h1>TEACHER CALLOUT SIGN UP LOG IN ETC</h1>
-      </div>
-      <div className="text">
-        <h1>ABOUT THIS SITE / JOIN THE DISCUSSION</h1>
-      </div>
       <div className="rap-guides">
-        <h2>RAP GUIDES</h2>
+        <h1>RAP GUIDES</h1>
         <div className="four-columns">
+          <VideoThumb
+            id="uHGlCi9jOWY"
+            title="Data Science"
+            thumbnail="https://picsum.photos/400/200"
+            topics={["topic 1", "topic 2", "topic 3"]} />
+          <VideoThumb
+            id="vGrxereJ1nQ"
+            title="Fahrenheit 45"
+            thumbnail="https://picsum.photos/400/200?2"
+            topics={["topic 1", "topic 2", "topic 3"]} />
+          <VideoThumb
+            id="HuI2hL1QYrk"
+            title="Dylan"
+            thumbnail="https://picsum.photos/400/200?3"
+            topics={["topic 1", "topic 2", "topic 3"]} />
+          <VideoThumb
+            id="YiWfRx2RiSI"
+            title="Senescence"
+            thumbnail="https://picsum.photos/400/200?4"
+            topics={["topic 1", "topic 2", "topic 3"]} />
           <VideoThumb
             id="uHGlCi9jOWY"
             title="Data Science"
@@ -68,10 +82,11 @@ const StyledContent = styled.div`
     display: grid;
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 2.5rem;
+    row-gap: 5rem;
   }
 
-  h2 {
-    margin-bottom: 2.5rem;
+  h1 {
+    margin-bottom: 5rem;
   }
 `;
 
