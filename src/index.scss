@@ -1,5 +1,9 @@
 @import url('https://fonts.googleapis.com/css?family=Ubuntu:300,400,500,700&display=swap');
 
+// Hamburger Menu Styles -- https://jonsuh.com/hamburgers/
+$hamburger-layer-color: white;
+@import "../node_modules/hamburgers/_sass/hamburgers/hamburgers.scss";
+
 * {
   margin: 0;
   padding: 0;
