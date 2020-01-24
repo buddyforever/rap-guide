@@ -1,7 +1,4 @@
-import React from 'react';
-import globalHook from 'use-global-hook';
-
-const initialState = {
+export const data = {
   videos: [
     {
       id: 1,
@@ -32,7 +29,8 @@ const initialState = {
         },
       ],
       thumbnail: `https://picsum.photos/400/200`,
-      topics: [`topic 1`, `topic 2`, `topic 3`],
+      topics: [`topic 1`, `topic 2`, `topic 3`
+      ],
       lyrics: [
         `Aww...`,
         `You know the feelin’ when you’re chillin’ like a villain`,
@@ -138,12 +136,6 @@ const initialState = {
       ]
     }
   ]
-};
+}
 
-const actions = {
-
-};
-
-const useGlobal = globalHook(React, initialState, actions);
-
-export default useGlobal;
+export default data

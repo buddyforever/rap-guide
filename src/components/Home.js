@@ -1,12 +1,11 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import useGlobal from "../store/Store"
 import VideoThumb from './VideoThumb'
+import data from '../data/data'
 
 export const Home = () => {
 
-  const [globalState, globalActions] = useGlobal();
-  const [annotation, setAnnotation] = useState(null);
+  const [videos, setVideos] = useState(data.videos);
 
   return (
     <StyledContent>
@@ -19,26 +18,15 @@ export const Home = () => {
       <div className="rap-guides">
         <h2>RAP GUIDES</h2>
         <div className="four-columns">
-          <VideoThumb
-            id="uHGlCi9jOWY"
-            title="Data Science"
-            thumbnail="https://picsum.photos/400/200"
-            topics={["topic 1", "topic 2", "topic 3"]} />
-          <VideoThumb
-            id="vGrxereJ1nQ"
-            title="Fahrenheit 45"
-            thumbnail="https://picsum.photos/400/200?2"
-            topics={["topic 1", "topic 2", "topic 3"]} />
-          <VideoThumb
-            id="HuI2hL1QYrk"
-            title="Dylan"
-            thumbnail="https://picsum.photos/400/200?3"
-            topics={["topic 1", "topic 2", "topic 3"]} />
-          <VideoThumb
-            id="YiWfRx2RiSI"
-            title="Senescence"
-            thumbnail="https://picsum.photos/400/200?4"
-            topics={["topic 1", "topic 2", "topic 3"]} />
+          {videos.map(video => {
+            return (
+              <VideoThumb
+                id={video.id}
+                title={video.title}
+                thumbnail={video.thumbnail}
+                topics={video.topics} />
+            )
+          })}
         </div>
       </div>
     </StyledContent>

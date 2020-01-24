@@ -1,65 +1,63 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import useGlobal from "../store/Store"
+import { useParams } from "react-router-dom"
+import data from '../data/data.js'
 
-export const Home = () => {
+export const Video = () => {
 
-  const [globalState, globalActions] = useGlobal();
-  const [annotation, setAnnotation] = useState(null);
+  let { id } = useParams();
+
+  const [video, setVideo] = useState(null)
+  const [annotation, setAnnotation] = useState(["abc", "def"])
+
+
+  useEffect(() => {
+    setVideo(data.videos.filter(video => video.id === parseInt(id))[0]);
+  }, []);
 
   return (
     <div>
-      <h1>RAP GUIDE TO CONSCIOUSNESS</h1>
-      <StyledColumns>
+      {!video ? <div>LOADING...</div> : (
         <div>
-          <div className="video">
-            <iframe title="dylan" width="100%" src="https://www.youtube.com/embed/HuI2hL1QYrk" frameborder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-          </div>
-        </div>
-        <div>
-          <h2>Dylan</h2>
-          <h3>From the new album "The Rap Guide to Consciousness"</h3>
-          <p>
-            Music produced and mixed by Tom Caruana<br />
-            Keys by Simon Kendall <br />
-            Cuts by Mr. Simmonds <br />
-            Video animation by Olivia Sebesky
-          </p>
-        </div>
-      </StyledColumns>
+          <h1>{video.album.title}</h1>
+          <StyledColumns>
+            <div>
+              <div className="video">
+                <iframe title={video.title} width="100%" src={video.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              </div>
+            </div>
+            <div>
+              <h2>{video.title}</h2>
+              <h3>From the album "{video.album.title}"</h3>
+              <div className="credits">
+                {video.credits.map((credit, index) => {
+                  return (
+                    <span key={index}>{credit.what} by {credit.who}</span>
+                  )
+                })}
+              </div>
+            </div>
+          </StyledColumns>
 
-      <StyledColumns>
-        <div className="lyrics">
-          <span>Aww</span>
-          <span>You know that feelin' when you're chillin' like a villian</span>
-          <span
-            className="annotated"
-            onClick={() => setAnnotation(globalState.annotations[0])}
-            onMouseEnter={() => setAnnotation(globalState.annotations[0])}
-          >
-            Dealin' with no stress, like a room with no ceilin'
-              </span>
-          <span>Just open, and you like the rhyme "-illin"</span>
-          <span
-            className="annotated"
-            onClick={() => setAnnotation(globalState.annotations[1])}
-            onMouseEnter={() => setAnnotation(globalState.annotations[1])}
-          >
-            So much, you name your first son Dylan?
-              </span>
-          <span>That's the feelin' I had November 12th</span>
+          <StyledColumns>
+            <div className="lyrics">
+              {video.lyrics.map((lyric, index) => {
+                return <span key={index}>{lyric}</span>
+              })}
+            </div>
+            {annotation &&
+              <StyledAnnotation>
+                <div dangerouslySetInnerHTML={{ __html: annotation }} />
+              </StyledAnnotation>
+            }
+          </StyledColumns>
         </div>
-        {annotation &&
-          <StyledAnnotation>
-            <div dangerouslySetInnerHTML={{ __html: annotation }} />
-          </StyledAnnotation>
-        }
-      </StyledColumns>
+      )}
     </div>
   )
 }
 
-export default Home;
+export default Video;
 
 const StyledAnnotation = styled.div`
   border-left: 3px solid #dd3333;
@@ -99,6 +97,10 @@ const StyledColumns = styled.div`
   h3 {
     font-weight: 300;
     margin-bottom: 2.5rem;
+  }
+
+  .credits span {
+    display: block;
   }
 
   .lyrics {

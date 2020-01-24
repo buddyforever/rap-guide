@@ -14,9 +14,6 @@ import PageNotFound from './components/PageNotFound'
 import auth from './auth/auth'
 
 function App() {
-
-  console.log(auth.isAuthenticated());
-
   return (
     <Router>
       <Layout>
@@ -27,6 +24,7 @@ function App() {
           <Route path="/make-a-rap-guide" component={MakeARapGuide} />
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
+          <Route path="/video/:id" component={Video} />
           <PrivateRoute
             path="/manage"
             component={Manage}

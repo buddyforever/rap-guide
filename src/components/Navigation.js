@@ -16,6 +16,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
       <NavLink to="/rap-guides" activeClassName="active" onClick={toggleMenu}>Rap Guides</NavLink>
       <NavLink to="/teachers" activeClassName="active" onClick={toggleMenu}>Teachers</NavLink>
       <NavLink to="/make-a-rap-guide" activeClassName="active" onClick={toggleMenu}>Make a Rap Guide</NavLink>
+      <NavLink to="/contact" activeClassName="active" onClick={toggleMenu}>Contact</NavLink>
       {
         !auth.isAuthenticated() &&
         <NavLink to="/login" activeClassName="active" onClick={toggleMenu}>Login / Signup</NavLink>
@@ -23,11 +24,10 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
       {
         auth.isAuthenticated() &&
         <>
+          <NavLink to="/manage" activeClassName="active" onClick={toggleMenu}>Manage Videos</NavLink>
           <button onClick={handleLogout}>Logout</button>
-          <NavLink to="/manage" activeClassName="active" onClick={toggleMenu}>Manage</NavLink>
         </>
       }
-      <NavLink to="/contact" activeClassName="active" onClick={toggleMenu}>Contact</NavLink>
     </StyledNavigation>
   )
 }
