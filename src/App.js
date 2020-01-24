@@ -8,8 +8,15 @@ import Teachers from './components/Teachers'
 import MakeARapGuide from './components/MakeARapGuide'
 import Contact from './components/Contact'
 import Login from './components/Login'
+import PrivateRoute from './auth/PrivateRoute'
+import Manage from './components/Manage'
+import PageNotFound from './components/PageNotFound'
+import auth from './auth/auth'
 
 function App() {
+
+  console.log(auth.isAuthenticated());
+
   return (
     <Router>
       <Layout>
@@ -20,6 +27,15 @@ function App() {
           <Route path="/make-a-rap-guide" component={MakeARapGuide} />
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
+          <PrivateRoute
+            path="/manage"
+            component={Manage}
+            authenticationPath="/login"
+            isAuthenticated={auth.isAuthenticated()}
+            isAllowed={auth.isAuthenticated()}
+            restrictedPath="/404"
+          />
+          <Route component={PageNotFound} />
         </Switch>
       </Layout>
     </Router>

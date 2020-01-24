@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
@@ -25,7 +26,7 @@ export const Header = () => {
               <span className="hamburger-inner"></span>
             </span>
           </button>
-          <h1>RAP<strong>GUIDE</strong><span>.com</span></h1>
+          <h1><Link to="/">RAP<strong>GUIDE</strong><span>.com</span></Link></h1>
         </div>
         <div className="search">
           <input type="text" placeholder="What are you looking for?..." />
@@ -64,6 +65,11 @@ const StyledHeader = styled.header`
     span {
       font-weight: 300;
       font-size: 2rem;
+    }
+
+    a, a:link {
+      color: inherit;
+      text-decoration: none;
     }
   }
 
