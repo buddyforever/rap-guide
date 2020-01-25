@@ -21,6 +21,7 @@ export const Home = () => {
           {videos.map(video => {
             return (
               <VideoThumb
+                key={video.id}
                 id={video.id}
                 title={video.title}
                 thumbnail={video.thumbnail}

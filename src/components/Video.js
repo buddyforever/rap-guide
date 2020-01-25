@@ -2,25 +2,58 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useParams } from "react-router-dom"
 import data from '../data/data.js'
+import Lyric from './Lyric'
 
 export const Video = () => {
 
   let { id } = useParams();
 
   const [video, setVideo] = useState(null)
-  const [annotation, setAnnotation] = useState(["abc", "def"])
+  const [lyrics, setLyrics] = useState([])
+  const [annotation, setAnnotation] = useState(null)
 
+  function displayAnnotation(annotations) {
+    setAnnotation(annotations[0]);
+  }
+
+  function loadData() {
+    if (video) {
+      setLyrics(video.lyrics);
+    } else {
+      if (localStorage.getItem("video")) {
+        setVideo(JSON.parse(localStorage.getItem("video")));
+      } else {
+        setVideo(data.videos.filter(video => video.id === parseInt(id))[0]);
+      }
+    }
+  }
+
+  function saveData() {
+    let newVideo = video;
+    video.lyrics = lyrics;
+    setVideo(newVideo);
+    localStorage.setItem("video", JSON.stringify(newVideo));
+  }
+
+  function addAnnotation(lyricId, annotation) {
+    let newLyrics = lyrics;
+    newLyrics.filter(lyric => lyric.id === lyricId)[0].annotations.push(annotation);
+    setLyrics(newLyrics);
+
+    setAnnotation(annotation);
+    saveData();
+  }
 
   useEffect(() => {
-    setVideo(data.videos.filter(video => video.id === parseInt(id))[0]);
-  }, []);
+    loadData();
+  }, [video]);
 
   return (
     <div>
       {!video ? <div>LOADING...</div> : (
         <div>
           <h1>{video.album.title}</h1>
-          <StyledColumns>
+          <StyledColumns className="top">
             <div>
               <div className="video">
                 <iframe title={video.title} width="100%" src={video.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
@@ -41,15 +74,26 @@ export const Video = () => {
 
           <StyledColumns>
             <div className="lyrics">
-              {video.lyrics.map((lyric, index) => {
-                return <span key={index}>{lyric}</span>
+              {lyrics.map((lyric) => {
+                return (
+                  <Lyric
+                    id={lyric.id}
+                    key={lyric.id}
+                    displayAnnotation={displayAnnotation}
+                    addAnnotation={addAnnotation}
+                    lyric={lyric.lyric}
+                    annotations={lyric.annotations}
+                  />
+                )
               })}
             </div>
-            {annotation &&
-              <StyledAnnotation>
-                <div dangerouslySetInnerHTML={{ __html: annotation }} />
-              </StyledAnnotation>
-            }
+            <div>
+              {annotation &&
+                <StyledAnnotation>
+                  <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+                </StyledAnnotation>
+              }
+            </div>
           </StyledColumns>
         </div>
       )}
@@ -68,6 +112,10 @@ const StyledColumns = styled.div`
   display: grid;
   grid-template-columns: 50% 50%;
   column-gap: 5rem;
+
+  &.top {
+    position: sticky;
+  }
 
   .video {
     position: relative;
@@ -104,21 +152,7 @@ const StyledColumns = styled.div`
   }
 
   .lyrics {
-    span {
-      display: block;
-      margin-bottom: 0.5rem;
-      transition: all .3s ease;
-      padding: .5rem;
-    }
-
-    span.annotated {
-      cursor: pointer;
-      background-color: #ffe1e1;
-    }
-
-    span.annotated:hover {
-      background-color: #DD3333;
-      color: #fff7f7;
-    }
+    display: flex;
+    flex-direction: column;
   }
 `;

@@ -66,8 +66,6 @@ const StyledVideoThumb = styled.div`
     transition: all .3s ease;
   }
 
-
-
   .video_details {
     a, a:link {
       text-decoration: none;
