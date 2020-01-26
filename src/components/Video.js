@@ -52,20 +52,19 @@ export const Video = () => {
     <div>
       {!video ? <div>LOADING...</div> : (
         <div>
-          <h1>{video.album.title}</h1>
-          <StyledColumns className="top">
+          <h1>{video.title}</h1>
+          <StyledColumns>
             <div>
               <div className="video">
                 <iframe title={video.title} width="100%" src={video.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
               </div>
             </div>
             <div>
-              <h2>{video.title}</h2>
-              <h3>From the album "{video.album.title}"</h3>
+              <h3><strong>From the album</strong> "{video.album.title}"</h3>
               <div className="credits">
                 {video.credits.map((credit, index) => {
                   return (
-                    <span key={index}>{credit.what} by {credit.who}</span>
+                    <span key={index}><em>{credit.what} by</em> <strong>{credit.who}</strong></span>
                   )
                 })}
               </div>
@@ -106,6 +105,8 @@ export default Video;
 const StyledAnnotation = styled.div`
   border-left: 3px solid #dd3333;
   padding: 2.5rem;
+  position: sticky;
+  top: 10rem;
 `;
 
 const StyledColumns = styled.div`
@@ -113,8 +114,13 @@ const StyledColumns = styled.div`
   grid-template-columns: 50% 50%;
   column-gap: 5rem;
 
-  &.top {
-    position: sticky;
+  strong {
+    font-weight: 500;
+  }
+
+  em {
+    font-style: normal;
+    font-weight: 300;
   }
 
   .video {
@@ -149,6 +155,7 @@ const StyledColumns = styled.div`
 
   .credits span {
     display: block;
+    margin-bottom: 1rem;
   }
 
   .lyrics {

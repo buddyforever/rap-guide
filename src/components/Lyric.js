@@ -20,9 +20,9 @@ export const Lyric = ({ id, lyric, annotations, displayAnnotation, addAnnotation
   }
 
   return (
-    <StyledLyric onClick={() => handleClick(annotations)}>
+    <StyledLyric className={annotations.length > 0 ? 'annotated' : ''} onClick={() => handleClick(annotations)}>
       {lyric}
-    </StyledLyric>
+    </StyledLyric >
   )
 }
 
@@ -38,12 +38,12 @@ const StyledLyric = styled.span`
     box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
   }
 
-  .annotated {
+  &.annotated {
     cursor: pointer;
-    background-color: #ffe1e1;
+    background-color:  rgba(221, 51, 51, 0.2);
   }
 
-  .annotated:hover {
+  &.annotated:hover {
     background-color: #DD3333;
     color: #fff7f7;
   }
