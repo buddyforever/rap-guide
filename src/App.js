@@ -1,11 +1,11 @@
 import React from 'react'
 import Layout from './components/Layout'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
-import Home from './components/Home'
+import About from './components/About'
 import Video from './components/Video'
 import RapGuides from './components/RapGuides'
-import Teachers from './components/Teachers'
-import MakeARapGuide from './components/MakeARapGuide'
+import Lessons from './components/Lessons'
+import Request from './components/Request'
 import Contact from './components/Contact'
 import Login from './components/Login'
 import PrivateRoute from './auth/PrivateRoute'
@@ -18,10 +18,10 @@ function App() {
     <Router>
       <Layout>
         <Switch>
-          <Route exact path="/" component={Home} />
-          <Route path="/rap-guides" component={RapGuides} />
-          <Route path="/teachers" component={Teachers} />
-          <Route path="/make-a-rap-guide" component={MakeARapGuide} />
+          <Route exact path="/" component={RapGuides} />
+          <Route path="/lessons" component={Lessons} />
+          <Route path="/request" component={Request} />
+          <Route path="/about" component={About} />
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
           <Route path="/video/:id" component={Video} />

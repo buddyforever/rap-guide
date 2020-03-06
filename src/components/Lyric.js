@@ -3,8 +3,6 @@ import styled from 'styled-components'
 
 export const Lyric = ({ id, lyric, annotations, displayAnnotation, addAnnotation }) => {
 
-  // Set annotations as state
-
   function handleClick() {
     if (annotations.length > 0) {
       displayAnnotation(annotations)

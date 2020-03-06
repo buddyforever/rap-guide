@@ -2,21 +2,19 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import useGlobal from "../store/Store"
 
-export const Teachers = () => {
+export const Lessons = () => {
 
   const [globalState, globalActions] = useGlobal();
   const [annotation, setAnnotation] = useState(null);
 
   return (
     <StyledContent>
-      <div className="callout">
-        <h1>INFORMATION FOR TEACHERS</h1>
-      </div>
+      <h1>Lessons</h1>
     </StyledContent>
   )
 }
 
-export default Teachers;
+export default Lessons;
 
 const StyledContent = styled.div`
 

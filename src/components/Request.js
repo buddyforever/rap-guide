@@ -2,21 +2,19 @@ import React, { useState } from 'react'
 import styled from 'styled-components'
 import useGlobal from "../store/Store"
 
-export const MakeARapGuide = () => {
+export const Request = () => {
 
   const [globalState, globalActions] = useGlobal();
   const [annotation, setAnnotation] = useState(null);
 
   return (
     <StyledContent>
-      <div className="callout">
-        <h1>INFORMATION ABOUT MAKING A RAP GUIDE</h1>
-      </div>
+      <h1>Request</h1>
     </StyledContent>
   )
 }
 
-export default MakeARapGuide;
+export default Request;
 
 const StyledContent = styled.div`
 

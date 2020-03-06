@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import VideoThumb from './VideoThumb'
 import data from '../data/data'
 
-export const Home = () => {
+export const About = () => {
 
   const [videos, setVideos] = useState(data.videos);
 
@@ -15,26 +15,11 @@ export const Home = () => {
       <div className="text">
         <h1>ABOUT THIS SITE / JOIN THE DISCUSSION</h1>
       </div>
-      <div className="rap-guides">
-        <h2>RAP GUIDES</h2>
-        <div className="four-columns">
-          {videos.map(video => {
-            return (
-              <VideoThumb
-                key={video.id}
-                id={video.id}
-                title={video.title}
-                thumbnail={video.thumbnail}
-                topics={video.topics} />
-            )
-          })}
-        </div>
-      </div>
     </StyledContent>
   )
 }
 
-export default Home;
+export default About;
 
 const StyledContent = styled.div`
 

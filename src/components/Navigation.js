@@ -12,22 +12,21 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
 
   return (
     <StyledNavigation className={isOpen ? 'open' : ''}>
-      <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Home</NavLink>
-      <NavLink to="/rap-guides" activeClassName="active" onClick={toggleMenu}>Rap Guides</NavLink>
-      <NavLink to="/teachers" activeClassName="active" onClick={toggleMenu}>Teachers</NavLink>
-      <NavLink to="/make-a-rap-guide" activeClassName="active" onClick={toggleMenu}>Make a Rap Guide</NavLink>
+      <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Explore</NavLink>
+      <NavLink to="/lessons" activeClassName="active" onClick={toggleMenu}>Lessons</NavLink>
+      <NavLink to="/request" activeClassName="active" onClick={toggleMenu}>Request</NavLink>
+      <NavLink to="/about" activeClassName="active" onClick={toggleMenu}>About</NavLink>
       <NavLink to="/contact" activeClassName="active" onClick={toggleMenu}>Contact</NavLink>
-      {
+      {/* {
         !auth.isAuthenticated() &&
         <NavLink to="/login" activeClassName="active" onClick={toggleMenu}>Login / Signup</NavLink>
       }
       {
         auth.isAuthenticated() &&
         <>
-          <NavLink to="/manage" activeClassName="active" onClick={toggleMenu}>Manage Videos</NavLink>
           <button onClick={handleLogout}>Logout</button>
         </>
-      }
+      } */}
     </StyledNavigation>
   )
 }
@@ -44,7 +43,7 @@ const StyledNavigation = styled.div`
   display: flex;
   flex-direction: column;
   width: 30rem;
-  margin-top: 6rem;
+  margin-top: 10rem;
   transition: all .4s ease-in-out;
   z-index: 5000;
 

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { useParams } from "react-router-dom"
+import { useParams, Link } from "react-router-dom"
 import data from '../data/data.js'
 import Lyric from './Lyric'
 
@@ -8,6 +8,7 @@ export const Video = () => {
 
   let { id } = useParams();
 
+  const [selectedLyric, setSelectedLyric] = useState(null);
   const [video, setVideo] = useState(null)
   const [lyrics, setLyrics] = useState([])
   const [annotation, setAnnotation] = useState(null)
@@ -68,6 +69,9 @@ export const Video = () => {
                   )
                 })}
               </div>
+              <div className="educator">
+                <Link className="button" to={'/lesson/' + id}>Begin a Lesson</Link>
+              </div>
             </div>
           </StyledColumns>
 
@@ -95,8 +99,9 @@ export const Video = () => {
             </div>
           </StyledColumns>
         </div>
-      )}
-    </div>
+      )
+      }
+    </div >
   )
 }
 
@@ -161,5 +166,24 @@ const StyledColumns = styled.div`
   .lyrics {
     display: flex;
     flex-direction: column;
+  }
+
+  .educator {
+    margin-top: 25px;
+    text-align: right;
+  }
+
+  .button {
+    padding: 10px 15px;
+    text-decoration: none;
+    text-transform: uppercase;
+    background-color: #DD3333;
+    color: white;
+    border-radius: 3px;
+    transition: all .3s ease;
+  }
+
+  .button:hover {
+    background-color: #b51e1e;
   }
 `;

@@ -3,7 +3,9 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { faFacebook, faYoutube, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import Navigation from './Navigation'
+import logo from '../images/logo-standard.jpg'
 
 export const Header = () => {
 
@@ -16,7 +18,7 @@ export const Header = () => {
   return (
     <>
       <StyledHeader>
-        <div>
+        <div className="logo">
           <button
             className={menuIsOpen ? "hamburger hamburger--collapse is-active" : "hamburger hamburger--collapse"}
             type="button"
@@ -26,11 +28,27 @@ export const Header = () => {
               <span className="hamburger-inner"></span>
             </span>
           </button>
-          <h1><Link to="/">RAP<strong>GUIDE</strong><span>.com</span></Link></h1>
+          <div><Link to="/"><img src={logo} alt="RapGuide.com" /></Link></div>
         </div>
-        <div className="search">
-          <input type="text" placeholder="What are you looking for?..." />
-          <button><FontAwesomeIcon icon={faSearch} /></button>
+        <div className="header-right">
+          <div className="search">
+            <input type="text" placeholder="What are you looking for?..." />
+            <button><FontAwesomeIcon icon={faSearch} /></button>
+          </div>
+          <div className="header-right__social">
+            <a href="https://www.facebook.com" target="_blank" className="facebook">
+              <FontAwesomeIcon icon={faFacebook} />
+            </a>
+            <a href="https://www.youtube.com" target="_blank" className="youtube">
+              <FontAwesomeIcon icon={faYoutube} />
+            </a>
+            <a href="https://www.instagram.com" target="_blank" className="instagram">
+              <FontAwesomeIcon icon={faInstagram} />
+            </a>
+            <a href="https://www.twitter.com" target="_blank" className="twitter">
+              <FontAwesomeIcon icon={faTwitter} />
+            </a>
+          </div>
         </div>
       </StyledHeader>
       <Navigation isOpen={menuIsOpen} toggleMenu={toggleMenu} />
@@ -43,7 +61,7 @@ export default Header;
 const StyledHeader = styled.header`
   position: fixed;
   width: 100vw;
-  height: 6rem;
+  height: 10rem;
   background-color: #0A0405;
   color: white;
   margin-bottom: 5rem;
@@ -52,25 +70,38 @@ const StyledHeader = styled.header`
   justify-content: space-between;
   z-index: 5000;
 
-  h1 {
-    display: inline-block;
-    font-size: 3rem;
-    line-height: 4rem;
-    font-weight: 400;
+  .logo {
+    display: flex;
+    align-items: center;
+  }
 
-    strong {
-      font-weight: 700;
-    }
+  .header-right {
+    display: flex;
+    flex-direction: column;
+  }
 
-    span {
-      font-weight: 300;
-      font-size: 2rem;
-    }
+  .header-right__social {
+    padding-right: 4rem;
+    text-align: right;
+    margin-top: 7px;
 
-    a, a:link {
-      color: inherit;
+    a {
       text-decoration: none;
+      font-size: 2.3rem;
+      padding: 0 0.5rem;
+      color: white;
+      transition: all .3s ease;
+      position: relative;
+      display: inline-block;
     }
+
+    a:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  img {
+    height: 10rem;
   }
 
   .hamburger {
@@ -78,7 +109,7 @@ const StyledHeader = styled.header`
   }
 
   .search {
-    padding-right: 3rem;
+    padding-right: 4rem;
     display: flex;
     align-items: center;
 
