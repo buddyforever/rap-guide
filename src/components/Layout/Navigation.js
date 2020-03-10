@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import auth from '../auth/auth'
+import auth from '../../auth/auth'
 
 export const Navigation = ({ isOpen, toggleMenu }) => {
 
@@ -17,16 +17,17 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
       <NavLink to="/request" activeClassName="active" onClick={toggleMenu}>Request</NavLink>
       <NavLink to="/about" activeClassName="active" onClick={toggleMenu}>About</NavLink>
       <NavLink to="/contact" activeClassName="active" onClick={toggleMenu}>Contact</NavLink>
-      {/* {
+      {
         !auth.isAuthenticated() &&
         <NavLink to="/login" activeClassName="active" onClick={toggleMenu}>Login / Signup</NavLink>
       }
       {
         auth.isAuthenticated() &&
         <>
+          <NavLink to="/profile" activeClassName="active" onClick={toggleMenu}>Profile</NavLink>
           <button onClick={handleLogout}>Logout</button>
         </>
-      } */}
+      }
     </StyledNavigation>
   )
 }

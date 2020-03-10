@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import useGlobal from "../store/Store"
+import useGlobal from "../../store/Store"
 
 export const Contact = () => {
 

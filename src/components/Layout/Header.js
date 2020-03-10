@@ -5,7 +5,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faFacebook, faYoutube, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import Navigation from './Navigation'
-import logo from '../images/logo-standard.jpg'
+import logo from '../../images/logo-standard.jpg'
 
 export const Header = () => {
 

@@ -1,31 +1,48 @@
 import React from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
 
 export const VideoThumb = ({ id, title, thumbnail, topics }) => {
+
+  /*
+    FRAMER MOTION USAGE
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.5 }}
+        transition={{ duration: 1, loop: Infinity }}
+      >
+  */
+
   return (
-    <StyledVideoThumb>
-      <Link className="video_link" to={`/video/${id}`}>
-        <div className="video_thumbnail">
-          <img src={thumbnail} alt={title} />
+    <motion.div
+      initial={{ y: 10 }}
+      animate={{ y: 0 }}
+      transition={{ duration: 1 }}
+    >
+      <StyledVideoThumb>
+        <Link className="video_link" to={`/video/${id}`}>
+          <div className="video_thumbnail">
+            <img src={thumbnail} alt={title} />
+          </div>
+          <h4>{title}</h4>
+        </Link>
+        <div className="video_details">
+          <div>
+            <strong>From: </strong>
+            <a href="#">Album Name</a>
+          </div>
+          <div>
+            <strong>Topics: </strong>
+            {
+              topics.map((topic, index) => {
+                return (<span key={index}><a href="#">{topic}</a>,</span>)
+              })
+            }
+          </div>
         </div>
-        <h4>{title}</h4>
-      </Link>
-      <div className="video_details">
-        <div>
-          <strong>From: </strong>
-          <a href="#">Album Name</a>
-        </div>
-        <div>
-          <strong>Topics: </strong>
-          {
-            topics.map(topic => {
-              return (<span><a href="#">{topic}</a>,</span>)
-            })
-          }
-        </div>
-      </div>
-    </StyledVideoThumb>
+      </StyledVideoThumb>
+    </motion.div >
   )
 }
 

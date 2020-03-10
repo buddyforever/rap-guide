@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
-import data from '../data/data.js'
+import data from '../../data/data.js'
 import Lyric from './Lyric'
+import auth from '../../auth/auth'
 
 export const Video = () => {
 
@@ -69,9 +70,12 @@ export const Video = () => {
                   )
                 })}
               </div>
-              <div className="educator">
-                <Link className="button" to={'/lesson/' + id}>Begin a Lesson</Link>
-              </div>
+              {
+                auth.isAuthenticated() &&
+                <div className="educator">
+                  <Link className="button" to={'/lesson/' + id}>Start a Lesson</Link>
+                </div>
+              }
             </div>
           </StyledColumns>
 
@@ -171,19 +175,5 @@ const StyledColumns = styled.div`
   .educator {
     margin-top: 25px;
     text-align: right;
-  }
-
-  .button {
-    padding: 10px 15px;
-    text-decoration: none;
-    text-transform: uppercase;
-    background-color: #DD3333;
-    color: white;
-    border-radius: 3px;
-    transition: all .3s ease;
-  }
-
-  .button:hover {
-    background-color: #b51e1e;
   }
 `;

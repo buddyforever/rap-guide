@@ -1,20 +1,25 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import useGlobal from "../store/Store"
+import VideoThumb from '../Video/VideoThumb'
+import data from '../../data/data'
 
-export const Request = () => {
+export const About = () => {
 
-  const [globalState, globalActions] = useGlobal();
-  const [annotation, setAnnotation] = useState(null);
+  const [videos, setVideos] = useState(data.videos);
 
   return (
     <StyledContent>
-      <h1>Request</h1>
+      <div className="callout">
+        <h1>TEACHER CALLOUT SIGN UP LOG IN ETC</h1>
+      </div>
+      <div className="text">
+        <h1>ABOUT THIS SITE / JOIN THE DISCUSSION</h1>
+      </div>
     </StyledContent>
   )
 }
 
-export default Request;
+export default About;
 
 const StyledContent = styled.div`
 

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import useGlobal from "../store/Store"
-import auth from '../auth/auth'
+import useGlobal from "../../store/Store"
+import auth from '../../auth/auth'
 import { Redirect } from 'react-router-dom'
 
 export const Login = () => {
@@ -16,7 +16,7 @@ export const Login = () => {
     e.preventDefault();
     if (validateEmail(email)) {
       auth.login(email);
-      window.location = "/manage"; // TODO - change this to a proper react redirect
+      window.location = "/"; // TODO - change this to a proper react redirect
     } else {
       alert("please enter a valid email address");
     }
