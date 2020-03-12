@@ -1,7 +1,7 @@
 class auth {
-  static login(name) {
+  static login(profile) {
     localStorage.setItem("authenticated", true);
-    localStorage.setItem("name", name);
+    localStorage.setItem("profile", JSON.stringify(profile));
   }
   static logout() {
     localStorage.removeItem("authenticated");

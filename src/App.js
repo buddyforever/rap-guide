@@ -1,8 +1,8 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import Layout from './components/Layout/Layout'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import About from './components/Pages/About'
-import Video from './components/Video/Video'
+import Guide from './components/Guide/Guide'
 import RapGuides from './components/Pages/RapGuides'
 import Lessons from './components/Pages/Lessons'
 import Request from './components/Pages/Request'
@@ -15,12 +15,26 @@ import Profile from './components/Private/Profile'
 import auth from './auth/auth'
 import { getLocalStorage, setLocalStorage } from './utilities/LocalStorage'
 import data from './data/data'
+import useGlobal from './store/Store'
 
 function App() {
 
+  const [globalState, globalActions] = useGlobal();
+
+  /*
+    Setup the default data if it has been reset
+    This will all be connected to a datasource of some kind
+    but it is in Local Storage for prototyping
+  */
   if (getLocalStorage("guides") === null) {
     setLocalStorage("guides", JSON.stringify(data.guides));
   }
+
+  useEffect(() => {
+    if (auth.isAuthenticated()) {
+      globalActions.setName(JSON.parse(getLocalStorage("profile")).nameFirst);
+    }
+  }, []);
 
   return (
     <Router>
@@ -32,7 +46,7 @@ function App() {
           <Route path="/about" component={About} />
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
-          <Route path="/video/:id" component={Video} />
+          <Route path="/guide/:id" component={Guide} />
           <Route path="/lesson/:id" component={Lesson} />
           <PrivateRoute
             path="/profile"

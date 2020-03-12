@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyledContent, Heading, FourGrid } from '../../styles/PageStyles'
-import VideoThumb from '../Video/VideoThumb'
+import VideoThumb from '../Guide/VideoThumb'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 
 export const Home = () => {
@@ -8,10 +8,8 @@ export const Home = () => {
   const [guides, setGuides] = useState([]);
 
   useEffect(() => {
-
     // TODO Get actual data
     setGuides(JSON.parse(getLocalStorage("guides")));
-
   }, [])
 
   return (

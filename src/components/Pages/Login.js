@@ -1,24 +1,44 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import useGlobal from "../../store/Store"
+import { StyledContent, Heading } from '../../styles/PageStyles'
 import auth from '../../auth/auth'
 import { Redirect } from 'react-router-dom'
+import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/FormStyles'
+import { faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
+import { getLocalStorage } from '../../utilities/LocalStorage'
 
 export const Login = () => {
-
-  const [globalState, globalActions] = useGlobal();
-  const [annotation, setAnnotation] = useState(null);
 
   const [email, setEmail] = useState(null);
   const [password, setPassword] = useState(null);
 
+  const [message, setMessage] = useState();
+
   const handleLogin = (e) => {
     e.preventDefault();
-    if (validateEmail(email)) {
-      auth.login(email);
-      window.location = "/"; // TODO - change this to a proper react redirect
+
+    // TODO change this to be actual loging system
+    // For now I will check if the profile exists in local storage
+    let profile = JSON.parse(getLocalStorage("profile"));
+    if (!profile) {
+      profile = {
+        nameFirst: '',
+        nameLast: '',
+        email: email,
+        type: 'administrator'
+      }
     } else {
-      alert("please enter a valid email address");
+      profile.email = email;
+    }
+
+    if (validateEmail(email)) {
+      auth.login(profile);
+      window.location = "/profile"; // TODO - change this to a proper react redirect
+    } else {
+      setMessage({
+        className: "error",
+        text: "please enter a valid email address"
+      });
     }
   }
 
@@ -29,9 +49,17 @@ export const Login = () => {
 
   return (
     <StyledContent>
-      <form onSubmit={handleLogin}>
+      <Heading>
         <h1>Login</h1>
-        <div className="form-group">
+      </Heading>
+      <Form onSubmit={handleLogin} style={{ maxWidth: "500px" }}>
+        {message && (
+          <Autoreply className={message.className}>
+            {message.text}
+          </Autoreply>
+        )}
+        <FormBlock>
+          <label htmlFor="email">Email</label>
           <input
             type="text"
             id="email"
@@ -39,9 +67,9 @@ export const Login = () => {
             required
             onChange={(e) => setEmail(e.target.value)}
           />
-          <label htmlFor="email">Email</label>
-        </div>
-        <div className="form-group">
+        </FormBlock>
+        <FormBlock>
+          <label htmlFor="password">Password</label>
           <input
             type="password"
             id="password"
@@ -49,84 +77,14 @@ export const Login = () => {
             required
             onChange={(e) => setPassword(e.target.value)}
           />
-          <label htmlFor="password">Password</label>
-        </div>
-        <div className="button-group">
-          <button className="btn btn-right" onClick={handleLogin}>Login</button>
-        </div>
-      </form>
-    </StyledContent>
+        </FormBlock>
+        <ButtonBlock>
+          <Button onClick={handleLogin}>Login</Button>
+        </ButtonBlock>
+      </Form>
+    </StyledContent >
   )
 }
 
 export default Login;
-
-const StyledContent = styled.div`
-
-  min-height: 40vh;
-
-  form {
-    max-width: 50rem;
-    margin: 0 auto;
-
-    .form-group {
-      margin-bottom: 2.5rem;
-      position: relative;
-
-      input[type=text],
-      input[type=password]{
-        width: 100%;
-        padding: 1rem 1.5rem;
-        border: 1px solid black;
-        border-radius: 2px;
-        outline: none;
-        font-size: 1.6rem;
-      }
-
-      label{
-        position: absolute;
-        background-color: white;
-        left: 1.5rem;
-        top: 1rem;
-        transition: all .3s ease;
-      }
-
-      input:focus + label,
-      input:valid + label {
-        padding: 0 0.5rem;
-        left: 20px;
-        top: -0.8rem;
-        font-size: 1.4rem;
-      }
-
-      input:-webkit-autofill,
-      input:-webkit-autofill:hover,
-      input:-webkit-autofill:focus,
-      input:-webkit-autofill:active  {
-        -webkit-box-shadow: 0 0 0 30px white inset !important;
-      }
-    }
-
-    .button-group {
-      display: flex;
-      justify-content: flex-end
-
-      button {
-        border: 1px solid black;
-        border-radius: 2px;
-        text-transform: uppercase;
-        font-weight: 500;
-        background-color: white;
-        padding: 1rem 1.5rem;
-        cursor: pointer;
-        transition: all .3s ease;
-
-        &:hover {
-          background-color: black;
-          color: white;
-        }
-      }
-    }
-  }
-`;
 

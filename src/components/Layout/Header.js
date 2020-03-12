@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,10 +6,16 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faFacebook, faYoutube, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import Navigation from './Navigation'
 import logo from '../../images/logo-standard.jpg'
+import auth from '../../auth/auth'
+import { getLocalStorage } from '../../utilities/LocalStorage'
+import useGlobal from '../../store/Store'
 
 export const Header = () => {
 
+  const [globalState, globalActions] = useGlobal();
+
   const [menuIsOpen, setMenuIsOpen] = useState(false);
+  const [name, setName] = useState(null);
 
   const toggleMenu = () => {
     setMenuIsOpen(!menuIsOpen);
@@ -29,6 +35,9 @@ export const Header = () => {
             </span>
           </button>
           <div><Link to="/"><img src={logo} alt="RapGuide.com" /></Link></div>
+          {globalState.name.length > 0 && (
+            <div>Hi {globalState.name}!</div>
+          )}
         </div>
         <div className="header-right">
           <div className="search">

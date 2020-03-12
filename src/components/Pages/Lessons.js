@@ -1,46 +1,36 @@
-import React, { useState } from 'react'
-import styled from 'styled-components'
-import useGlobal from "../../store/Store"
+import React, { useState, useEffect } from 'react'
+import { StyledContent, Heading } from '../../styles/PageStyles'
+import { getLocalStorage } from '../../utilities/LocalStorage'
 
 export const Lessons = () => {
 
-  const [globalState, globalActions] = useGlobal();
-  const [annotation, setAnnotation] = useState(null);
+  const [lessons, setLessons] = useState([]);
+
+  useEffect(() => {
+    // TODO Get actual data
+    if (getLocalStorage("lessons")) {
+      setLessons(JSON.parse(getLocalStorage("lessons")));
+    } else {
+
+    }
+  }, [])
 
   return (
     <StyledContent>
-      <h1>Lessons</h1>
+      <Heading>
+        <h1>Lessons</h1>
+      </Heading>
+      <div>
+        {lessons.length < 1 && <p>No lessons available. Please contact your teacher.</p>}
+        {lessons && lessons.map(lesson => {
+          return (
+            <div>{lesson}</div>
+          )
+        })}
+      </div>
     </StyledContent>
   )
 }
 
 export default Lessons;
-
-const StyledContent = styled.div`
-
-  min-height: 50vh;
-
-  .callout,
-  .text {
-    text-align: center;
-    font-size: 2.4rem;
-    padding: 5rem 0;
-    margin: 2.5rem;
-    border: 1px solid black;
-  }
-
-  .rap-guides {
-    padding: 5rem 0;
-  }
-
-  .four-columns {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-gap: 2.5rem;
-  }
-
-  h2 {
-    margin-bottom: 2.5rem;
-  }
-`;
 

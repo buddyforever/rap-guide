@@ -21,7 +21,7 @@ export const VideoThumb = ({ id, title, thumbnail, topics }) => {
       transition={{ duration: 1 }}
     >
       <StyledVideoThumb>
-        <Link className="video_link" to={`/video/${id}`}>
+        <Link className="video_link" to={`/guide/${id}`}>
           <div className="video_thumbnail">
             <img src={thumbnail} alt={title} />
           </div>
