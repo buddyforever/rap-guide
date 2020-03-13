@@ -5,7 +5,6 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { faFacebook, faYoutube, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import Navigation from './Navigation'
-import logo from '../../images/logo-standard.jpg'
 import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import useGlobal from '../../store/Store'
@@ -34,9 +33,9 @@ export const Header = () => {
               <span className="hamburger-inner"></span>
             </span>
           </button>
-          <div><Link to="/"><img src={logo} alt="RapGuide.com" /></Link></div>
+          <div><Link to="/"><img src={globalState.logo} alt="RapGuide.com" /></Link></div>
           {globalState.name.length > 0 && (
-            <div>Hi {globalState.name}!</div>
+            <div>Hi {globalState.name}! ({globalState.type})</div>
           )}
         </div>
         <div className="header-right">

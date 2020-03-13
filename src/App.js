@@ -11,6 +11,7 @@ import Login from './components/Pages/Login'
 import PrivateRoute from './auth/PrivateRoute'
 import PageNotFound from './components/Pages/PageNotFound'
 import Lesson from './components/Pages/Lesson'
+import AddLesson from './components/Lesson/AddLesson'
 import Profile from './components/Private/Profile'
 import auth from './auth/auth'
 import { getLocalStorage, setLocalStorage } from './utilities/LocalStorage'
@@ -33,6 +34,7 @@ function App() {
   useEffect(() => {
     if (auth.isAuthenticated()) {
       globalActions.setName(JSON.parse(getLocalStorage("profile")).nameFirst);
+      globalActions.setType(JSON.parse(getLocalStorage("profile")).type);
     }
   }, []);
 
@@ -47,6 +49,7 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
           <Route path="/guide/:id" component={Guide} />
+          <Route path="/lesson/add/:id" component={AddLesson} />
           <Route path="/lesson/:id" component={Lesson} />
           <PrivateRoute
             path="/profile"

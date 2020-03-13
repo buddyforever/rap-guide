@@ -9,6 +9,10 @@ export const Heading = styled.header`
 
   h1 {
     text-transform: uppercase;
+    margin: 0;
+  }
+  h2 {
+    margin: 0;
   }
 `
 

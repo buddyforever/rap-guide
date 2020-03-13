@@ -1,26 +1,14 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 
-export const Lyric = ({ id, lyric, annotations, displayAnnotation, addAnnotation }) => {
+export const Lyric = ({ active = false, children }) => {
 
-  function handleClick() {
-    if (annotations.length > 0) {
-      displayAnnotation(annotations)
-    } else {
-      let newAnnotation = {
-        id: 1,
-        annotation: `<p>This is an annotation from lyric.js ${id} at ${Date.now()}</p>`
-      }
-
-      addAnnotation(id, newAnnotation)
-    }
-
-  }
+  const [isActive, setIsActive] = useState(active);
 
   return (
-    <StyledLyric className={annotations.length > 0 ? 'annotated' : ''} onClick={() => handleClick(annotations)}>
-      {lyric}
-    </StyledLyric >
+    <StyledLyric onClick={() => setIsActive(!isActive)} className={isActive ? "active" : ""}>
+      {children}
+    </StyledLyric>
   )
 }
 
@@ -31,17 +19,18 @@ const StyledLyric = styled.span`
   transition: all .3s ease;
   padding: .5rem;
   cursor: pointer;
+  display: block;
 
-  :not(.annotated):hover {
+  &:hover {
     box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
   }
 
-  &.annotated {
+  &.active {
     cursor: pointer;
     background-color:  rgba(221, 51, 51, 0.2);
   }
 
-  &.annotated:hover {
+  &.active:hover {
     background-color: #DD3333;
     color: #fff7f7;
   }

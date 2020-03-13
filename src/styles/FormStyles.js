@@ -1,11 +1,31 @@
 import styled from 'styled-components'
 
 export const Form = styled.form`
-
+  h3 {
+    margin-bottom: 1rem;
+  }
+  p {
+      margin-bottom: 1rem;
+  }
 `
 
 export const Select = styled.select`
 
+`
+
+export const DropZone = styled.div`
+  margin: 25px 0;
+  height: 75px;
+  border: 1px dashed black;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: all .3s ease;
+
+  &:hover {
+    background-color: #f3f3f3;
+  }
 `
 
 export const Textarea = styled.textarea`
@@ -44,9 +64,23 @@ export const Button = styled.button`
   transition: all .3s ease;
   border: none;
   cursor: pointer;
+  outline: none;
 
   &:hover {
     background-color: #b51e1e;
+  }
+`
+
+export const LinkButton = styled.button`
+  border: none;
+  background-color: transparent!important;
+  color: #DD3333;
+  cursor: pointer;
+  transition: all .2s ease;
+  outline: none;
+
+  &:hover {
+    text-decoration: underline;
   }
 `
 
@@ -78,4 +112,11 @@ export const ButtonBlock = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
+  padding-top: 2.5rem;
+  margin-top: 2.5rem;
+  border-top: 1px solid black;
 `
+
+export const FormPage = styled.div`
+
+`;

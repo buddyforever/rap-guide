@@ -27,6 +27,7 @@ export const Profile = () => {
     }
 
     globalActions.setName(nameFirst);
+    globalActions.setType(type);
     auth.login(profile);
 
     setMessage({

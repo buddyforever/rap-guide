@@ -20,7 +20,7 @@ export const Lesson = () => {
 
   return (
     <StyledContent>
-      {lesson ? <h1>{lesson}</h1> : <AddLesson />}
+      {lesson ? <h1>{lesson}</h1> : <p>There are currently no lessons available.</p>}
     </StyledContent>
   )
 }
