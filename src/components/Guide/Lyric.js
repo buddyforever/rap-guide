@@ -1,12 +1,17 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-export const Lyric = ({ active = false, children }) => {
+export const Lyric = ({ active = false, children, onHandleClick }) => {
 
   const [isActive, setIsActive] = useState(active);
 
+  function handleClick() {
+    setIsActive(!isActive);
+    onHandleClick();
+  }
+
   return (
-    <StyledLyric onClick={() => setIsActive(!isActive)} className={isActive ? "active" : ""}>
+    <StyledLyric onClick={handleClick} className={isActive ? "active" : ""}>
       {children}
     </StyledLyric>
   )

@@ -9,6 +9,7 @@ import { Modal } from "../../styles/ModalStyles"
 import AddAnnotation from '../Annotation/AddAnnotation'
 import { motion } from 'framer-motion'
 import useGlobal from '../../store/Store'
+import Lyric from '../Guide/Lyric'
 
 const variants = {
   open: { x: "-50vw" },
@@ -70,8 +71,9 @@ export const Guide = () => {
 
           <StyledColumns>
             <div>
-              <h1>LYRICS</h1>
-              <Button onClick={() => setIsAnnotationOpen(!isAnnotationOpen)}>Add Annotation</Button>
+              {guide.lyrics.map(lyric => (
+                <Lyric onHandleClick={() => setIsAnnotationOpen(!isAnnotationOpen)}>{lyric.lyric}</Lyric>
+              ))}
             </div>
             <div>
               <h1>ANNOTATION</h1>
