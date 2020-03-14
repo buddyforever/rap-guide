@@ -4,8 +4,14 @@ export const StyledContent = styled.div`
   min-height: 50vh;
 `
 
+export const LargeSpace = styled.div`
+  margin: 5rem 0;
+`
 export const MediumSpace = styled.div`
   margin: 2.5rem 0;
+`
+export const SmallSpace = styled.div`
+  margin: 1rem 0;
 `
 
 export const Heading = styled.header`

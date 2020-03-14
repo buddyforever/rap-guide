@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import { Button } from "../../styles/FormStyles"
-import { Heading, StyledContent } from "../../styles/PageStyles"
+import { Heading, StyledContent, LargeSpace } from "../../styles/PageStyles"
 import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import { Modal } from "../../styles/ModalStyles"
@@ -37,59 +37,47 @@ export const Guide = () => {
 
 
   return (
-    <div>
+    <StyledContent>
       {!guide ? <div>LOADING...</div> : (
-        <StyledContent>
+        <div>
           <Heading>
             <h1>{guide.title}</h1>
           </Heading>
-          <StyledColumns>
-            <div>
-              <div className="video">
-                <iframe title={guide.title} width="100%" src={guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-              </div>
+          <StyledVideo>
+            <div className="video">
+              <iframe title={guide.title} width="100%" src={guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </div>
-            <div>
-              <h3><strong>From the album</strong> "{guide.album.title}"</h3>
-              <div className="credits">
-                {guide.credits.map((credit, index) => {
-                  return (
-                    <span key={index}><em>{credit.what} by</em> <strong>{credit.who}</strong></span>
-                  )
-                })}
-              </div>
-              {
-                auth.isAuthenticated() && globalState.type === 'educator' &&
-                <div className="educator">
-                  <Link className="button" to={'/lesson/add/' + id}>
-                    <Button>Create a Lesson</Button>
-                  </Link>
-                </div>
-              }
-            </div>
-          </StyledColumns>
+            {
+              auth.isAuthenticated() && globalState.type === 'educator' &&
+              <LargeSpace>
+                <Link className="button" to={'/lesson/add/' + id}>
+                  <Button>Create a Lesson</Button>
+                </Link>
+              </LargeSpace>
+            }
+          </StyledVideo>
 
           <StyledColumns>
             <div>
+              <h3>Lyrics</h3>
               {guide.lyrics.map(lyric => (
                 <Lyric onHandleClick={() => setIsAnnotationOpen(!isAnnotationOpen)}>{lyric.lyric}</Lyric>
               ))}
             </div>
             <div>
-              <h1>ANNOTATION</h1>
+              <h3>Annotations</h3>
             </div>
           </StyledColumns>
-        </StyledContent>
-      )
-      }
-      <Modal
-        variants={variants}
-        initial="closed"
-        animate={isAnnotationOpen ? "open" : "closed"}
-        transition={{ damping: 300 }} >
-        <AddAnnotation closeModal={closeModal} />
-      </Modal>
-    </div >
+          <Modal
+            variants={variants}
+            initial="closed"
+            animate={isAnnotationOpen ? "open" : "closed"}
+            transition={{ damping: 300 }} >
+            <AddAnnotation closeModal={closeModal} />
+          </Modal>
+        </div>
+      )}
+    </StyledContent>
   )
 }
 
@@ -116,11 +104,25 @@ const StyledColumns = styled.div`
     font-weight: 300;
   }
 
+  .lyrics {
+    display: flex;
+    flex-direction: column;
+  }
+
+  h3 {
+    margin-bottom: 2.5rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+
+
+`;
+
+const StyledVideo = styled.div`
   .video {
     position: relative;
     padding-bottom: 56.25%;
     padding-top: 30px; height: 0; overflow: hidden;
-    margin-bottom: 5rem;
   }
 
   .video iframe,
@@ -132,32 +134,4 @@ const StyledColumns = styled.div`
     width: 100%;
     height: 100%;
   }
-
-  p {
-    line-height: 2.8rem;
-  }
-
-  h2 {
-    font-weight: 500;
-  }
-
-  h3 {
-    font-weight: 300;
-    margin-bottom: 2.5rem;
-  }
-
-  .credits span {
-    display: block;
-    margin-bottom: 1rem;
-  }
-
-  .lyrics {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .educator {
-    margin-top: 25px;
-    text-align: right;
-  }
-`;
+`

@@ -23,13 +23,11 @@ function App() {
   const [globalState, globalActions] = useGlobal();
 
   /*
-    Setup the default data if it has been reset
+    TODO Setup the default data if it has been reset
     This will all be connected to a datasource of some kind
     but it is in Local Storage for prototyping
   */
-  if (getLocalStorage("guides") === null) {
-    setLocalStorage("guides", JSON.stringify(data.guides));
-  }
+  setLocalStorage("guides", JSON.stringify(data.guides));
 
   useEffect(() => {
     if (auth.isAuthenticated()) {

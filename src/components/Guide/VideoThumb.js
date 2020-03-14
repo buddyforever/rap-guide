@@ -35,7 +35,7 @@ export const VideoThumb = ({ id, title, thumbnail, topics }) => {
           }
         </div>
       </StyledVideoThumb>
-    </motion.div >
+    </motion.div>
   )
 }
 
@@ -75,6 +75,7 @@ const StyledVideoThumb = styled.div`
     font-size: 1.8rem;
     transition: all .3s ease;
     font-weight: 400;
+    text-align: center;
   }
 
   .video_details {
