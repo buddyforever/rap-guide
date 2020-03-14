@@ -1,5 +1,7 @@
 import React from 'react'
 import styled from 'styled-components'
+import SocialIcons from '../SocialIcons'
+import { Link } from 'react-router-dom'
 
 export const Footer = () => {
   return (
@@ -7,28 +9,30 @@ export const Footer = () => {
       <div className="content-container">
         <div>
           <h3>CONTACT</h3>
+          <SocialIcons />
         </div>
         <div>
-          <h3>SHOWS</h3>
+          <h3>TOPICS</h3>
           <ul>
-            <li><a href="#">Dolor</a></li>
-            <li><a href="#">Consectetur</a></li>
-            <li><a href="#">Nulla</a></li>
-            <li><a href="#">Numquam</a></li>
+            <li><a href="#">Climate Chaos</a></li>
+            <li><a href="#">Religion</a></li>
+            <li><a href="#">Consciousness</a></li>
+            <li><a href="#">Culture</a></li>
           </ul>
         </div>
         <div>
-          <h3>ALBUMS</h3>
+          <h3>LINKS</h3>
           <ul>
-            <li><a href="#">Dolor</a></li>
-            <li><a href="#">Consectetur</a></li>
-            <li><a href="#">Nulla</a></li>
-            <li><a href="#">Numquam</a></li>
+            <li><Link exact to="/">Explore</Link></li>
+            <li><Link to="/lessons">Lessons</Link></li>
+            <li><Link to="/request">Request</Link></li>
+            <li><Link to="/about">About</Link></li>
+            <li><Link to="/contact">Contact</Link></li>
           </ul>
         </div>
         <div>
-          <h3>LOREM</h3>
-          <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Nulla delectus numquam qui atque quaerat rerum cupiditate.</p>
+          <h3>ABOUT</h3>
+          <p>A New Teaching And Learning Platform For Engaging With Complex Ideas In Science And Society Through Interactive Rap Music Videos.</p>
         </div>
       </div>
     </StyledFooter>

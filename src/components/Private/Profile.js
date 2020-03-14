@@ -53,7 +53,11 @@ export const Profile = () => {
       </Heading>
       <Form onSubmit={saveProfile}>
         {message && (
-          <Autoreply className={message.className}>
+          <Autoreply
+            className={message.className}
+            initial={{ height: 0 }}
+            animate={{ height: "auto" }}
+          >
             {message.text}
           </Autoreply>
         )}

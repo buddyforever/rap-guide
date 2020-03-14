@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
-import { faFacebook, faYoutube, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 import Navigation from './Navigation'
 import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import useGlobal from '../../store/Store'
 import Logo from './Logo'
+import SocialIcons from '../SocialIcons'
 
 export const Header = () => {
 
@@ -45,18 +45,7 @@ export const Header = () => {
         </div>
         <div className="header-right">
           <div className="header-right__social">
-            <a href="https://www.facebook.com" target="_blank" className="facebook">
-              <FontAwesomeIcon icon={faFacebook} />
-            </a>
-            <a href="https://www.youtube.com" target="_blank" className="youtube">
-              <FontAwesomeIcon icon={faYoutube} />
-            </a>
-            <a href="https://www.instagram.com" target="_blank" className="instagram">
-              <FontAwesomeIcon icon={faInstagram} />
-            </a>
-            <a href="https://www.twitter.com" target="_blank" className="twitter">
-              <FontAwesomeIcon icon={faTwitter} />
-            </a>
+            <SocialIcons />
           </div>
         </div>
       </StyledHeader>
@@ -99,20 +88,6 @@ const StyledHeader = styled.header`
     padding-right: 4rem;
     text-align: right;
     margin-top: 7px;
-
-    a {
-      text-decoration: none;
-      font-size: 2.3rem;
-      padding: 0 0.5rem;
-      color: white;
-      transition: all .3s ease;
-      position: relative;
-      display: inline-block;
-    }
-
-    a:hover {
-      transform: scale(1.1);
-    }
   }
 
   img {
