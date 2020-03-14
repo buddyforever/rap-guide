@@ -4,6 +4,10 @@ export const StyledContent = styled.div`
   min-height: 50vh;
 `
 
+export const MediumSpace = styled.div`
+  margin: 2.5rem 0;
+`
+
 export const Heading = styled.header`
   margin: 5rem 0;
 

@@ -28,18 +28,11 @@ export const VideoThumb = ({ id, title, thumbnail, topics }) => {
           <h4>{title}</h4>
         </Link>
         <div className="video_details">
-          <div>
-            <strong>From: </strong>
-            <a href="#">Album Name</a>
-          </div>
-          <div>
-            <strong>Topics: </strong>
-            {
-              topics.map((topic, index) => {
-                return (<span key={index}><a href="#">{topic}</a>,</span>)
-              })
-            }
-          </div>
+          {
+            topics.map((topic, index) => {
+              return (<a href="#" key={index}>{topic}</a>)
+            })
+          }
         </div>
       </StyledVideoThumb>
     </motion.div >
@@ -81,15 +74,19 @@ const StyledVideoThumb = styled.div`
     margin: 1rem 0;
     font-size: 1.8rem;
     transition: all .3s ease;
+    font-weight: 400;
   }
 
   .video_details {
+    text-align: center;
     a, a:link {
       text-decoration: none;
       color: inherit;
       box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
       transition: all .3s ease;
       padding: 0 .2rem;
+      white-space: nowrap;
+      margin: 0 .2rem;
     }
 
     a:hover {

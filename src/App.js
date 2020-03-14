@@ -33,8 +33,9 @@ function App() {
 
   useEffect(() => {
     if (auth.isAuthenticated()) {
-      globalActions.setName(JSON.parse(getLocalStorage("profile")).nameFirst);
-      globalActions.setType(JSON.parse(getLocalStorage("profile")).type);
+      let profile = JSON.parse(getLocalStorage("profile"));
+      globalActions.setName(profile.nameFirst + ' ' + profile.nameLast);
+      globalActions.setType(profile.type);
     }
   }, []);
 

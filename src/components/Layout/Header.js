@@ -8,6 +8,7 @@ import Navigation from './Navigation'
 import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import useGlobal from '../../store/Store'
+import Logo from './Logo'
 
 export const Header = () => {
 
@@ -33,16 +34,16 @@ export const Header = () => {
               <span className="hamburger-inner"></span>
             </span>
           </button>
-          <div><Link to="/"><img src={globalState.logo} alt="RapGuide.com" /></Link></div>
+          <div>
+            <Link to="/">
+              <Logo src={globalState.logo} alt="RapGuide.com" />
+            </Link>
+          </div>
           {globalState.name.length > 0 && (
-            <div>Hi {globalState.name}! ({globalState.type})</div>
+            <div className="profile"><Link to="/profile">{globalState.name} ({globalState.type})</Link></div>
           )}
         </div>
         <div className="header-right">
-          <div className="search">
-            <input type="text" placeholder="What are you looking for?..." />
-            <button><FontAwesomeIcon icon={faSearch} /></button>
-          </div>
           <div className="header-right__social">
             <a href="https://www.facebook.com" target="_blank" className="facebook">
               <FontAwesomeIcon icon={faFacebook} />
@@ -83,6 +84,12 @@ const StyledHeader = styled.header`
     align-items: center;
   }
 
+  .profile a {
+    color: white;
+    text-decoration: none;
+    font-size: 1.8rem;
+  }
+
   .header-right {
     display: flex;
     flex-direction: column;
@@ -116,36 +123,5 @@ const StyledHeader = styled.header`
     outline: none;
   }
 
-  .search {
-    padding-right: 4rem;
-    display: flex;
-    align-items: center;
-
-    input[type=text] {
-      min-width: 600px;
-      padding: 0 1rem;
-      height: 4rem;
-      border: none;
-      border-top-left-radius: 3px;
-      border-bottom-left-radius: 3px;
-      font-size: 1.6rem;
-    }
-
-    button {
-      background-color: #333;
-      color: white;
-      height: 4rem;
-      cursor: pointer;
-      padding: 0 2rem;
-      border: none;
-      border-top-right-radius: 3px;
-      border-bottom-right-radius: 3px;
-      transition: all .3s ease;
-      outline: none;
-
-      &:hover {
-        background-color: #999;
-      }
-    }
   }
 `;
