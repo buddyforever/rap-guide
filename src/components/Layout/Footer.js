@@ -23,7 +23,7 @@ export const Footer = () => {
         <div>
           <h3>LINKS</h3>
           <ul>
-            <li><Link exact to="/">Explore</Link></li>
+            <li><Link to="/">Explore</Link></li>
             <li><Link to="/lessons">Lessons</Link></li>
             <li><Link to="/request">Request</Link></li>
             <li><Link to="/about">About</Link></li>

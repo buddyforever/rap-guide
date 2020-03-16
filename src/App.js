@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Layout from './components/Layout/Layout'
-import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
+import { Switch, Route, BrowserRouter as Router, useHistory } from 'react-router-dom'
 import About from './components/Pages/About'
 import Guide from './components/Guide/Guide'
 import RapGuides from './components/Pages/RapGuides'
@@ -34,6 +34,7 @@ function App() {
       let profile = JSON.parse(getLocalStorage("profile"));
       globalActions.setName(profile.nameFirst + ' ' + profile.nameLast);
       globalActions.setType(profile.type);
+      globalActions.setProfileImage(profile.image);
     }
   }, []);
 
@@ -53,7 +54,7 @@ function App() {
           <PrivateRoute
             path="/profile"
             component={Profile}
-            authenticationPath="/login"
+            authenticationPath="/"
             isAuthenticated={auth.isAuthenticated()}
             isAllowed={auth.isAuthenticated()}
             restrictedPath="/404"

@@ -40,7 +40,13 @@ export const Header = () => {
             </Link>
           </div>
           {globalState.name.length > 0 && (
-            <div className="profile"><Link to="/profile">{globalState.name} ({globalState.type})</Link></div>
+            <div className="profile">
+              <Link to="/profile">
+                <span className="profile__image">
+                  <img src={globalState.profileImage} alt="Profile Image" />
+                </span> <span>{globalState.name} ({globalState.type})</span>
+              </Link>
+            </div>
           )}
         </div>
         <div className="header-right">
@@ -77,6 +83,8 @@ const StyledHeader = styled.header`
     color: white;
     text-decoration: none;
     font-size: 1.8rem;
+    display: flex;
+    align-items: center;
   }
 
   .header-right {
@@ -98,5 +106,18 @@ const StyledHeader = styled.header`
     outline: none;
   }
 
+  .profile__image {
+    width: 4rem;
+    height: 4rem;
+    display: inline-block;
+    border-radius: 50%;
+    overflow: hidden;
+    margin-right: 1rem;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
   }
 `;

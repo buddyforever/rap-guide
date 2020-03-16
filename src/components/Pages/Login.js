@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { StyledContent, Heading } from '../../styles/PageStyles'
 import auth from '../../auth/auth'
@@ -6,45 +6,50 @@ import { Redirect } from 'react-router-dom'
 import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/FormStyles'
 import { faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
 import { getLocalStorage } from '../../utilities/LocalStorage'
+import useGlobal from '../../store/Store'
+
+import FacebookLogin from 'react-facebook-login';
+import GoogleLogin from 'react-google-login';
 
 export const Login = () => {
 
-  const [email, setEmail] = useState(null);
-  const [password, setPassword] = useState(null);
+  const [redirect, setRedirect] = useState();
+  const [globalState, globalActions] = useGlobal();
 
-  const [message, setMessage] = useState();
+  function loginUser(profile) {
+    auth.login(profile).then(() => {
+      // Update Global State
+      globalActions.setName(profile.nameFirst + ' ' + profile.nameLast);
+      globalActions.setType(profile.type);
+      globalActions.setProfileImage(profile.image);
 
-  const handleLogin = (e) => {
-    e.preventDefault();
-
-    // TODO change this to be actual loging system
-    // For now I will check if the profile exists in local storage
-    let profile = JSON.parse(getLocalStorage("profile"));
-    if (!profile) {
-      profile = {
-        nameFirst: '',
-        nameLast: '',
-        email: email,
-        type: 'administrator'
-      }
-    } else {
-      profile.email = email;
-    }
-
-    if (validateEmail(email)) {
-      auth.login(profile);
-      window.location = "/profile"; // TODO - change this to a proper react redirect
-    } else {
-      setMessage({
-        className: "error",
-        text: "please enter a valid email address"
-      });
-    }
+      // Redirect
+      setRedirect(true);
+    });
   }
 
-  function validateEmail(email) {
-    var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-    return re.test(String(email).toLowerCase());
+  const responseFacebook = ({ email, name, picture }) => {
+    let nameSplit = name.split(" ");
+
+    loginUser({
+      nameFirst: nameSplit[0] ? nameSplit[0] : '',
+      nameLast: nameSplit[nameSplit.length] ? nameSplit[nameSplit.length] : '',
+      email: email,
+      type: 'educator',
+      image: picture.data.url
+    });
+  }
+
+  const responseGoogle = (response) => {
+    const profileObj = response.profileObj;
+
+    loginUser({
+      nameFirst: profileObj.givenName,
+      nameLast: profileObj.familyName,
+      email: profileObj.email,
+      type: 'administrator',
+      image: profileObj.imageUrl
+    });
   }
 
   return (
@@ -52,37 +57,21 @@ export const Login = () => {
       <Heading>
         <h1>Login</h1>
       </Heading>
-      <Form onSubmit={handleLogin} style={{ maxWidth: "500px" }}>
-        {message && (
-          <Autoreply className={message.className}>
-            {message.text}
-          </Autoreply>
-        )}
-        <FormBlock>
-          <label htmlFor="email">Email</label>
-          <input
-            type="text"
-            id="email"
-            name="email"
-            required
-            onChange={(e) => setEmail(e.target.value)}
-          />
-        </FormBlock>
-        <FormBlock>
-          <label htmlFor="password">Password</label>
-          <input
-            type="password"
-            id="password"
-            name="password"
-            required
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </FormBlock>
-        <ButtonBlock>
-          <Button onClick={handleLogin}>Login</Button>
-        </ButtonBlock>
-      </Form>
-    </StyledContent >
+      <FacebookLogin
+        appId="665758824197396"
+        fields="name,email,picture"
+        callback={responseFacebook}
+      />
+      <br />
+      <br />
+      <GoogleLogin
+        clientId="898142775962-ib0uaie5botfugao80pjjn9nae1387fl.apps.googleusercontent.com"
+        buttonText="LOGIN WITH GOOGLE"
+        onSuccess={responseGoogle}
+        onFailure={responseGoogle}
+      />
+      {redirect && <Redirect to="/profile" />}
+    </StyledContent>
   )
 }
 

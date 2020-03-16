@@ -39,7 +39,7 @@ export const Home = () => {
       <FourGrid>
         {guides && guides.map(guide => {
           return (<VideoThumb
-            key={guide.id}
+            key={guide.videoId}
             id={guide.videoId}
             title={guide.title}
             thumbnail={guide.thumbnail}

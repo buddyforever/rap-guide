@@ -7,6 +7,7 @@ import logoStudent from '../images/logo-student.jpg'
 const initialState = {
   name: "",
   type: "",
+  profileImage: "",
   logo: logo
 };
 
@@ -25,6 +26,9 @@ const actions = {
     if (type === 'student') {
       store.setState({ logo: logoStudent })
     }
+  },
+  setProfileImage: (store, img) => {
+    store.setState({ profileImage: img });
   },
 };
 

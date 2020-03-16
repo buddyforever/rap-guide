@@ -13,6 +13,7 @@ export const Profile = () => {
   const [nameLast, setNameLast] = useState("");
   const [email, setEmail] = useState("");
   const [type, setType] = useState("");
+  const [image, setImage] = useState("");
 
   const [message, setMessage] = useState(null);
 
@@ -23,7 +24,8 @@ export const Profile = () => {
       nameFirst,
       nameLast,
       email,
-      type
+      type,
+      image
     }
 
     globalActions.setName(nameFirst);
@@ -44,13 +46,17 @@ export const Profile = () => {
     setNameLast(profile.nameLast);
     setEmail(profile.email);
     setType(profile.type);
+    setImage(profile.image);
   }, [])
 
   return (
     <StyledContent>
-      <Heading>
-        <h1>Profile</h1>
-      </Heading>
+      {image &&
+        <Heading>
+          <h1 style={{ display: "flex", alignItems: "center" }}>
+            <img src={image} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {nameFirst} {nameLast}
+          </h1>
+        </Heading>}
       <Form onSubmit={saveProfile}>
         {message && (
           <Autoreply
