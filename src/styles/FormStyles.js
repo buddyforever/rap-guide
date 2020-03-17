@@ -11,7 +11,7 @@ export const Form = styled.form`
 `
 
 export const Select = styled.select`
-
+  border-color: #CCCCCC;
 `
 
 export const DropZone = styled.div`
@@ -106,6 +106,8 @@ export const FormBlock = styled.div`
     padding: 1.5rem 1rem;
     border: 1px solid black;
     border-radius: 2px;
+    border-color: #CCCCCC;
+    outline: none;
   }
 `
 
@@ -118,6 +120,6 @@ export const ButtonBlock = styled.div`
   border-top: 1px solid black;
 `
 
-export const FormPage = styled.div`
+export const FormPage = styled(motion.div)`
 
 `;

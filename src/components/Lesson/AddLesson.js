@@ -6,14 +6,17 @@ import { Editor } from '@tinymce/tinymce-react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFilePdf } from '@fortawesome/free-solid-svg-icons'
 import { Select, Button, ButtonBlock, FormBlock, FormPage, Form, DropZone, LinkButton } from '../../styles/FormStyles'
-import { StyledContent, Heading } from '../../styles/PageStyles'
+import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { setLocalStorage, getLocalStorage } from '../../utilities/LocalStorage'
 import Lyric from '../Guide/Lyric'
 import { Modal } from "../../styles/ModalStyles"
+import Checkbox from "../Form/Checkbox"
+import { motion, AnimatePresence } from 'framer-motion'
 
 const variants = {
-  open: { x: "-50vw" },
-  closed: { x: "100%" },
+  initial: { x: "50px", opacity: 0 },
+  show: { x: 0, opacity: 1 },
+  exit: { opacity: 0 },
 }
 
 export const AddLesson = () => {
@@ -26,25 +29,11 @@ export const AddLesson = () => {
   const [lyrics, setLyrics] = useState([]);
   const [students, setStudents] = useState([]);
   const [page, setPage] = useState(0);
-  const [emailToAdd, setEmailToAdd] = useState("");
-  const [emails, setEmails] = useState([]);
-
+  const [maximumStudents, setMaximumStudents] = useState(null);
   const [isNoteOpen, setIsNoteOpen] = useState(false);
 
   function closeModal() {
     setIsNoteOpen(false);
-  }
-
-  function addStudent(e) {
-    e.preventDefault();
-    setEmails(prevState => [...prevState, emailToAdd]);
-    setEmailToAdd("");
-  }
-
-  function handleKeyPress(e) {
-    if (e.key === 'Enter') {
-      addStudent(e);
-    }
   }
 
   function loadGuide() {
@@ -106,17 +95,6 @@ export const AddLesson = () => {
     setLessonDetils(content);
   }
 
-  function addAttachment() {
-    let attachment = {
-      title: "This is a document title.pdf"
-    }
-    setAttachments(prevState => [...prevState, attachment]);
-  }
-
-  function handleAddDocument(document) {
-    // TODO Create function to handle managing documents
-  }
-
   useEffect(() => {
     loadGuide();
   }, []);
@@ -148,10 +126,19 @@ export const AddLesson = () => {
 
             <Form>
               {page === 0 &&
-                <FormPage>
+                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
                   <FormBlock>
                     <h3>Lesson Details</h3>
                     <p>This is placeholder text that will describe what this rich text editor is for.</p>
+                    <MediumSpace style={{ display: "flex", justifyContent: "flex-end" }}>
+                      <div style={{ width: "360px" }}>
+                        <Select>
+                          <option value="">-- Select a Lesson Template (optional) --</option>
+                          <option value="">Sample Lesson</option>
+                          <option value="">Another Template</option>
+                        </Select>
+                      </div>
+                    </MediumSpace>
                     <Editor
                       initialValue="<p></p>"
                       apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
@@ -169,65 +156,29 @@ export const AddLesson = () => {
                       onEditorChange={handleEditorChange}
                     />
                   </FormBlock>
-                  <FormBlock>
-                    <h3>Supporting Documents</h3>
-                    <p>This is placeholder text that will describe what kind of documents can be added and how to manage them.</p>
-
-                    <DropZone onClick={addAttachment}>
-                      <span>Click or Drop files here to be uploaded</span>
-                    </DropZone>
-
-                    <div className="attachments">
-                      {attachments.map(attachment => (
-                        <StyledAttachment className="attachment">
-                          <span className="attachment__type">
-                            <FontAwesomeIcon icon={faFilePdf} />
-                          </span>
-                          <span className="attachment__title">
-                            <a href="">{attachment.title}</a>
-                          </span>
-                          <span className="attachment__visible">
-                            <Select>
-                              <option value="0">Visible To Me & My Students</option>
-                              <option value="1">Visible To Teachers Only</option>
-                              <option value="2">Visible To Me Only</option>
-                            </Select>
-                          </span>
-                        </StyledAttachment>
-                      ))}
-
-                    </div>
-                  </FormBlock>
                 </FormPage>
               }
 
               {page === 1 &&
-                <FormPage>
+                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
                   <FormBlock>
                     <h3>Lyrics</h3>
                     <p>Select which lyrics are available for annotation. If no lyrics are assigned all lyrics will be available for students to annotate.</p>
                   </FormBlock>
                   <FormBlock>
-                    <p>
-                      <LinkButton onClick={selectAllLyrics}>Assign All</LinkButton> | <LinkButton onClick={selectNoLyrics}>Assign None</LinkButton>
-                    </p>
                     {lyrics.map(lyric => (
-                      <StyledLyric className={lyric.assigned ? "active" : ""}>
-                        <span>{lyric.example ? "* " : ""}{lyric.lyric}</span>
-                        <span className="options">
-                          <input
-                            type="checkbox"
-                            name="assigned"
-                            checked={lyric.assigned}
-                            onChange={(e) => {
-                              updateAssigned(lyric.id, e.target.checked);
-                            }} /> Assign | <input type="checkbox"
-                              name="example"
-                              checked={lyric.example}
+                      <StyledLyric role="button" onClick={() => setIsNoteOpen(true)} className={lyric.assigned ? "active" : ""}>
+                        <label style={{ marginBottom: 0, cursor: "pointer" }}>
+                          <span className="options">
+                            <Checkbox
+                              checked={lyric.assigned}
                               onChange={(e) => {
-                                updateExample(lyric.id, e.target.checked);
-                              }} /> Example | <a href="#" onClick={() => setIsNoteOpen(true)}>Add Note</a>
-                        </span>
+                                updateAssigned(lyric.id, e.target.checked);
+                              }}
+                            />
+                          </span>
+                          {lyric.example ? "* " : ""}{lyric.lyric}
+                        </label>
                       </StyledLyric>
                     ))}
                   </FormBlock>
@@ -235,23 +186,14 @@ export const AddLesson = () => {
               }
 
               {page === 2 &&
-                <FormPage>
+                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
                   <FormBlock>
                     <h3>Students</h3>
-                    <p>Enter the email addresses of the students you wish to enroll in this lesson.</p>
+                    <p>Enter the maximum number of students expected to enroll in this class.</p>
                   </FormBlock>
                   <FormBlock>
-                    <label>Enter Email Address</label>
-                    <div style={{ display: "flex" }}>
-                      <input type="text" value={emailToAdd} placeholder="someone@domain.com" onChange={(e) => setEmailToAdd(e.target.value)} onKeyPress={handleKeyPress} />
-                      <Button style={{ marginLeft: "1rem", width: "200px" }} onClick={addStudent}>Add Student</Button>
-                    </div>
-                  </FormBlock>
-                  <FormBlock>
-                    {emails.map(email => (
-                      <div>{email}</div>
-
-                    ))}
+                    <label>Number of Students</label>
+                    <input type="text" value={maximumStudents} onChange={(e) => setMaximumStudents(e.target.value)} />
                   </FormBlock>
                 </FormPage>
               }
@@ -303,7 +245,7 @@ export const AddLesson = () => {
           <Button onClick={() => setIsNoteOpen(false)}>Save Note</Button>
         </ButtonBlock>
       </Modal>
-    </StyledContent>
+    </StyledContent >
   )
 }
 
@@ -374,13 +316,13 @@ const StyledLyric = styled.div`
   }
 
   .options {
-    padding-left: 1rem;
-    font-size: 1.2rem;
+    padding: 0 1rem;
     opacity: 0;
     transition: all .3s ease;
   }
 
-  &:hover .options {
+  &:hover .options,
+  &.active .options {
     opacity: 1;
   }
 `
