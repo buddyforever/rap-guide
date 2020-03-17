@@ -39,3 +39,11 @@ export const TwoGrid = styled.div`
   grid-gap: 2.5rem;
   row-gap: 5rem;
 `
+
+export const Thumbnail = styled.div`
+  img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;
+  }
+`

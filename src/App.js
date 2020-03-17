@@ -31,7 +31,7 @@ function App() {
 
   useEffect(() => {
     if (auth.isAuthenticated()) {
-      let profile = JSON.parse(getLocalStorage("profile"));
+      let profile = getLocalStorage("profile");
       globalActions.setName(profile.nameFirst + ' ' + profile.nameLast);
       globalActions.setType(profile.type);
       globalActions.setProfileImage(profile.image);

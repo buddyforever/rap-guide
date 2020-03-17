@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import { setLocalStorage, getLocalStorage } from '../../utilities/LocalStorage'
 import AddLesson from '../Lesson/AddLesson'
+import { Heading, MediumSpace } from '../../styles/PageStyles'
 
 export const Lesson = () => {
 
@@ -11,16 +12,25 @@ export const Lesson = () => {
   const [lesson, setLesson] = useState(null);
 
   function loadLesson() {
-    setLesson(localStorage.getItem("lesson") ? localStorage.getItem("lesson") : null);
+    if (getLocalStorage("lessons")) {
+      setLesson(getLocalStorage("lessons").filter(lesson => lesson.lessonId === id)[0]);
+    }
   }
 
   useEffect(() => {
     loadLesson();
-  }, [lesson]);
+  }, []);
 
   return (
     <StyledContent>
-      {lesson ? <h1>{lesson}</h1> : <p>There are currently no lessons available.</p>}
+      {lesson &&
+        <>
+          <Heading>
+            <h1>{lesson.title}</h1>
+          </Heading>
+          <MediumSpace dangerouslySetInnerHTML={{ __html: lesson.details }} />
+        </>
+      }
     </StyledContent>
   )
 }

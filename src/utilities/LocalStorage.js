@@ -7,5 +7,5 @@ export const clearLocalStorage = (name) => {
 }
 
 export const getLocalStorage = (name) => {
-  return localStorage.getItem(name);
+  return JSON.parse(localStorage.getItem(name));
 }

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { motion } from 'framer-motion'
+import { Tag } from '../../styles/TagStyles'
 
 const minFontSize = 2;
 const maxFontSize = 3;
@@ -88,11 +88,4 @@ const StyledTagCloud = styled.div`
   text-align: center;
 `
 
-const Tag = styled(motion.div)`
-  display: inline-block;
-  padding: 0.5rem 1rem;
-  margin: 0 1rem;
-  font-size: ${props => props.size + 'rem'};
-  background-color: #EEE;
-  cursor: pointer;
-`
+

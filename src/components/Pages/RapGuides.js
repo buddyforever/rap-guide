@@ -13,7 +13,7 @@ export const Home = () => {
 
   useEffect(() => {
     // TODO Get actual data
-    setGuides(JSON.parse(getLocalStorage("guides")));
+    setGuides(getLocalStorage("guides"));
   }, [])
 
   function selectTag(tag) {

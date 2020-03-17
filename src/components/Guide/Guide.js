@@ -31,7 +31,7 @@ export const Guide = () => {
 
   useEffect(() => {
     // TODO Get from actual datasource
-    const selectedGuide = JSON.parse(getLocalStorage("guides")).filter(guide => guide.videoId === id)[0];
+    const selectedGuide = getLocalStorage("guides").filter(guide => guide.videoId === id)[0];
     setGuide(selectedGuide);
   }, [])
 
