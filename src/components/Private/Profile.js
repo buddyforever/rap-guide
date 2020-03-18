@@ -85,6 +85,7 @@ export const Profile = () => {
           <label>Account Type</label>
           <select value={type} onChange={(e) => setType(e.target.value)}>
             <option value="administrator">Administrator</option>
+            <option value="export">Export</option>
             <option value="educator">Educator</option>
             <option value="student">Student</option>
             <option value="public">Public</option>

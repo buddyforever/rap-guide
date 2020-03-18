@@ -34,7 +34,7 @@ export const Header = () => {
               <span className="hamburger-inner"></span>
             </span>
           </button>
-          <div>
+          <div className="logo__image">
             <Link to="/">
               <Logo src={globalState.logo} alt="RapGuide.com" />
             </Link>
@@ -44,7 +44,7 @@ export const Header = () => {
               <Link to="/profile">
                 <span className="profile__image">
                   <img src={globalState.profileImage} alt="Profile Image" />
-                </span> <span>{globalState.name} ({globalState.type})</span>
+                </span> <span>{globalState.name}<br /><em style={{ fontSize: "1.2rem" }}>{globalState.type}</em></span>
               </Link>
             </div>
           )}
@@ -89,11 +89,10 @@ const StyledHeader = styled.header`
 
   .header-right {
     display: flex;
-    flex-direction: column;
   }
 
   .header-right__social {
-    padding-right: 4rem;
+    padding: 0 4rem;
     text-align: right;
     margin-top: 7px;
   }
@@ -118,6 +117,14 @@ const StyledHeader = styled.header`
       width: 100%;
       height: 100%;
       object-fit: contain;
+    }
+  }
+
+  &.scrolled {
+    height: 8rem;
+
+    .logo__image img {
+      height: 8rem;
     }
   }
 `;

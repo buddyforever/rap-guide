@@ -3,6 +3,7 @@ import Layout from './components/Layout/Layout'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import About from './components/Pages/About'
 import Guide from './components/Guide/Guide'
+import AddGuide from './components/Guide/AddGuide'
 import RapGuides from './components/Pages/RapGuides'
 import Lessons from './components/Pages/Lessons'
 import Request from './components/Pages/Request'
@@ -74,6 +75,14 @@ function App() {
           <PrivateRoute
             path="/profile"
             component={Profile}
+            authenticationPath="/login"
+            isAuthenticated={auth.isAuthenticated()}
+            isAllowed={auth.isAuthenticated()}
+            restrictedPath="/404"
+          />
+          <PrivateRoute
+            path="/addguide"
+            component={AddGuide}
             authenticationPath="/login"
             isAuthenticated={auth.isAuthenticated()}
             isAllowed={auth.isAuthenticated()}
