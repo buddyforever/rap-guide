@@ -40,7 +40,7 @@ export const Profile = () => {
 
   useEffect(() => {
     // TODO Get actual data
-    const profile = JSON.parse(getLocalStorage("profile"));
+    const profile = getLocalStorage("profile");
 
     setNameFirst(profile.nameFirst);
     setNameLast(profile.nameLast);
