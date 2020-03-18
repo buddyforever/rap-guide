@@ -2,6 +2,26 @@ import styled from 'styled-components'
 
 export const StyledContent = styled.div`
   min-height: 50vh;
+
+  p {
+    margin: 1rem 0;
+  }
+
+  a, a:link {
+    text-decoration: none;
+    color: inherit;
+    box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
+    transition: all .3s ease;
+    padding: 0 .2rem;
+    white-space: nowrap;
+    margin: 0 .2rem;
+  }
+
+  a:hover {
+    background-color: rgba(221, 51, 51, 0.6);
+    color: white;
+    box-shadow: inset 0 -4px rgba(221, 51, 51, 0);
+  }
 `
 
 export const LargeSpace = styled.div`
@@ -45,5 +65,39 @@ export const Thumbnail = styled.div`
     width: 100%;
     max-height: 200px;
     object-fit: contain;
+  }
+`
+
+export const StyledVideo = styled.div`
+  .video {
+    position: relative;
+    padding-bottom: 56.25%;
+    padding-top: 30px; height: 0; overflow: hidden;
+    background-color: black;
+  }
+
+  .video iframe,
+  .video object,
+  .video embed {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+  }
+`
+
+export const Split = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 5rem;
+`
+
+export const ActivityList = styled.div`
+  margin: 2.5rem 0;
+  list-style: none;
+
+  li {
+    margin-bottom: 1.5rem;
   }
 `

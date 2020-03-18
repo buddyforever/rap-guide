@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import { Button } from "../../styles/FormStyles"
-import { Heading, StyledContent, LargeSpace } from "../../styles/PageStyles"
+import { Heading, StyledContent, LargeSpace, StyledVideo } from "../../styles/PageStyles"
 import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import { Modal } from "../../styles/ModalStyles"
@@ -118,20 +118,3 @@ const StyledColumns = styled.div`
 
 `;
 
-const StyledVideo = styled.div`
-  .video {
-    position: relative;
-    padding-bottom: 56.25%;
-    padding-top: 30px; height: 0; overflow: hidden;
-  }
-
-  .video iframe,
-  .video object,
-  .video embed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-  }
-`

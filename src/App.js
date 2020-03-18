@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import Layout from './components/Layout/Layout'
-import { Switch, Route, BrowserRouter as Router, useHistory } from 'react-router-dom'
+import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import About from './components/Pages/About'
 import Guide from './components/Guide/Guide'
 import RapGuides from './components/Pages/RapGuides'
@@ -10,8 +10,9 @@ import Contact from './components/Pages/Contact'
 import Login from './components/Pages/Login'
 import PrivateRoute from './auth/PrivateRoute'
 import PageNotFound from './components/Pages/PageNotFound'
-import Lesson from './components/Pages/Lesson'
+import Lesson from './components/Private/Lesson'
 import AddLesson from './components/Lesson/AddLesson'
+import EditLesson from './components/Lesson/EditLesson'
 import Profile from './components/Private/Profile'
 import auth from './auth/auth'
 import { getLocalStorage, setLocalStorage } from './utilities/LocalStorage'
@@ -49,12 +50,31 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
           <Route path="/guide/:id" component={Guide} />
-          <Route path="/lesson/add/:id" component={AddLesson} />
-          <Route path="/lesson/:id" component={Lesson} />
+          <PrivateRoute
+            path="/lesson/add/:id"
+            component={AddLesson}
+            authenticationPath="/login"
+            isAuthenticated={auth.isAuthenticated()}
+            isAllowed={auth.isAuthenticated()}
+            restrictedPath="/404" />
+          <PrivateRoute
+            path="/lesson/edit/:id"
+            component={EditLesson}
+            authenticationPath="/login"
+            isAuthenticated={auth.isAuthenticated()}
+            isAllowed={auth.isAuthenticated()}
+            restrictedPath="/404" />
+          <PrivateRoute
+            path="/lesson/:id"
+            component={Lesson}
+            authenticationPath="/login"
+            isAuthenticated={auth.isAuthenticated()}
+            isAllowed={auth.isAuthenticated()}
+            restrictedPath="/404" />
           <PrivateRoute
             path="/profile"
             component={Profile}
-            authenticationPath="/"
+            authenticationPath="/login"
             isAuthenticated={auth.isAuthenticated()}
             isAllowed={auth.isAuthenticated()}
             restrictedPath="/404"
