@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import auth from '../../auth/auth'
 import { Editor } from '@tinymce/tinymce-react';
-import { Select, Button, ButtonBlock, FormBlock, FormPage, Form, DropZone, LinkButton } from '../../styles/FormStyles'
+import { Select, Button, ButtonBlock, FormBlock, FormPage, Form, DropZone, LinkButton, Autoreply } from '../../styles/FormStyles'
 import { Tag } from '../../styles/TagStyles'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { setLocalStorage, getLocalStorage } from '../../utilities/LocalStorage'
@@ -12,8 +12,9 @@ import { Modal } from "../../styles/ModalStyles"
 import Checkbox from "../Form/Checkbox"
 import { motion, AnimatePresence } from 'framer-motion'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faComment } from '@fortawesome/free-solid-svg-icons'
+import { faComment, faCopy } from '@fortawesome/free-solid-svg-icons'
 import { Redirect } from 'react-router-dom'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
 
 const variants = {
   open: { x: "-50vw", opacity: 1 },
@@ -44,6 +45,8 @@ export const AddLesson = () => {
   const [noteType, setNoteType] = useState("Note");
   const [note, setNote] = useState("");
   const [redirect, setRedirect] = useState(false);
+  const [lessonSignupUrl, setLessonSignupUrl] = useState();
+  const [copied, setCopied] = useState(false);
 
   function closeModal() {
     setIsNoteOpen(false);
@@ -116,11 +119,15 @@ export const AddLesson = () => {
       maxStudents: maximumStudents
     };
 
+    // TODO Create a better hash for the URL
+    setLessonSignupUrl(window.location.protocol + "//" + window.location.hostname + "/lesson/signup/" + lesson.lessonId);
+
     // TODO make this update if exists - might not be needed in Local Storage proto
     let lessons = getLocalStorage("lessons") ? getLocalStorage("lessons") : [];
     lessons.push(lesson);
     setLocalStorage("lessons", JSON.stringify(lessons));
-    setRedirect(true);
+
+    setPage(3);
   }
 
   function handleLessonDetailsContent(content, editor) {
@@ -198,6 +205,15 @@ export const AddLesson = () => {
               <h1>Lesson Setup</h1>
               <h2>Creating a lesson for - <a href={`https://www.youtube.com/watch?v=${guide.videoId}`} target="_blank">{guide.title}</a></h2>
             </Heading>
+
+            {copied && (
+              <Autoreply
+                initial={{ height: 0 }}
+                animate={{ height: "auto" }}
+              >
+                <p>The link has been copied to your clipboard.</p>
+              </Autoreply>
+            )}
 
             <Form>
               {page === 0 &&
@@ -311,9 +327,38 @@ export const AddLesson = () => {
                 </FormPage>
               }
 
-              <ButtonBlock>
+              {page === 3 &&
+                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
+                  <FormBlock>
+                    <h3>All Done!</h3>
+                    <p>Your course is now ready for enrollment. Send the following url to your students so that they can sign up.</p>
+                  </FormBlock>
+                  <FormBlock>
+                    <CopyToClipboard text={lessonSignupUrl}
+                      onCopy={() => setCopied(true)}>
+                      <div style={{ display: "flex" }}>
+                        <input
+                          type="text"
+                          readonly
+                          value={lessonSignupUrl}
+                        />
+                        <Button
+                          title="Click to copy the url to your clipboard"
+                          style={{ marginLeft: "1rem", width: "100px" }}
+                          onClick={(e) => e.preventDefault()}>
+                          <FontAwesomeIcon icon={faCopy} /> Copy
+                        </Button>
+                      </div>
+                    </CopyToClipboard>
+                  </FormBlock>
+                </FormPage>
+              }
+
+              <ButtonBlock
+                style={{ position: "sticky", bottom: 0, paddingBottom: "2.5rem", backgroundColor: "white" }}
+              >
                 {page === 0 && <Link to="">Cancel</Link>}
-                {page > 0 && <Button onClick={(e) => {
+                {page > 0 && page < 3 && <Button onClick={(e) => {
                   e.preventDefault();
                   setPage(page - 1)
                 }}>Back</Button>
@@ -324,6 +369,7 @@ export const AddLesson = () => {
                 }}>Next</Button>
                 }
                 {page === 2 && <Button onClick={saveLesson}>Save Lesson</Button>}
+                {page === 3 && <Button onClick={() => setRedirect(true)}>View Lessons</Button>}
               </ButtonBlock>
             </Form>
           </div>

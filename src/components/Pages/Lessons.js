@@ -58,8 +58,8 @@ export const Lessons = () => {
             </Link>
             <div className="video_details">
               <div style={{ marginBottom: "1rem" }}>
-                <p>Students 0/{lesson.maxStudents}</p>
-                <p>Lyrics {lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</p>
+                <p><strong>Students</strong> <span>0/{lesson.maxStudents}</span></p>
+                <p><strong>Lyrics</strong> <span>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</span></p>
               </div>
               {
                 lesson.topics.map((topic, index) => {
@@ -129,6 +129,14 @@ const StyledVideoThumb = styled.div`
       background-color: rgba(221, 51, 51, 0.6);
       color: white;
       box-shadow: inset 0 -4px rgba(221, 51, 51, 0);
+    }
+
+    p {
+      line-height: 2.4rem;
+    }
+
+    p span {
+      font-size: 2rem;
     }
   }
 
