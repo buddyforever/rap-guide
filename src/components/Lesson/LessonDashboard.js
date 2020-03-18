@@ -52,9 +52,8 @@ const EditLesson = ({ lesson }) => {
           <LargeSpace>
             <Split>
               <div>
-                <h2>Lesson Data</h2>
-                <p><strong>Students</strong> <span>0/{lesson.maxStudents}</span> enrolled</p>
-                <p><strong>Lyrics</strong> <span>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</span> assigned</p>
+                <p><Data>0/{lesson.maxStudents}</Data> <span>Students enrolled</span></p>
+                <p><Data>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</Data> Lyrics assigned</p>
               </div>
               <div>
                 <h2>Recent Activity</h2>
@@ -115,4 +114,27 @@ const Student = styled.div`
       object-fit: contain;
     }
   }
+
+  a, a:link {
+    text-decoration: none;
+    color: inherit;
+    box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
+    transition: all .3s ease;
+    padding: 0 .2rem;
+    white-space: nowrap;
+    margin: 0 .2rem;
+  }
+
+  a:hover {
+    background-color: rgba(221, 51, 51, 0.6);
+    color: white;
+    box-shadow: inset 0 -4px rgba(221, 51, 51, 0);
+  }
+`
+
+const Data = styled.span`
+  font-size: 3rem;
+  margin-right: 1rem;
+  color: #DD3333;
+  font-weight: 700;
 `
