@@ -58,7 +58,7 @@ export const Lessons = () => {
             </Link>
             <div className="video_details">
               <div style={{ marginBottom: "1rem" }}>
-                <p><strong>Students</strong> <span>0/{lesson.maxStudents}</span></p>
+                <p><strong>Students</strong> <span>{lesson.students ? lesson.students.length : 0}/{lesson.maxStudents}</span></p>
                 <p><strong>Lyrics</strong> <span>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</span></p>
               </div>
               {

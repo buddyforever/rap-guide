@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import auth from '../../auth/auth'
 import { Editor } from '@tinymce/tinymce-react';
-import { Select, Button, ButtonBlock, FormBlock, FormPage, Form, DropZone, LinkButton, Autoreply } from '../../styles/FormStyles'
+import { Select, Button, ButtonBlock, FormBlock, FormPage, Form, LinkButton, Autoreply } from '../../styles/FormStyles'
 import { Tag } from '../../styles/TagStyles'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { setLocalStorage, getLocalStorage } from '../../utilities/LocalStorage'

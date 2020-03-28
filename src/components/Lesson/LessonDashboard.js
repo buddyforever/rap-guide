@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react'
 import { StyledContent, Heading, Split, StyledVideo, LargeSpace, ActivityList } from '../../styles/PageStyles'
-import { Button } from '../../styles/FormStyles'
+import { Button, Autoreply, FormBlock } from '../../styles/FormStyles'
 import { Link } from 'react-router-dom'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import styled from 'styled-components'
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faCopy } from '@fortawesome/free-solid-svg-icons'
 
 const EditLesson = ({ lesson }) => {
 
   const [video, setVideo] = useState();
 
-  // Needs to come from Lesson
-  const [students, setStudents] = useState([
-    {
-      nameFirst: "Jesse",
-      nameLast: "Burton",
-      email: "jessejburton@gmail.com",
-      image: 'https://lh3.googleusercontent.com/a-/AOh14GhFljvVF8Gd9N-zHCjhihwEDLpIo1bmYqMUMOuXvw=s96-c',
-      submitted: []
-    }
-  ])
+  let domain
+  if (window.location.port) {
+    domain = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+  } else {
+    domain = window.location.protocol + "//" + window.location.hostname;
+  }
+
+  const [lessonSignupUrl, setLessonSignupUrl] = useState(domain + "/lesson/signup/" + lesson.lessonId);
+  const [copied, setCopied] = useState(false);
+  const [students, setStudents] = useState(lesson.students || [])
 
   function loadVideo() {
     if (getLocalStorage("guides")) {
@@ -37,12 +40,38 @@ const EditLesson = ({ lesson }) => {
           <Heading>
             <h1>Educator Dashboard</h1>
           </Heading>
+          {copied && (
+            <Autoreply
+              initial={{ height: 0 }}
+              animate={{ height: "auto" }}
+            >
+              <p>The signup url for this lesson has been copied to your clipboard.</p>
+              <p style={{ "fontStyle": "italic", "fontSize": "1.2rem" }}>{lessonSignupUrl}</p>
+            </Autoreply>
+          )}
           <Heading>
             <Split>
               <div>
                 <h2>{lesson.title}</h2>
               </div>
-              <div style={{ textAlign: "right" }}>
+              <div style={{ display: "flex", "justifyContent": "flex-end" }}>
+                <CopyToClipboard
+                  text={lessonSignupUrl}
+                  onCopy={() => setCopied(true)}>
+                  <div>
+                    <input
+                      type="hidden"
+                      readonly
+                      value={lessonSignupUrl}
+                    />
+                    <Button
+                      title="Click to copy the signup url to your clipboard"
+                      style={{ marginRight: "1rem" }}
+                      onClick={(e) => e.preventDefault()}>
+                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+                    </Button>
+                  </div>
+                </CopyToClipboard>
                 <Link to={"/lesson/edit/" + lesson.lessonId}>
                   <Button>Edit Lesson</Button>
                 </Link>
@@ -52,8 +81,9 @@ const EditLesson = ({ lesson }) => {
           <LargeSpace>
             <Split>
               <div>
-                <p><Data>0/{lesson.maxStudents}</Data> <span>Students enrolled</span></p>
+                <p><Data>{lesson.students ? lesson.students.length : 0}/{lesson.maxStudents}</Data> <span>Students enrolled</span></p>
                 <p><Data>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</Data> Lyrics assigned</p>
+                <p><Data>0</Data> Submitted annotations</p>
               </div>
               <div>
                 <h2>Recent Activity</h2>
@@ -68,8 +98,31 @@ const EditLesson = ({ lesson }) => {
             <Heading>
               <h2>Students</h2>
             </Heading>
-            {students.map(student => (
-              <Student>
+            {!students.length && (<div>
+              <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
+              <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
+              <FormBlock style={{ margin: "5rem 0" }}>
+                <CopyToClipboard
+                  text={lessonSignupUrl}
+                  onCopy={() => setCopied(true)}>
+                  <div style={{ display: "flex" }}>
+                    <input
+                      type="text"
+                      readonly
+                      value={lessonSignupUrl}
+                    />
+                    <Button
+                      title="Click to copy the signup url to your clipboard"
+                      style={{ marginLeft: "1rem", width: "200px" }}
+                      onClick={(e) => e.preventDefault()}>
+                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+                    </Button>
+                  </div>
+                </CopyToClipboard>
+              </FormBlock>
+            </div>)}
+            {students.map((student, index) => (
+              <Student key={index}>
                 <div>
                   <div className="image">
                     <img src={student.image} alt={student.nameFirst + ' ' + student.nameLast} />

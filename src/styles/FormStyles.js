@@ -40,7 +40,7 @@ export const Textarea = styled.textarea`
 
 export const Autoreply = styled(motion.div)`
   margin: 2.5rem 0;
-  padding: 1.5rem 1rem;
+  padding: 1rem 1.5rem;
   font-size: 1.6rem;
   border-radius: 2px;
   color: white;

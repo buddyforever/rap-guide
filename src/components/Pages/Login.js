@@ -1,22 +1,37 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
-import { StyledContent, Heading } from '../../styles/PageStyles'
+import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import auth from '../../auth/auth'
 import { Redirect } from 'react-router-dom'
 import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/FormStyles'
 import { faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
-import { getLocalStorage } from '../../utilities/LocalStorage'
+import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
 import useGlobal from '../../store/Store'
 
 import FacebookLogin from 'react-facebook-login';
 import GoogleLogin from 'react-google-login';
 
-export const Login = () => {
+export const Login = ({ lesson = null }) => {
 
   const [redirect, setRedirect] = useState();
+  const [classFull, setClassFull] = useState(false);
   const [globalState, globalActions] = useGlobal();
 
   function loginUser(profile) {
+
+    setClassFull(false);
+
+    if (lesson) {
+      if (lesson.students && lesson.students < lesson.maxStudents) {
+        profile.type = "student";
+        profile.submitted = false;
+        enrollStudent(profile);
+      } else {
+        setClassFull(true);
+        return false;
+      }
+    }
+
     auth.login(profile).then(() => {
       // Update Global State
       globalActions.setName(profile.nameFirst + ' ' + profile.nameLast);
@@ -26,6 +41,27 @@ export const Login = () => {
       // Redirect
       setRedirect(true);
     });
+  }
+
+  function enrollStudent(profile) {
+    let lessons = getLocalStorage("lessons")
+
+    let newLessons = JSON.stringify(lessons.map(l => {
+      if (l.lessonId === lesson.lessonId) {
+        return {
+          ...l,
+          students: [
+            ...l.students || [],
+            profile
+          ]
+        }
+      } else {
+        return l
+      }
+    }));
+
+    setLocalStorage("lessons", newLessons)
+
   }
 
   const responseFacebook = ({ email, name, picture }) => {
@@ -57,6 +93,21 @@ export const Login = () => {
       <Heading>
         <h1>Login</h1>
       </Heading>
+      {classFull && (
+        <Autoreply
+          className="error"
+          initial={{ height: 0 }}
+          animate={{ height: "auto" }}
+        >
+          <p><strong>LESSON FULL</strong></p>
+          <p>Sorry, this lesson is full. Please contact your teacher for assistance.</p>
+        </Autoreply>
+      )}
+      {lesson && (
+        <MediumSpace>
+          <p>Please login with Google or Facebook to enroll yourself in <strong>{lesson.title}</strong>.</p>
+        </MediumSpace>
+      )}
       <FacebookLogin
         appId="665758824197396"
         fields="name,email,picture"

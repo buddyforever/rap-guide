@@ -9,6 +9,7 @@ import Lessons from './components/Pages/Lessons'
 import Request from './components/Pages/Request'
 import Contact from './components/Pages/Contact'
 import Login from './components/Pages/Login'
+import LessonSignup from './components/Lesson/LessonSignup'
 import PrivateRoute from './auth/PrivateRoute'
 import PageNotFound from './components/Pages/PageNotFound'
 import Lesson from './components/Private/Lesson'
@@ -51,6 +52,7 @@ function App() {
           <Route path="/login" component={Login} />
           <Route path="/contact" component={Contact} />
           <Route path="/guide/:id" component={Guide} />
+          <Route path="/lesson/signup/:id" component={LessonSignup} />
           <PrivateRoute
             path="/lesson/add/:id"
             component={AddLesson}
