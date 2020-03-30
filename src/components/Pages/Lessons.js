@@ -9,13 +9,27 @@ export const Lessons = () => {
 
   const [guides, setGuides] = useState();
   const [lessons, setLessons] = useState([]);
+  const [profile, setProfile] = useState(getLocalStorage("profile"));
 
   /* LESSONS */
   function loadLessons() {
     if (guides) {
       // TODO Get actual data
       if (getLocalStorage("lessons")) {
-        setLessons(getLocalStorage("lessons").map(lesson => {
+        let filteredLessons = getLocalStorage("lessons");
+
+        if (profile.type === "student") {
+          filteredLessons = filteredLessons.filter(lesson => {
+            if (lesson.students) {
+              if (lesson.students.some(student => student.email === profile.email)) {
+                return true
+              }
+            }
+            return false
+          });
+        }
+
+        setLessons(filteredLessons.map(lesson => {
           const guide = guides.filter(guide => guide.videoId === lesson.videoId)[0];
           return {
             ...lesson,

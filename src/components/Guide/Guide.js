@@ -23,18 +23,11 @@ export const Guide = () => {
   let { id } = useParams();
   const [guide, setGuide] = useState();
 
-  const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
-
-  function closeModal() {
-    setIsAnnotationOpen(false);
-  }
-
   useEffect(() => {
     // TODO Get from actual datasource
     const selectedGuide = getLocalStorage("guides").filter(guide => guide.videoId === id)[0];
     setGuide(selectedGuide);
   }, [])
-
 
   return (
     <StyledContent>
@@ -61,20 +54,13 @@ export const Guide = () => {
             <div>
               <h3>Lyrics</h3>
               {guide.lyrics.map(lyric => (
-                <Lyric onHandleClick={() => setIsAnnotationOpen(!isAnnotationOpen)}>{lyric.lyric}</Lyric>
+                <StyledLyric>{lyric.lyric}</StyledLyric>
               ))}
             </div>
             <div>
               <h3>Annotations</h3>
             </div>
           </StyledColumns>
-          <Modal
-            variants={variants}
-            initial="closed"
-            animate={isAnnotationOpen ? "open" : "closed"}
-            transition={{ damping: 300 }} >
-            <AddAnnotation closeModal={closeModal} />
-          </Modal>
         </div>
       )}
     </StyledContent>
@@ -114,7 +100,21 @@ const StyledColumns = styled.div`
     font-size: 1.8rem;
     font-weight: 500;
   }
-
-
 `;
 
+const StyledLyric = styled.div`
+  margin-bottom: 0.5rem;
+  transition: all .3s ease;
+  padding: .5rem;
+  display: block;
+
+  &.annotated:hover {
+    box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
+  }
+
+  &.annotated {
+    cursor: pointer;
+    background-color:  rgba(221, 51, 51, 0.2);
+  }
+
+`

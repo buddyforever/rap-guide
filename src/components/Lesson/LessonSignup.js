@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import Login from '../Pages/Login'
 import { useParams, Link } from "react-router-dom"
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import useGlobal from '../../store/Store'
+import { LessonContext } from '../../context/LessonContext'
 
 const LessonSignup = () => {
 
   let { id } = useParams();
   const [globalState, globalActions] = useGlobal();
-
+  //const { lesson, setLesson } = useContext(LessonContext);
   const [lesson, setLesson] = useState(null);
 
   function loadLesson() {
@@ -34,7 +35,7 @@ const LessonSignup = () => {
       </StyledContent>
     )
   } else {
-    return (<StyledContent><Login /></StyledContent>)
+    return (<StyledContent><h1>Loading...</h1></StyledContent>)
   }
 }
 

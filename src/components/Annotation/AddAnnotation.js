@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import AnnotationForm from './AnnotationForm'
 
-export const AddAnnotation = ({ closeModal }) => {
+export const AddAnnotation = ({ lyric, closeModal, saveAnnotation }) => {
   return (
-    <AnnotationForm lyric="My Lyric" closeModal={closeModal} />
+    <AnnotationForm lyric={lyric} cancel={closeModal} saveAnnotation={saveAnnotation} />
   )
 }
 

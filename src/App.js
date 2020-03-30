@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import Layout from './components/Layout/Layout'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import About from './components/Pages/About'
@@ -20,10 +20,12 @@ import auth from './auth/auth'
 import { getLocalStorage, setLocalStorage } from './utilities/LocalStorage'
 import data from './data/data'
 import useGlobal from './store/Store'
+import { LessonContext } from './context/LessonContext'
 
 function App() {
 
   const [globalState, globalActions] = useGlobal();
+  const [lesson, setLesson] = useState(null);
 
   /*
     TODO Setup the default data if it has been reset
@@ -60,36 +62,38 @@ function App() {
             isAuthenticated={auth.isAuthenticated()}
             isAllowed={auth.isAuthenticated()}
             restrictedPath="/404" />
-          <PrivateRoute
-            path="/lesson/edit/:id"
-            component={EditLesson}
-            authenticationPath="/login"
-            isAuthenticated={auth.isAuthenticated()}
-            isAllowed={auth.isAuthenticated()}
-            restrictedPath="/404" />
-          <PrivateRoute
-            path="/lesson/:id"
-            component={Lesson}
-            authenticationPath="/login"
-            isAuthenticated={auth.isAuthenticated()}
-            isAllowed={auth.isAuthenticated()}
-            restrictedPath="/404" />
-          <PrivateRoute
-            path="/profile"
-            component={Profile}
-            authenticationPath="/login"
-            isAuthenticated={auth.isAuthenticated()}
-            isAllowed={auth.isAuthenticated()}
-            restrictedPath="/404"
-          />
-          <PrivateRoute
-            path="/addguide"
-            component={AddGuide}
-            authenticationPath="/login"
-            isAuthenticated={auth.isAuthenticated()}
-            isAllowed={auth.isAuthenticated()}
-            restrictedPath="/404"
-          />
+          <LessonContext.Provider value={{ lesson, setLesson }}>
+            <PrivateRoute
+              path="/lesson/edit/:id"
+              component={EditLesson}
+              authenticationPath="/login"
+              isAuthenticated={auth.isAuthenticated()}
+              isAllowed={auth.isAuthenticated()}
+              restrictedPath="/404" />
+            <PrivateRoute
+              path="/lesson/:id"
+              component={Lesson}
+              authenticationPath="/login"
+              isAuthenticated={auth.isAuthenticated()}
+              isAllowed={auth.isAuthenticated()}
+              restrictedPath="/404" />
+            <PrivateRoute
+              path="/profile"
+              component={Profile}
+              authenticationPath="/login"
+              isAuthenticated={auth.isAuthenticated()}
+              isAllowed={auth.isAuthenticated()}
+              restrictedPath="/404"
+            />
+            <PrivateRoute
+              path="/addguide"
+              component={AddGuide}
+              authenticationPath="/login"
+              isAuthenticated={auth.isAuthenticated()}
+              isAllowed={auth.isAuthenticated()}
+              restrictedPath="/404"
+            />
+          </LessonContext.Provider>
           <Route component={PageNotFound} />
         </Switch>
       </Layout>

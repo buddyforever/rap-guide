@@ -1,16 +1,21 @@
 import React, { useState } from 'react'
-import { Form, FormBlock, ButtonBlock, Button, Textarea } from '../../styles/FormStyles'
+import { Form, FormBlock, ButtonBlock, Button, LinkButton } from '../../styles/FormStyles'
 import { Heading } from '../../styles/PageStyles'
 import { Editor } from '@tinymce/tinymce-react';
 
-export const AnnotationForm = ({ closeModal, lyric, lyricId }) => {
+export const AnnotationForm = ({ lyric, saveAnnotation, cancel }) => {
 
   const [annotation, setAnnotation] = useState("");
 
-  function saveAnnotation(e) {
+  function handleAddAnnotation(e) {
     e.preventDefault();
-    alert("Annotation Saved")
-    closeModal();
+    alert("Annotation Added");
+    saveAnnotation(annotation);
+  }
+
+  function handleCancel(e) {
+    e.preventDefault();
+    cancel();
   }
 
   function handleEditorChange(content, editor) {
@@ -21,7 +26,10 @@ export const AnnotationForm = ({ closeModal, lyric, lyricId }) => {
     <Form onSubmit={saveAnnotation}>
       <Heading>
         <h1>Add Annotation</h1>
-        <h2>{lyric}</h2>
+        <h2>{lyric.lyric}</h2>
+        {lyric.notes.length > 0 &&
+          <div dangerouslySetInnerHTML={{ __html: lyric.notes }}></div>
+        }
       </Heading>
       <FormBlock>
         <label>Annotation</label>
@@ -43,8 +51,8 @@ export const AnnotationForm = ({ closeModal, lyric, lyricId }) => {
         />
       </FormBlock>
       <ButtonBlock>
-        <a href="#" onClick={closeModal}>Cancel</a>
-        <Button>Add Annotation</Button>
+        <LinkButton onClick={handleCancel}>Cancel</LinkButton>
+        <Button onClick={handleAddAnnotation}>Add Annotation</Button>
       </ButtonBlock>
     </Form>
   )

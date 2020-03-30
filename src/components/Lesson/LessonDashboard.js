@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { StyledContent, Heading, Split, StyledVideo, LargeSpace, ActivityList } from '../../styles/PageStyles'
 import { Button, Autoreply, FormBlock } from '../../styles/FormStyles'
 import { Link } from 'react-router-dom'
@@ -7,10 +7,13 @@ import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
+import { LessonContext } from '../../context/LessonContext'
 
-const EditLesson = ({ lesson }) => {
+const EditLesson = () => {
 
   const [video, setVideo] = useState();
+
+  const { lesson, setLesson } = useContext(LessonContext);
 
   let domain
   if (window.location.port) {

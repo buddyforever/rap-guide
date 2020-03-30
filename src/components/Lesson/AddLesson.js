@@ -12,7 +12,7 @@ import { Modal } from "../../styles/ModalStyles"
 import Checkbox from "../Form/Checkbox"
 import { motion, AnimatePresence } from 'framer-motion'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faComment, faCopy } from '@fortawesome/free-solid-svg-icons'
+import { faComment, faCopy, faStar } from '@fortawesome/free-solid-svg-icons'
 import { Redirect } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 
@@ -39,7 +39,7 @@ export const AddLesson = () => {
   const [page, setPage] = useState(0);
   const [maximumStudents, setMaximumStudents] = useState(null);
   const [topics, setTopics] = useState([]);
-  const [topic, setTopic] = useState(null);
+  const [topic, setTopic] = useState("");
   const [isNoteOpen, setIsNoteOpen] = useState(false);
   const [selectedLyric, setSelectedLyric] = useState(null);
   const [noteType, setNoteType] = useState("Note");
@@ -52,23 +52,23 @@ export const AddLesson = () => {
     setIsNoteOpen(false);
   }
 
-  function selectAllLyrics(e) {
+  function assignAllLyrics(e) {
     e.preventDefault();
     setLyrics(prevState => prevState.map(lyric => {
-      return {
+      return !lyric.example ? {
         ...lyric,
         assigned: true
-      }
+      } : lyric
     }))
   }
 
-  function selectNoLyrics(e) {
+  function assignNoLyrics(e) {
     e.preventDefault();
     setLyrics(prevState => prevState.map(lyric => {
-      return {
+      return !lyric.example ? {
         ...lyric,
         assigned: false
-      }
+      } : lyric
     }))
   }
 
@@ -117,11 +117,19 @@ export const AddLesson = () => {
       topics: topics,
       lyrics: lyrics,
       maxStudents: maximumStudents,
-      students: []
+      students: [],
+      annotations: []
     };
 
+    let domain
+    if (window.location.port) {
+      domain = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+    } else {
+      domain = window.location.protocol + "//" + window.location.hostname;
+    }
+
     // TODO Create a better hash for the URL
-    setLessonSignupUrl(window.location.protocol + "//" + window.location.hostname + "/lesson/signup/" + lesson.lessonId);
+    setLessonSignupUrl(domain + "/lesson/signup/" + lesson.lessonId);
 
     // TODO make this update if exists - might not be needed in Local Storage proto
     let lessons = getLocalStorage("lessons") ? getLocalStorage("lessons") : [];
@@ -148,7 +156,7 @@ export const AddLesson = () => {
             ...lyric,
             example: noteType === "Example" ? true : false,
             notes: note,
-            assigned: true
+            assigned: noteType === "Note" ? true : false
           }
         } else {
           return lyric;
@@ -166,7 +174,7 @@ export const AddLesson = () => {
     setSelectedLyric(lyric);
   }
 
-  /* GUIDES */
+  // Load the guide and scroll to the top of the page
   function loadGuide() {
     setGuide(getLocalStorage("guides").filter(guide => guide.videoId = id)[0]);
   }
@@ -176,13 +184,14 @@ export const AddLesson = () => {
     window.scrollTo(0, 0)
   }, [page]);
 
+  // Get the lyrics ready for the lesson
+  // Creates a new set of lyrics with additional properties
   useEffect(() => {
-    // Get the lyrics ready for the lesson
     if (guide && lyrics.length === 0) {
       setLyrics(guide.lyrics.map(lyric => {
         return {
-          lyric: lyric.lyric,
           id: lyric.id,
+          lyric: lyric.lyric,
           assigned: false,
           example: false,
           notes: ""
@@ -191,12 +200,6 @@ export const AddLesson = () => {
     }
   }, [guide]);
 
-  useEffect(() => {
-    console.log(lyrics);
-  }, [lyrics]);
-
-
-
   return (
     <StyledContent>
       {
@@ -204,7 +207,7 @@ export const AddLesson = () => {
           <div>
             <Heading>
               <h1>Lesson Setup</h1>
-              <h2>Creating a lesson for - <a href={`https://www.youtube.com/watch?v=${guide.videoId}`} target="_blank">{guide.title}</a></h2>
+              <h2>{lessonTitle.length ? lessonTitle : "Creating a lesson for"} - <a href={`https://www.youtube.com/watch?v=${guide.videoId}`} target="_blank">{guide.title}</a></h2>
             </Heading>
 
             {copied && (
@@ -225,6 +228,7 @@ export const AddLesson = () => {
                     <MediumSpace style={{ display: "flex", justifyContent: "space-between" }}>
                       <div>
                         <input
+                          style={{ width: "300px" }}
                           type="text"
                           value={lessonTitle}
                           onChange={(e) => setLessonTitle(e.target.value)}
@@ -280,32 +284,56 @@ export const AddLesson = () => {
                   </FormBlock>
                   <FormBlock>
                     <p>
-                      <LinkButton onClick={selectAllLyrics}>Assign All</LinkButton> | <LinkButton onClick={selectNoLyrics}>Assign None</LinkButton>
+                      <LinkButton onClick={assignAllLyrics}>Assign All</LinkButton> | <LinkButton onClick={assignNoLyrics}>Assign None</LinkButton>
                     </p>
                     {lyrics.map(lyric => (
-                      <StyledLyric key={lyric.id} className={lyric.assigned ? "active" : ""}>
-                        <label style={{ marginBottom: 0 }}>
+                      <StyledLyric
+                        key={lyric.id}
+                        className={
+                          lyric.assigned && !lyric.example ? "assigned"
+                            : lyric.example ? "example"
+                              : selectedLyric && selectedLyric.id === lyric.id ? "selected"
+                                : ""
+                        }
+                      >
+                        <div>
                           <span className="options">
-                            <Checkbox
-                              checked={lyric.assigned}
-                              onChange={(e) => {
-                                updateAssigned(lyric.id, e.target.checked);
-                                selectLyric(lyric);
-                              }}
-                            />
+                            {!lyric.example &&
+                              <label style={{ display: "inline-block", marginBottom: 0 }}>
+                                <Checkbox
+                                  alt="Assign this lyric"
+                                  style={{ cursor: "pointer" }}
+                                  checked={lyric.assigned}
+                                  onChange={(e) => {
+                                    updateAssigned(lyric.id, e.target.checked);
+                                    selectLyric(lyric);
+                                  }}
+                                />
+                              </label>
+                            }
+
                           </span>
                           <span
+                            className="lyric"
                             role="button"
-                            onClick={() => setIsNoteOpen(true)}
+                            onClick={() => {
+                              selectLyric(lyric);
+                              setIsNoteOpen(true)
+                            }}
                             style={{ cursor: "pointer" }}>
-                            {lyric.example ? "* " : ""}{lyric.lyric}
-                            {lyric.notes.length > 0 && (
+                            {lyric.lyric}
+                            {lyric.example &&
+                              <span style={{ marginLeft: "1rem", color: "rgba(35,163,213)" }}>
+                                <FontAwesomeIcon icon={faStar} />
+                              </span>
+                            }
+                            {lyric.notes.length > 0 && !lyric.example && (
                               <span style={{ marginLeft: "1rem", color: "#DD3333" }}>
                                 <FontAwesomeIcon icon={faComment} />
                               </span>)
                             }
                           </span>
-                        </label>
+                        </div>
                       </StyledLyric>
                     ))}
                   </FormBlock>
@@ -388,6 +416,7 @@ export const AddLesson = () => {
               <AnimatePresence>
                 {selectedLyric &&
                   <motion.h2
+                    style={{ color: "#DD3333" }}
                     key={selectedLyric.id}
                     variants={pageVariants}
                     initial="initial"
@@ -497,29 +526,46 @@ const StyledLyric = styled.div`
   padding: .5rem;
   cursor: pointer;
   display: block;
+  position: relative;
 
-  &:hover {
+  .lyric {
+    padding: 0.5rem;
+  }
+
+  &:hover .lyric {
     box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
   }
 
-  &.active {
-    cursor: pointer;
-    background-color:  rgba(221, 51, 51, 0.2);
-  }
-
-  &.active:hover {
-    background-color: #DD3333;
-    color: #fff7f7;
+  &.selected .lyric {
+    font-weight: bold;
+    color: #DD3333;
   }
 
   .options {
+    position: absolute;
+    left: -3rem;
     padding: 0 1rem;
     opacity: 0;
     transition: all .3s ease;
   }
 
   &:hover .options,
-  &.active .options {
+  &.assigned .options {
     opacity: 1;
   }
+
+  &.example .lyric {
+    cursor: pointer;
+    background-color:  rgba(35,163,213,0.3);
+  }
+
+  &.assigned:hover .lyric {
+    box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
+  }
+
+  &.assigned .lyric {
+    cursor: pointer;
+    background-color:  rgba(221, 51, 51, 0.2);
+  }
+
 `

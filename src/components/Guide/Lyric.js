@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-export const Lyric = ({ active = false, children, onHandleClick }) => {
-
+export const Lyric = ({ lyric, active = false, onHandleClick }) => {
   const [isActive, setIsActive] = useState(active);
 
   function handleClick() {
@@ -12,7 +11,7 @@ export const Lyric = ({ active = false, children, onHandleClick }) => {
 
   return (
     <StyledLyric onClick={handleClick} className={isActive ? "active" : ""}>
-      {children}
+      {lyric.lyric}
     </StyledLyric>
   )
 }
