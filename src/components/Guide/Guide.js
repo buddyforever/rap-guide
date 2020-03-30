@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import { Button } from "../../styles/FormStyles"
@@ -8,8 +8,8 @@ import { getLocalStorage } from '../../utilities/LocalStorage'
 import { Modal } from "../../styles/ModalStyles"
 import AddAnnotation from '../Annotation/AddAnnotation'
 import { motion } from 'framer-motion'
-import useGlobal from '../../store/Store'
 import Lyric from '../Guide/Lyric'
+import { UserContext } from '../../context/UserContext'
 
 const variants = {
   open: { x: "-50vw" },
@@ -18,7 +18,7 @@ const variants = {
 
 export const Guide = () => {
 
-  const [globalState, globalActions] = useGlobal();
+  const { user } = useContext(UserContext);
 
   let { id } = useParams();
   const [guide, setGuide] = useState();
@@ -41,7 +41,7 @@ export const Guide = () => {
               <iframe title={guide.title} width="100%" src={guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </div>
             {
-              auth.isAuthenticated() && globalState.type === 'educator' &&
+              user && user.type === 'educator' &&
               <LargeSpace>
                 <Link className="button" to={'/lesson/add/' + id}>
                   <Button>Create a Lesson</Button>

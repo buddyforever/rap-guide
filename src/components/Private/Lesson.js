@@ -8,13 +8,14 @@ import auth from '../../auth/auth'
 import useGlobal from '../../store/Store'
 import LessonDashboard from '../Lesson/LessonDashboard'
 import { LessonContext } from '../../context/LessonContext'
+import { UserContext } from '../../context/UserContext'
 
 export const Lesson = () => {
 
   const { lesson, setLesson } = useContext(LessonContext);
+  const { user } = useContext(UserContext);
 
   let { id } = useParams();
-  const [globalState, globalActions] = useGlobal();
 
   function loadLesson() {
     if (getLocalStorage("lessons")) {
@@ -32,7 +33,7 @@ export const Lesson = () => {
   if (lesson) {
     return (
       <StyledContent>
-        {auth.isAuthenticated() && globalState.type === 'educator' ?
+        {user && user.type === 'educator' ?
           <LessonDashboard /> : (<DisplayLesson />)
         }
       </StyledContent>
