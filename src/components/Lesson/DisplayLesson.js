@@ -3,10 +3,12 @@ import { Heading, MediumSpace, StyledContent } from '../../styles/PageStyles'
 import DisplayGuide from '../Guide/DisplayGuide'
 import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
 import { LessonContext } from '../../context/LessonContext'
+import { UserContext } from '../../context/UserContext'
 
 const DisplayLesson = () => {
 
   const { lesson, setLesson } = useContext(LessonContext);
+  const { user } = useContext(UserContext);
 
   // Need to make this accept an annotation object containing the lyric ID
   // User, annotation, date etc and it needs to go to lesson.annotations
@@ -14,11 +16,11 @@ const DisplayLesson = () => {
   // instead of the lyric.
   function handleAddAnnotation(annotation, lyric) {
     let annotationObj = {
+      userId: user.id,
       annotation: annotation,
       lyricId: lyric.id,
       status: "saved"
     }
-    if (!lesson.annotations) lesson.annotations = [];
     lesson.annotations.push(annotationObj);
     setLesson({ ...lesson });
     saveLessons(); // TODO this will update the database

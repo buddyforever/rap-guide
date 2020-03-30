@@ -9,6 +9,7 @@ export const PrivateRoute = (props) => {
   if (props.isAuthenticated && !props.isAllowed) {
     redirectPath = props.restrictedPath;
   }
+  redirectPath = null;
 
   if (redirectPath) {
     const renderComponent = () => <Redirect to={{ pathname: redirectPath }} />;
