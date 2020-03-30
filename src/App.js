@@ -27,7 +27,7 @@ function App() {
   const [lesson, setLesson] = useState(null);
   const [user, setUser] = useState(auth.isAuthenticated() ? getLocalStorage("profile") : null);
 
-  console.log("Version", "1.0");
+  console.log("Version", "1.1");
   /*
     TODO Setup the default data if it has been reset
     This will all be connected to a datasource of some kind
