@@ -1,28 +1,26 @@
-import React, { useState, useEffect } from 'react'
-import styled from 'styled-components'
+import React, { useState, useContext } from 'react'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import auth from '../../auth/auth'
 import { Redirect } from 'react-router-dom'
-import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/FormStyles'
-import { faProjectDiagram } from '@fortawesome/free-solid-svg-icons'
+import { Autoreply } from '../../styles/FormStyles'
+import FacebookLogin from 'react-facebook-login'
+import GoogleLogin from 'react-google-login'
+import { UserContext } from '../../context/UserContext'
 import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
-import useGlobal from '../../store/Store'
-
-import FacebookLogin from 'react-facebook-login';
-import GoogleLogin from 'react-google-login';
 
 export const Login = ({ lesson = null }) => {
 
+  const { user, setUser } = useContext(UserContext);
+
   const [redirect, setRedirect] = useState();
   const [classFull, setClassFull] = useState(false);
-  const [globalState, globalActions] = useGlobal();
 
   function loginUser(profile) {
 
     setClassFull(false);
 
     if (lesson) {
-      if (lesson.students && lesson.students < lesson.maxStudents) {
+      if (lesson.students && (lesson.students < lesson.maxStudents)) {
         profile.type = "student";
         profile.submitted = false;
         enrollStudent(profile);
@@ -32,12 +30,9 @@ export const Login = ({ lesson = null }) => {
       }
     }
 
-    auth.login(profile).then(() => {
-      // Update Global State
-      globalActions.setName(profile.nameFirst + ' ' + profile.nameLast);
-      globalActions.setType(profile.type);
-      globalActions.setProfileImage(profile.image);
+    setUser(profile);
 
+    auth.login(profile).then(() => {
       // Redirect
       setRedirect(true);
     });
@@ -64,10 +59,11 @@ export const Login = ({ lesson = null }) => {
 
   }
 
-  const responseFacebook = ({ email, name, picture }) => {
+  const responseFacebook = ({ email, name, picture, id }) => {
     let nameSplit = name.split(" ");
 
     loginUser({
+      id: id,
       nameFirst: nameSplit[0] ? nameSplit[0] : '',
       nameLast: nameSplit[nameSplit.length] ? nameSplit[nameSplit.length] : '',
       email: email,
@@ -80,6 +76,7 @@ export const Login = ({ lesson = null }) => {
     const profileObj = response.profileObj;
 
     loginUser({
+      id: profileObj.googleId,
       nameFirst: profileObj.givenName,
       nameLast: profileObj.familyName,
       email: profileObj.email,

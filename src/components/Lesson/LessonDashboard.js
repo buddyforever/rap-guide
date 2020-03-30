@@ -86,7 +86,7 @@ const EditLesson = () => {
               <div>
                 <p><Data>{lesson.students ? lesson.students.length : 0}/{lesson.maxStudents}</Data> <span>Students enrolled</span></p>
                 <p><Data>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</Data> Lyrics assigned</p>
-                <p><Data>0</Data> Submitted annotations</p>
+                <p><Data>{lesson.annotations.length}</Data> Submitted annotations</p>
               </div>
               <div>
                 <h2>Recent Activity</h2>

@@ -9,7 +9,6 @@ export const AnnotationForm = ({ lyric, saveAnnotation, cancel }) => {
 
   function handleAddAnnotation(e) {
     e.preventDefault();
-    alert("Annotation Added");
     saveAnnotation(annotation);
   }
 
@@ -52,7 +51,10 @@ export const AnnotationForm = ({ lyric, saveAnnotation, cancel }) => {
       </FormBlock>
       <ButtonBlock>
         <LinkButton onClick={handleCancel}>Cancel</LinkButton>
-        <Button onClick={handleAddAnnotation}>Add Annotation</Button>
+        <div>
+          <Button className="secondary" style={{ marginRight: "1rem" }} onClick={handleAddAnnotation}>Save Annotation</Button>
+          <Button onClick={handleAddAnnotation}>Submit Annotation</Button>
+        </div>
       </ButtonBlock>
     </Form>
   )

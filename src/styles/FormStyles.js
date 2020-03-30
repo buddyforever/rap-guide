@@ -70,6 +70,14 @@ export const Button = styled.button`
   &:hover {
     background-color: #b51e1e;
   }
+
+  &.secondary {
+    background-color: #23a3d5;
+
+    &:hover {
+      background-color: #1c83aa;
+    }
+  }
 `
 
 export const LinkButton = styled.button`

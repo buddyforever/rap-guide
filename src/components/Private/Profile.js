@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { StyledContent, Heading, TwoGrid } from '../../styles/PageStyles'
 import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/FormStyles'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import auth from '../../auth/auth'
-import useGlobal from '../../store/Store'
+import { UserContext } from '../../context/UserContext'
 
 export const Profile = () => {
 
-  const [globalState, globalActions] = useGlobal();
+  const { user, setUser } = useContext(UserContext)
 
-  const [nameFirst, setNameFirst] = useState("");
-  const [nameLast, setNameLast] = useState("");
-  const [email, setEmail] = useState("");
-  const [type, setType] = useState("");
-  const [image, setImage] = useState("");
+  const [nameFirst, setNameFirst] = useState(user.nameFirst);
+  const [nameLast, setNameLast] = useState(user.nameLast);
+  const [email, setEmail] = useState(user.email);
+  const [type, setType] = useState(user.type);
+  const [image, setImage] = useState(user.image);
 
   const [message, setMessage] = useState(null);
 
@@ -28,8 +28,7 @@ export const Profile = () => {
       image
     }
 
-    globalActions.setName(nameFirst);
-    globalActions.setType(type);
+    setUser(profile);
     auth.login(profile);
 
     setMessage({

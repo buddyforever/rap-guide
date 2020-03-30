@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import { Heading, StyledVideo, MediumSpace } from "../../styles/PageStyles"
 import styled from 'styled-components'
 import { Modal } from "../../styles/ModalStyles"
@@ -6,13 +6,16 @@ import AddAnnotation from '../Annotation/AddAnnotation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { motion } from 'framer-motion'
+import { LessonContext } from '../../context/LessonContext'
 
 const variants = {
   open: { x: "-50vw" },
   closed: { x: "100%" },
 }
 
-const DisplayGuide = ({ guide, annotations, addAnnotation }) => {
+const DisplayGuide = ({ annotations, addAnnotation }) => {
+
+  const { lesson, setLesson } = useContext(LessonContext);
 
   const [annotationTop, setAnnotationTop] = useState("15rem");
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
@@ -24,7 +27,7 @@ const DisplayGuide = ({ guide, annotations, addAnnotation }) => {
   }
 
   function handleAddAnnotation(annotation) {
-    addAnnotation(annotation);
+    addAnnotation(annotation, selectedLyric);
   }
 
   function handleLyricClick(lyric) {
@@ -38,38 +41,41 @@ const DisplayGuide = ({ guide, annotations, addAnnotation }) => {
     }
   }
 
-  function handleLyricHover(lyric) {
+  function handleLyricHover(lyric, position) {
     if (lyric.example) {
-      setSelectedAnnotation({
-        annotation: lyric.notes,
-      })
+      showAnnotation(lyric.notes, position);
+    } else if (lyric.annotations && lyric.annotations.length) {
+      showAnnotation(lyric.annotations[0], position);
     }
-    // Need to make it so that if the lyric has an annotation it also shows on hover
+  }
+
+  function showAnnotation(annotation, position) {
+    setAnnotationTop(position);
+    setSelectedAnnotation({ annotation });
   }
 
   return (
     <div>
       <div>
         <Heading>
-          <h1>{guide.title}</h1>
+          <h1>{lesson.guide.title}</h1>
         </Heading>
         <MediumSpace>
           <StyledVideo>
             <div className="video">
-              <iframe title={guide.title} width="100%" src={guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              <iframe title={lesson.guide.title} width="100%" src={lesson.guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </div>
           </StyledVideo>
         </MediumSpace>
         <StyledColumns>
           <div>
-            {guide.lyrics.map(lyric => (
+            {lesson.guide.lyrics.map(lyric => (
               <StyledLyric
                 key={lyric.id}
                 onClick={() => handleLyricClick(lyric)}
                 onMouseOver={(e) => {
-                  console.log(lyric);
-                  setAnnotationTop(window.pageYOffset + e.target.getBoundingClientRect().top + "px");
-                  handleLyricHover(lyric);
+                  let position = window.pageYOffset + e.target.getBoundingClientRect().top + "px";
+                  handleLyricHover(lyric, position);
                 }}
                 className={lyric.assigned && !lyric.example ? "assigned" : lyric.example ? "example" : ""}>
                 {lyric.lyric} {lyric.example && <FontAwesomeIcon icon={faStar} />}

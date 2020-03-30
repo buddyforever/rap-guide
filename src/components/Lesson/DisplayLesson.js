@@ -1,15 +1,38 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { Heading, MediumSpace, StyledContent } from '../../styles/PageStyles'
 import DisplayGuide from '../Guide/DisplayGuide'
-import { getLocalStorage } from '../../utilities/LocalStorage'
+import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
 import { LessonContext } from '../../context/LessonContext'
 
 const DisplayLesson = () => {
 
   const { lesson, setLesson } = useContext(LessonContext);
 
-  function handleAddAnnotation(annotation) {
-    alert("Annotation added: ", annotation);
+  // Need to make this accept an annotation object containing the lyric ID
+  // User, annotation, date etc and it needs to go to lesson.annotations
+  // Then the hover in DisplayGuide.js needs to check lesson.annotations to display
+  // instead of the lyric.
+  function handleAddAnnotation(annotation, lyric) {
+    let annotationObj = {
+      annotation: annotation,
+      lyricId: lyric.id,
+      status: "saved"
+    }
+    if (!lesson.annotations) lesson.annotations = [];
+    lesson.annotations.push(annotationObj);
+    setLesson({ ...lesson });
+    saveLessons(); // TODO this will update the database
+  }
+
+  function saveLessons() {
+    const newLessons = getLocalStorage("lessons").map(l => {
+      if (l.id === lesson.id) {
+        return lesson;
+      } else {
+        return l
+      }
+    });
+    setLocalStorage("lessons", JSON.stringify(newLessons));
   }
 
   return (

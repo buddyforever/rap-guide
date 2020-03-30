@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -6,16 +6,15 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import Navigation from './Navigation'
 import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
-import useGlobal from '../../store/Store'
 import Logo from './Logo'
 import SocialIcons from '../SocialIcons'
+import { UserContext } from '../../context/UserContext'
 
 export const Header = () => {
 
-  const [globalState, globalActions] = useGlobal();
+  const { user } = useContext(UserContext)
 
   const [menuIsOpen, setMenuIsOpen] = useState(false);
-  const [name, setName] = useState(null);
 
   const toggleMenu = () => {
     setMenuIsOpen(!menuIsOpen);
@@ -36,15 +35,15 @@ export const Header = () => {
           </button>
           <div className="logo__image">
             <Link to="/">
-              <Logo src={globalState.logo} alt="RapGuide.com" />
+              <Logo alt="RapGuide.com" />
             </Link>
           </div>
-          {globalState.name.length > 0 && (
+          {user && (
             <div className="profile">
               <Link to="/profile">
                 <span className="profile__image">
-                  <img src={globalState.profileImage} alt="Profile Image" />
-                </span> <span>{globalState.name}<br /><em style={{ fontSize: "1.2rem" }}>{globalState.type}</em></span>
+                  <img src={user.image} alt="Profile Image" />
+                </span> <span>{user.nameFirst} {user.nameLast}<br /><em style={{ fontSize: "1.2rem" }}>{user.type}</em></span>
               </Link>
             </div>
           )}
