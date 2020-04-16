@@ -4,8 +4,13 @@ import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/Fo
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
+import Message from '../Layout/Message'
+import { graphql } from 'react-apollo'
+import gql from 'graphql-tag'
 
-export const Profile = () => {
+export const Profile = ({ data }) => {
+
+  console.log(data);
 
   const { user, setUser } = useContext(UserContext)
 
@@ -32,7 +37,6 @@ export const Profile = () => {
     auth.login(profile);
 
     setMessage({
-      className: "success",
       text: "Your profile has been saved."
     })
   }
@@ -57,15 +61,7 @@ export const Profile = () => {
           </h1>
         </Heading>}
       <Form onSubmit={saveProfile}>
-        {message && (
-          <Autoreply
-            className={message.className}
-            initial={{ height: 0 }}
-            animate={{ height: "auto" }}
-          >
-            {message.text}
-          </Autoreply>
-        )}
+        <Message message={message} />
         <TwoGrid>
           <FormBlock>
             <label>First Name</label>
@@ -84,7 +80,7 @@ export const Profile = () => {
           <label>Account Type</label>
           <select value={type} onChange={(e) => setType(e.target.value)}>
             <option value="administrator">Administrator</option>
-            <option value="export">Export</option>
+            <option value="expert">Expert</option>
             <option value="educator">Educator</option>
             <option value="student">Student</option>
             <option value="public">Public</option>
@@ -98,5 +94,17 @@ export const Profile = () => {
   )
 }
 
-export default Profile;
+const PROFILE_QUERY = gql`
+  query getAccount {
+    accounts {
+      id
+      nameFirst
+      nameLast
+      email
+    }
+  }
+`
+
+export default graphql(PROFILE_QUERY)(Profile)
+
 

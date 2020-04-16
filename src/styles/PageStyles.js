@@ -2,6 +2,7 @@ import styled from 'styled-components'
 
 export const StyledContent = styled.div`
   min-height: 50vh;
+  padding: 0 50px;
 
   p {
     margin: 1rem 0;

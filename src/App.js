@@ -21,13 +21,37 @@ import { getLocalStorage, setLocalStorage } from './utilities/LocalStorage'
 import data from './data/data'
 import { LessonContext } from './context/LessonContext'
 import { UserContext } from './context/UserContext'
+import { ApolloProvider } from 'react-apollo'
+import ApolloClient from 'apollo-boost'
+import gql from 'graphql-tag'
+
+const client = new ApolloClient({ uri: 'https://api-euwest.graphcms.com/v1/ck56vnvt50t7301gifvv37btb/master' });
+
+/*
+const testQuery = gql`
+  {
+    accounts {
+      id
+      nameFirst
+      nameLast
+      email
+      type
+    }
+  }
+`
+
+client.query({
+  query: testQuery
+}).then((result) => {
+  console.log(result);
+})
+*/
 
 function App() {
 
   const [lesson, setLesson] = useState(null);
   const [user, setUser] = useState(auth.isAuthenticated() ? getLocalStorage("profile") : null);
 
-  console.log("Version", "1.1");
   /*
     TODO Setup the default data if it has been reset
     This will all be connected to a datasource of some kind
@@ -36,62 +60,64 @@ function App() {
   setLocalStorage("guides", JSON.stringify(data.guides));
 
   return (
-    <Router>
-      <UserContext.Provider value={{ user, setUser }}>
-        <Layout>
-          <Switch>
-            <Route exact path="/" component={RapGuides} />
-            <Route path="/lessons" component={Lessons} />
-            <Route path="/request" component={Request} />
-            <Route path="/about" component={About} />
-            <Route path="/login" component={Login} />
-            <Route path="/contact" component={Contact} />
-            <Route path="/guide/:id" component={Guide} />
-            <Route path="/lesson/signup/:id" component={LessonSignup} />
-            <PrivateRoute
-              path="/lesson/add/:id"
-              component={AddLesson}
-              authenticationPath="/login"
-              isAuthenticated={auth.isAuthenticated()}
-              isAllowed={auth.isAuthenticated()}
-              restrictedPath="/404" />
-            <LessonContext.Provider value={{ lesson, setLesson }}>
+    <ApolloProvider client={client}>
+      <Router>
+        <UserContext.Provider value={{ user, setUser }}>
+          <Layout>
+            <Switch>
+              <Route exact path="/" component={RapGuides} />
+              <Route path="/lessons" component={Lessons} />
+              <Route path="/request" component={Request} />
+              <Route path="/about" component={About} />
+              <Route path="/login" component={Login} />
+              <Route path="/contact" component={Contact} />
+              <Route path="/guide/:id" component={Guide} />
+              <Route path="/lesson/signup/:id" component={LessonSignup} />
               <PrivateRoute
-                path="/lesson/edit/:id"
-                component={EditLesson}
+                path="/lesson/add/:id"
+                component={AddLesson}
                 authenticationPath="/login"
                 isAuthenticated={auth.isAuthenticated()}
                 isAllowed={auth.isAuthenticated()}
                 restrictedPath="/404" />
-              <PrivateRoute
-                path="/lesson/:id"
-                component={Lesson}
-                authenticationPath="/login"
-                isAuthenticated={auth.isAuthenticated()}
-                isAllowed={auth.isAuthenticated()}
-                restrictedPath="/404" />
-              <PrivateRoute
-                path="/profile"
-                component={Profile}
-                authenticationPath="/login"
-                isAuthenticated={auth.isAuthenticated()}
-                isAllowed={auth.isAuthenticated()}
-                restrictedPath="/404"
-              />
-              <PrivateRoute
-                path="/addguide"
-                component={AddGuide}
-                authenticationPath="/login"
-                isAuthenticated={auth.isAuthenticated()}
-                isAllowed={auth.isAuthenticated()}
-                restrictedPath="/404"
-              />
-            </LessonContext.Provider>
-            <Route component={PageNotFound} />
-          </Switch>
-        </Layout>
-      </UserContext.Provider>
-    </Router>
+              <LessonContext.Provider value={{ lesson, setLesson }}>
+                <PrivateRoute
+                  path="/lesson/edit/:id"
+                  component={EditLesson}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404" />
+                <PrivateRoute
+                  path="/lesson/:id"
+                  component={Lesson}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404" />
+                <PrivateRoute
+                  path="/profile"
+                  component={Profile}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404"
+                />
+                <PrivateRoute
+                  path="/addguide"
+                  component={AddGuide}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404"
+                />
+              </LessonContext.Provider>
+              <Route component={PageNotFound} />
+            </Switch>
+          </Layout>
+        </UserContext.Provider>
+      </Router>
+    </ApolloProvider>
   );
 }
 

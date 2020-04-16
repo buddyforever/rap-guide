@@ -1,44 +1,92 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import auth from '../../auth/auth'
 import { Redirect } from 'react-router-dom'
-import { Autoreply } from '../../styles/FormStyles'
+import Message from '../Layout/Message'
 import FacebookLogin from 'react-facebook-login'
 import GoogleLogin from 'react-google-login'
-import { UserContext } from '../../context/UserContext'
 import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+import { UserContext } from '../../context/UserContext'
 
-export const Login = ({ lesson = null }) => {
+const Login = ({ lesson = null }) => {
+
+  const [redirect, setRedirect] = useState(null);
+  const [message, setMessage] = useState(null);
 
   const { user, setUser } = useContext(UserContext);
 
-  const [redirect, setRedirect] = useState();
-  const [classFull, setClassFull] = useState(false);
+  /* TODO find a better way to handle this. useLazyQuery doesn't return a promise so
+    it doesn't appear that you can await the response the way you can with useQuery
+    Check Account */
+  const { refetch } = useQuery(GET_ACCOUNT, { variables: { accountId: "" } });
 
-  function loginUser(profile) {
+  const [createAccount] = useMutation(CREATE_ACCOUNT);
+  const [updateAccount] = useMutation(UPDATE_ACCOUNT);
+  const [createLessonStudents] = useMutation(ENROLL_STUDENT);
 
-    setClassFull(false);
+  /* TODO MAKE THE ACCOUNT BASED ON EMAIL ADDRESS - ONE ACCOUNT PER EMAIL */
+  async function loginUser(profile) {
+    const { data: { account } } = await refetch({ accountId: profile.accountId });
 
-    if (lesson) {
-      if (lesson.students && (lesson.students < lesson.maxStudents)) {
-        profile.type = "student";
-        profile.submitted = false;
-        enrollStudent(profile);
-      } else {
-        setClassFull(true);
-        return false;
+    if (!account) {
+      await createAccount({
+        variables: {
+          accountId: profile.accountId,
+          email: profile.email,
+          nameFirst: profile.nameFirst || '',
+          nameLast: profile.nameLast || '',
+          type: lesson ? "student" : "public"
+        }
+      }).then(({ data: { createAccount } }) => {
+        createAccount.image = profile.image;
+        setUser(createAccount);
+      });
+    } else {
+      const newAccount = {
+        image: profile.image,
+        accountId: profile.accountId,
+        ...account
       }
+      setUser(newAccount);
     }
+  }
 
-    setUser(profile);
-
-    auth.login(profile).then(() => {
-      // Redirect
-      setRedirect(true);
+  async function enrollStudent(user) {
+    await createLessonStudents({
+      variables: {
+        "lessonId": lesson.lessonId,
+        "accountId": user.accountId,
+        "email": user.email,
+        "nameFirst": user.nameFirst || '',
+        "nameLast": user.nameLast || '',
+        "type": "student"
+      }
+    }).then(() => {
+      // A user has been logged in
+      auth.login(user).then(() => {
+        setRedirect("/profile");
+      });
     });
   }
 
-  function enrollStudent(profile) {
+  useEffect(() => {
+    if (!user) return;
+
+    // Update the account to student and add the lesson Student record
+    if (lesson) {
+      enrollStudent(user);
+    } else {
+      auth.login(user).then(() => {
+        setRedirect("/profile");
+      });
+    }
+
+  }, [user])
+
+  function updateLessonLocalStorage(profile) {
+    // TODO send mutation to add user to the lesson.
     let lessons = getLocalStorage("lessons")
 
     let newLessons = JSON.stringify(lessons.map(l => {
@@ -56,33 +104,51 @@ export const Login = ({ lesson = null }) => {
     }));
 
     setLocalStorage("lessons", newLessons)
-
   }
 
-  const responseFacebook = ({ email, name, picture, id }) => {
+  const responseFacebook = (data, addAccount) => {
+    const { email, name, picture, id } = data;
     let nameSplit = name.split(" ");
 
-    loginUser({
+    const profile = {
       id: id,
+      accountId: id,
       nameFirst: nameSplit[0] ? nameSplit[0] : '',
       nameLast: nameSplit[nameSplit.length] ? nameSplit[nameSplit.length] : '',
       email: email,
-      type: 'educator',
       image: picture.data.url
-    });
+    }
+
+    loginUser(profile);
   }
 
   const responseGoogle = (response) => {
     const profileObj = response.profileObj;
 
-    loginUser({
+    const profile = {
       id: profileObj.googleId,
+      accountId: profileObj.googleId,
       nameFirst: profileObj.givenName,
       nameLast: profileObj.familyName,
       email: profileObj.email,
-      type: 'administrator',
       image: profileObj.imageUrl
-    });
+    };
+
+    loginUser(profile);
+  }
+
+  const responseOffline = () => {
+    const profile = {
+      id: "abcd",
+      accountId: "1234",
+      nameFirst: "Jesse",
+      nameLast: "Burton",
+      email: "jessejburton@gmail.com",
+      type: "educator",
+      image: ""
+    }
+
+    loginUser(profile);
   }
 
   return (
@@ -90,16 +156,7 @@ export const Login = ({ lesson = null }) => {
       <Heading>
         <h1>Login</h1>
       </Heading>
-      {classFull && (
-        <Autoreply
-          className="error"
-          initial={{ height: 0 }}
-          animate={{ height: "auto" }}
-        >
-          <p><strong>LESSON FULL</strong></p>
-          <p>Sorry, this lesson is full. Please contact your teacher for assistance.</p>
-        </Autoreply>
-      )}
+      <Message message={message} />
       {lesson && (
         <MediumSpace>
           <p>Please login with Google or Facebook to enroll yourself in <strong>{lesson.title}</strong>.</p>
@@ -116,12 +173,97 @@ export const Login = ({ lesson = null }) => {
         clientId="898142775962-ib0uaie5botfugao80pjjn9nae1387fl.apps.googleusercontent.com"
         buttonText="LOGIN WITH GOOGLE"
         onSuccess={responseGoogle}
-        onFailure={responseGoogle}
+        onFailure={(response) => console.log(response)}
       />
-      {redirect && <Redirect to="/profile" />}
+      {redirect && <Redirect to={redirect} />}
     </StyledContent>
   )
 }
 
 export default Login;
 
+const GET_ACCOUNT = gql`
+  query getAccount($accountId: String!) {
+    account(where: {
+      accountId: $accountId
+    }){
+      id
+      email
+      nameFirst
+      nameLast
+      type
+    }
+  }
+`
+
+const ENROLL_STUDENT = gql`
+  mutation createLessonStudents($lessonId: String!, $accountId: String!,$email: String!,$nameFirst: String!,$nameLast: String!,$type: String!) {
+    createLessonStudents(data: {
+      status: PUBLISHED
+      lessonId: $lessonId
+      accountId: $accountId
+      hasSubmitted: false
+    }) {
+      id
+    }
+    updateAccount(
+      where: { accountId: $accountId }
+      data: {
+      status: PUBLISHED
+      email: $email
+      nameFirst: $nameFirst
+      nameLast: $nameLast
+      type: $type
+      accountId: $accountId
+    }) {
+      id
+      accountId
+      nameFirst
+      nameLast
+      email
+      type
+    }
+  }
+`;
+
+const CREATE_ACCOUNT = gql`
+  mutation createAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
+    createAccount(data: {
+      status: PUBLISHED
+      email: $email
+      nameFirst: $nameFirst
+      nameLast: $nameLast
+      type: $type
+      accountId: $accountId
+    }) {
+      id
+      accountId
+      nameFirst
+      nameLast
+      email
+      type
+    }
+  }
+`
+
+const UPDATE_ACCOUNT = gql`
+  mutation updateAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
+    updateAccount(
+      where: { accountId: $accountId }
+      data: {
+      status: PUBLISHED
+      email: $email
+      nameFirst: $nameFirst
+      nameLast: $nameLast
+      type: $type
+      accountId: $accountId
+    }) {
+      id
+      accountId
+      nameFirst
+      nameLast
+      email
+      type
+    }
+  }
+`
