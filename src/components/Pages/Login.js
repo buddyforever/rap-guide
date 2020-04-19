@@ -85,27 +85,6 @@ const Login = ({ lesson = null }) => {
 
   }, [user])
 
-  function updateLessonLocalStorage(profile) {
-    // TODO send mutation to add user to the lesson.
-    let lessons = getLocalStorage("lessons")
-
-    let newLessons = JSON.stringify(lessons.map(l => {
-      if (l.lessonId === lesson.lessonId) {
-        return {
-          ...l,
-          students: [
-            ...l.students || [],
-            profile
-          ]
-        }
-      } else {
-        return l
-      }
-    }));
-
-    setLocalStorage("lessons", newLessons)
-  }
-
   const responseFacebook = (data, addAccount) => {
     const { email, name, picture, id } = data;
     let nameSplit = name.split(" ");
@@ -133,20 +112,6 @@ const Login = ({ lesson = null }) => {
       email: profileObj.email,
       image: profileObj.imageUrl
     };
-
-    loginUser(profile);
-  }
-
-  const responseOffline = () => {
-    const profile = {
-      id: "abcd",
-      accountId: "1234",
-      nameFirst: "Jesse",
-      nameLast: "Burton",
-      email: "jessejburton@gmail.com",
-      type: "educator",
-      image: ""
-    }
 
     loginUser(profile);
   }

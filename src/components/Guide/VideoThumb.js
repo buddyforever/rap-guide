@@ -29,8 +29,8 @@ export const VideoThumb = ({ id, title, thumbnail, topics }) => {
         </Link>
         <div className="video_details">
           {
-            topics.map((topic, index) => {
-              return (<a href="#" key={index}>{topic}</a>)
+            topics.map((topic) => {
+              return (<a href="#" key={topic.id}>{topic.topic}</a>)
             })
           }
         </div>

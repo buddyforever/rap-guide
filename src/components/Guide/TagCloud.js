@@ -5,49 +5,12 @@ import { Tag } from '../../styles/TagStyles'
 const minFontSize = 2;
 const maxFontSize = 3;
 
-const TagCloud = ({ selectTag }) => {
+const TagCloud = ({ selectTag, tags }) => {
 
-  const [tags, setTags] = useState([]);
   const [minMax, setMinMax] = useState([]);
 
   useEffect(() => {
-    // TODO get the tags from a database
-    setTags([
-      {
-        id: 1,
-        tag: "Climate Chaos",
-        count: 2
-      },
-      {
-        id: 2,
-        tag: "Religion",
-        count: 3
-      },
-      {
-        id: 3,
-        tag: "Consciousness",
-        count: 6
-      },
-      {
-        id: 4,
-        tag: "Culture",
-        count: 2
-      },
-      {
-        id: 5,
-        tag: "Evolution",
-        count: 4
-      },
-      {
-        id: 6,
-        tag: "Human Nature",
-        count: 4
-      }
-    ])
-  }, [])
-
-  useEffect(() => {
-    const values = tags.map(tag => tag.count);
+    const values = tags.map(tag => tag.lessons.length);
     setMinMax(getMinMax(values));
   }, [tags])
 
@@ -73,8 +36,8 @@ const TagCloud = ({ selectTag }) => {
           whileHover={{ scale: 1.1, rotate: '3deg' }}
           key={tag.id}
           onClick={() => handleTagClick(tag.id)}
-          size={getFontSize(tag.count)}
-        >{tag.tag}</Tag>
+          size={getFontSize(tag.lessons.length)}
+        >{tag.topic}</Tag>
       ))
       }
     </StyledTagCloud >

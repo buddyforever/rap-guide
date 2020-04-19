@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import auth from '../../auth/auth'
 import { Editor } from '@tinymce/tinymce-react';
-import { Select, Button, ButtonBlock, FormBlock, FormPage, Form, LinkButton, Autoreply } from '../../styles/FormStyles'
-import { Tag } from '../../styles/TagStyles'
+import { Button, ButtonBlock, FormBlock, FormPage, Form, LinkButton } from '../../styles/FormStyles'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
-import { setLocalStorage, getLocalStorage } from '../../utilities/LocalStorage'
+import Topic from '../Topic'
 import Lyric from '../Guide/Lyric'
 import { Modal } from "../../styles/ModalStyles"
 import Checkbox from "../Form/Checkbox"
@@ -15,6 +14,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faComment, faCopy, faStar } from '@fortawesome/free-solid-svg-icons'
 import { Redirect } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+import Message from '../Layout/Message'
+import { UserContext } from '../../context/UserContext'
 
 const variants = {
   open: { x: "-50vw", opacity: 1 },
@@ -29,15 +32,26 @@ const pageVariants = {
 
 export const AddLesson = () => {
 
-  let { id } = useParams();
+  /* Context */
+  const { user } = useContext(UserContext);
 
-  const [guide, setGuide] = useState();
-  const [lessonDetails, setLessonDetils] = useState("<div>This is the lesson details");
+  /* Paramaters */
+  let { id } = useParams(); // Guide
+
+  /* Queries */
+  const { loading, data } = useQuery(GET_GUIDE, {
+    variables: {
+      id: id
+    }
+  })
+  const [createLesson] = useMutation(CREATE_LESSON);
+
+  const [guide, setGuide] = useState(null);
+  const [lessonDescription, setLessonDescription] = useState("<div>This is the lesson details");
   const [lessonTitle, setLessonTitle] = useState("");
   const [lyrics, setLyrics] = useState([]);
-  const [students, setStudents] = useState([]);
   const [page, setPage] = useState(0);
-  const [maximumStudents, setMaximumStudents] = useState(null);
+  const [maxStudents, setMaxStudents] = useState(null);
   const [topics, setTopics] = useState([]);
   const [topic, setTopic] = useState("");
   const [isNoteOpen, setIsNoteOpen] = useState(false);
@@ -46,7 +60,7 @@ export const AddLesson = () => {
   const [note, setNote] = useState("");
   const [redirect, setRedirect] = useState(false);
   const [lessonSignupUrl, setLessonSignupUrl] = useState();
-  const [copied, setCopied] = useState(false);
+  const [message, setMessage] = useState(false);
 
   function closeModal() {
     setIsNoteOpen(false);
@@ -87,6 +101,7 @@ export const AddLesson = () => {
 
   /* TOPICS */
   function addTopic(topic) {
+    if (topic.length === 0) return
     setTopics((prevState) => [...prevState, topic]);
     setTopic("");
   }
@@ -98,51 +113,24 @@ export const AddLesson = () => {
     }
   }
 
-  /* TODO - move to utility or remove if not needed after adding database */
-  function guidGenerator() {
-    var S4 = function () {
-      return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    };
-    return (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-  }
-
-  function saveLesson(e) {
-    e.preventDefault();
-
-    const lesson = {
-      lessonId: guidGenerator(),
-      videoId: id,
-      title: lessonTitle,
-      details: lessonDetails,
-      topics: topics,
-      lyrics: lyrics,
-      maxStudents: maximumStudents,
-      students: [],
-      annotations: []
-    };
-
-    let domain
-    if (window.location.port) {
-      domain = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+  function removeTopic(topicToRemove) {
+    // If there is only one topic it ends up being null
+    if (topics.length === 1) {
+      setTopics([]);
     } else {
-      domain = window.location.protocol + "//" + window.location.hostname;
+      setTopics(prevState => {
+        return prevState.filter(topic => {
+          if (topic === topicToRemove) return false
+          return true
+        })
+      })
     }
-
-    // TODO Create a better hash for the URL
-    setLessonSignupUrl(domain + "/lesson/signup/" + lesson.lessonId);
-
-    // TODO make this update if exists - might not be needed in Local Storage proto
-    let lessons = getLocalStorage("lessons") ? getLocalStorage("lessons") : [];
-    lessons.push(lesson);
-    setLocalStorage("lessons", JSON.stringify(lessons));
-
-    setPage(3);
   }
 
-  function handleLessonDetailsContent(content, editor) {
-    setLessonDetils(content);
+  // TinyMCE Editors
+  function handlelessonDescriptionContent(content, editor) {
+    setLessonDescription(content);
   }
-
   function handleNoteContent(content, editor) {
     setNote(content);
   }
@@ -174,236 +162,240 @@ export const AddLesson = () => {
     setSelectedLyric(lyric);
   }
 
-  // Load the guide and scroll to the top of the page
-  function loadGuide() {
-    setGuide(getLocalStorage("guides").filter(guide => guide.videoId = id)[0]);
+  /* SAVE THE LESSON */
+  async function saveLesson(e) {
+    e.preventDefault();
+
+    let domain
+    if (window.location.port) {
+      domain = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
+    } else {
+      domain = window.location.protocol + "//" + window.location.hostname;
+    }
+
+    await createLesson({
+      variables: {
+        lessonTitle,
+        lessonDescription,
+        maxStudents: parseInt(maxStudents),
+        guide: {
+          id: id
+        },
+        account: {
+          id: "ck8qmxihbkhqq0b20saifky4d"
+        }
+      }
+    }).then(({ data: { createLesson } }) => {
+      setLessonSignupUrl(domain + "/lesson/signup/" + createLesson.id);
+      setPage(3);
+    })
   }
 
+  /* Effects */
+  // Scroll to the top when the page changes
   useEffect(() => {
-    loadGuide();
     window.scrollTo(0, 0)
   }, [page]);
 
-  // Get the lyrics ready for the lesson
-  // Creates a new set of lyrics with additional properties
   useEffect(() => {
-    if (guide && lyrics.length === 0) {
-      setLyrics(guide.lyrics.map(lyric => {
-        return {
-          id: lyric.id,
-          lyric: lyric.lyric,
-          assigned: false,
-          example: false,
-          notes: ""
-        }
-      }))
-    }
-  }, [guide]);
+    if (!data) return
+    setGuide(data.guide);
+    setTopics(data.guide.topics.map(topic => {
+      return topic.topic
+    }));
+    setLyrics(data.guide.lyrics.map(lyric => {
+      return {
+        isExample: false,
+        isAssigned: false,
+        notes: '',
+        ...lyric
+      }
+    }));
+  }, [data])
 
+  if (loading || !guide) return null;
   return (
     <StyledContent>
-      {
-        !guide ? <div>LOADING...</div> : (
-          <div>
-            <Heading>
-              <h1>Lesson Setup</h1>
-              <h2>{lessonTitle.length ? lessonTitle : "Creating a lesson for"} - <a href={`https://www.youtube.com/watch?v=${guide.videoId}`} target="_blank">{guide.title}</a></h2>
-            </Heading>
+      <div>
+        <Heading>
+          <h1>Lesson Setup</h1>
+          <h2>{lessonTitle.length ? lessonTitle : "Creating a lesson for"} - <a href={`https://www.youtube.com/watch?v=${guide.videoId}`} target="_blank">{guide.videoTitle}</a></h2>
+        </Heading>
+        <Message message={message} />
+        <Form>
+          {page === 0 &&
+            <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
+              <FormBlock>
+                <h3>Lesson Details</h3>
+                <p>This is placeholder text that will describe what this rich text editor is for.</p>
+                <MediumSpace style={{ display: "flex", justifyContent: "space-between" }}>
+                  <input
+                    style={{ width: "100%" }}
+                    type="text"
+                    value={lessonTitle}
+                    onChange={(e) => setLessonTitle(e.target.value)}
+                    placeholder="Give this lesson a name..." />
+                </MediumSpace>
+                <Editor
+                  initialValue="<p></p>"
+                  apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
+                  init={{
+                    height: 300,
+                    menubar: false,
+                    plugins: [
+                      'advlist autolink lists link image charmap print preview anchor',
+                      'searchreplace visualblocks code fullscreen',
+                      'insertdatetime media table paste code help wordcount'
+                    ],
+                    toolbar:
+                      'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                  }}
+                  onEditorChange={handlelessonDescriptionContent}
+                />
+              </FormBlock>
+              <FormBlock>
+                <label>Enter the topic(s) that this lesson plan aim's to cover.</label>
+                <div style={{ display: "flex" }}>
+                  <input type="text" value={topic} placeholder="Climate Chaos" onKeyPress={handleKeyPress} onChange={(e) => setTopic(e.target.value)} />
+                  <Button style={{ marginLeft: "1rem", width: "200px" }} onClick={(e) => { e.preventDefault(); addTopic(topic) }}>Add Topic</Button>
+                </div>
+                <MediumSpace>
+                  {topics.map(topic => (
+                    <Topic
+                      key={topic}
+                      topic={topic}
+                      onRemove={() => removeTopic(topic)} />
+                  ))}
+                </MediumSpace>
+              </FormBlock>
+            </FormPage>
+          }
 
-            {copied && (
-              <Autoreply
-                initial={{ height: 0 }}
-                animate={{ height: "auto" }}
-              >
-                <p>The link has been copied to your clipboard.</p>
-              </Autoreply>
-            )}
-
-            <Form>
-              {page === 0 &&
-                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
-                  <FormBlock>
-                    <h3>Lesson Details</h3>
-                    <p>This is placeholder text that will describe what this rich text editor is for.</p>
-                    <MediumSpace style={{ display: "flex", justifyContent: "space-between" }}>
-                      <div>
-                        <input
-                          style={{ width: "300px" }}
-                          type="text"
-                          value={lessonTitle}
-                          onChange={(e) => setLessonTitle(e.target.value)}
-                          placeholder="Give this lesson a name..." />
-                      </div>
-                      <div>
-                        <Select>
-                          <option value="">-- Select a Lesson Template (optional) --</option>
-                          <option value="">Sample Lesson</option>
-                          <option value="">Another Template</option>
-                        </Select>
-                      </div>
-                    </MediumSpace>
-                    <Editor
-                      initialValue="<p></p>"
-                      apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
-                      init={{
-                        height: 300,
-                        menubar: false,
-                        plugins: [
-                          'advlist autolink lists link image charmap print preview anchor',
-                          'searchreplace visualblocks code fullscreen',
-                          'insertdatetime media table paste code help wordcount'
-                        ],
-                        toolbar:
-                          'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                      }}
-                      onEditorChange={handleLessonDetailsContent}
-                    />
-                  </FormBlock>
-                  <FormBlock>
-                    <label>Enter the topic(s) that this lesson plan aim's to cover.</label>
-                    <div style={{ display: "flex" }}>
-                      <input type="text" value={topic} placeholder="Climate Chaos" onKeyPress={handleKeyPress} onChange={(e) => setTopic(e.target.value)} />
-                      <Button style={{ marginLeft: "1rem", width: "200px" }} onClick={(e) => { e.preventDefault(); addTopic(topic) }}>Add Topic</Button>
-                    </div>
-                    <MediumSpace>
-                      {topics.map(topic => (
-                        <Tag
-                          initial={{ scale: 0 }}
-                          animate={{ scale: 1 }}>{topic}</Tag>
-                      ))}
-                    </MediumSpace>
-                  </FormBlock>
-                </FormPage>
-              }
-
-              {page === 1 &&
-                <FormPage initial="initial" animate="show" exit="exit" variants={pageVariants}>
-                  <FormBlock>
-                    <h3>Lyrics</h3>
-                    <p>Select which lyrics are available for annotation. You can also add notes or create an example annotation.</p>
-                  </FormBlock>
-                  <FormBlock>
-                    <p>
-                      <LinkButton onClick={assignAllLyrics}>Assign All</LinkButton> | <LinkButton onClick={assignNoLyrics}>Assign None</LinkButton>
-                    </p>
-                    {lyrics.map(lyric => (
-                      <StyledLyric
-                        key={lyric.id}
-                        className={
-                          lyric.assigned && !lyric.example ? "assigned"
-                            : lyric.example ? "example"
-                              : selectedLyric && selectedLyric.id === lyric.id ? "selected"
-                                : ""
+          {page === 1 &&
+            <FormPage initial="initial" animate="show" exit="exit" variants={pageVariants}>
+              <FormBlock>
+                <h3>Lyrics</h3>
+                <p>Select which lyrics are available for annotation. You can also add notes or create an example annotation.</p>
+              </FormBlock>
+              <FormBlock>
+                <p>
+                  <LinkButton onClick={assignAllLyrics}>Assign All</LinkButton> | <LinkButton onClick={assignNoLyrics}>Assign None</LinkButton>
+                </p>
+                {lyrics.map(lyric => (
+                  <StyledLyric
+                    key={lyric.id}
+                    className={
+                      lyric.assigned && !lyric.example ? "assigned"
+                        : lyric.example ? "example"
+                          : selectedLyric && selectedLyric.id === lyric.id ? "selected"
+                            : ""
+                    }
+                  >
+                    <div>
+                      <span className="options">
+                        {!lyric.example &&
+                          <label style={{ display: "inline-block", marginBottom: 0 }}>
+                            <Checkbox
+                              alt="Assign this lyric"
+                              style={{ cursor: "pointer" }}
+                              checked={lyric.assigned}
+                              onChange={(e) => {
+                                updateAssigned(lyric.id, e.target.checked);
+                                selectLyric(lyric);
+                              }}
+                            />
+                          </label>
                         }
-                      >
-                        <div>
-                          <span className="options">
-                            {!lyric.example &&
-                              <label style={{ display: "inline-block", marginBottom: 0 }}>
-                                <Checkbox
-                                  alt="Assign this lyric"
-                                  style={{ cursor: "pointer" }}
-                                  checked={lyric.assigned}
-                                  onChange={(e) => {
-                                    updateAssigned(lyric.id, e.target.checked);
-                                    selectLyric(lyric);
-                                  }}
-                                />
-                              </label>
-                            }
-
+                      </span>
+                      <span
+                        className="lyric"
+                        role="button"
+                        onClick={() => {
+                          selectLyric(lyric);
+                          setIsNoteOpen(true)
+                        }}
+                        style={{ cursor: "pointer" }}>
+                        {lyric.lyric}
+                        {lyric.example &&
+                          <span style={{ marginLeft: "1rem", color: "rgba(35,163,213)" }}>
+                            <FontAwesomeIcon icon={faStar} />
                           </span>
-                          <span
-                            className="lyric"
-                            role="button"
-                            onClick={() => {
-                              selectLyric(lyric);
-                              setIsNoteOpen(true)
-                            }}
-                            style={{ cursor: "pointer" }}>
-                            {lyric.lyric}
-                            {lyric.example &&
-                              <span style={{ marginLeft: "1rem", color: "rgba(35,163,213)" }}>
-                                <FontAwesomeIcon icon={faStar} />
-                              </span>
-                            }
-                            {lyric.notes.length > 0 && !lyric.example && (
-                              <span style={{ marginLeft: "1rem", color: "#DD3333" }}>
-                                <FontAwesomeIcon icon={faComment} />
-                              </span>)
-                            }
-                          </span>
-                        </div>
-                      </StyledLyric>
-                    ))}
-                  </FormBlock>
-                </FormPage>
-              }
+                        }
+                        {lyric.notes.length > 0 && !lyric.example && (
+                          <span style={{ marginLeft: "1rem", color: "#DD3333" }}>
+                            <FontAwesomeIcon icon={faComment} />
+                          </span>)
+                        }
+                      </span>
+                    </div>
+                  </StyledLyric>
+                ))}
+              </FormBlock>
+            </FormPage>
+          }
 
-              {page === 2 &&
-                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
-                  <FormBlock>
-                    <h3>Students</h3>
-                    <p>Enter the maximum number of students expected to enroll in this class.</p>
-                  </FormBlock>
-                  <FormBlock>
+          {page === 2 &&
+            <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
+              <FormBlock>
+                <h3>Students</h3>
+                <p>Enter the maximum number of students expected to enroll in this class.</p>
+              </FormBlock>
+              <FormBlock>
+                <input
+                  type="number"
+                  value={maxStudents}
+                  onChange={(e) => setMaxStudents(e.target.value)}
+                  placeholder="20..." />
+              </FormBlock>
+            </FormPage>
+          }
+
+          {page === 3 &&
+            <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
+              <FormBlock>
+                <h3>All Done!</h3>
+                <p>Your course is now ready for enrollment. Send the following url to your students so that they can sign up.</p>
+              </FormBlock>
+              <FormBlock>
+                <CopyToClipboard text={lessonSignupUrl}
+                  onCopy={() => setMessage({ text: "The link has been copied to your clipboard." })}>
+                  <div style={{ display: "flex" }}>
                     <input
                       type="text"
-                      value={maximumStudents}
-                      onChange={(e) => setMaximumStudents(e.target.value)}
-                      placeholder="20..." />
-                  </FormBlock>
-                </FormPage>
-              }
-
-              {page === 3 &&
-                <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
-                  <FormBlock>
-                    <h3>All Done!</h3>
-                    <p>Your course is now ready for enrollment. Send the following url to your students so that they can sign up.</p>
-                  </FormBlock>
-                  <FormBlock>
-                    <CopyToClipboard text={lessonSignupUrl}
-                      onCopy={() => setCopied(true)}>
-                      <div style={{ display: "flex" }}>
-                        <input
-                          type="text"
-                          readonly
-                          value={lessonSignupUrl}
-                        />
-                        <Button
-                          title="Click to copy the url to your clipboard"
-                          style={{ marginLeft: "1rem", width: "100px" }}
-                          onClick={(e) => e.preventDefault()}>
-                          <FontAwesomeIcon icon={faCopy} /> Copy
+                      readOnly
+                      value={lessonSignupUrl}
+                    />
+                    <Button
+                      title="Click to copy the url to your clipboard"
+                      style={{ marginLeft: "1rem", width: "100px" }}
+                      onClick={(e) => e.preventDefault()}>
+                      <FontAwesomeIcon icon={faCopy} /> Copy
                         </Button>
-                      </div>
-                    </CopyToClipboard>
-                  </FormBlock>
-                </FormPage>
-              }
+                  </div>
+                </CopyToClipboard>
+              </FormBlock>
+            </FormPage>
+          }
 
-              <ButtonBlock
-                style={{ position: "sticky", bottom: 0, paddingBottom: "2.5rem", backgroundColor: "white" }}
-              >
-                {page === 0 && <Link to="">Cancel</Link>}
-                {page > 0 && page < 3 && <Button onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page - 1)
-                }}>Back</Button>
-                }
-                {page < 2 && <Button onClick={(e) => {
-                  e.preventDefault();
-                  setPage(page + 1)
-                }}>Next</Button>
-                }
-                {page === 2 && <Button onClick={saveLesson}>Save Lesson</Button>}
-                {page === 3 && <Button onClick={() => setRedirect(true)}>View Lessons</Button>}
-              </ButtonBlock>
-            </Form>
-          </div>
-        )
-      }
+          <ButtonBlock
+            style={{ position: "sticky", bottom: 0, paddingBottom: "2.5rem", backgroundColor: "white" }}
+          >
+            {page === 0 && <Link to="">Cancel</Link>}
+            {page > 0 && page < 3 && <Button onClick={(e) => {
+              e.preventDefault();
+              setPage(page - 1)
+            }}>Back</Button>
+            }
+            {page < 2 && <Button onClick={(e) => {
+              e.preventDefault();
+              setPage(page + 1)
+            }}>Next</Button>
+            }
+            {page === 2 && <Button onClick={saveLesson}>Save Lesson</Button>}
+            {page === 3 && <Button onClick={() => setRedirect(true)}>View Lessons</Button>}
+          </ButtonBlock>
+        </Form>
+      </div>
       <Modal
         variants={variants}
         initial="closed"
@@ -568,4 +560,45 @@ const StyledLyric = styled.div`
     background-color:  rgba(221, 51, 51, 0.2);
   }
 
+`
+
+const GET_GUIDE = gql`
+  query getGuide($id:ID!) {
+    guide(where: {id:$id}) {
+      id
+      videoId
+      videoUrl
+      videoTitle
+      videoThumb
+      topics {
+        id
+        topic
+      }
+      lyrics {
+        id
+        lyric
+      }
+    }
+  }
+`
+
+const CREATE_LESSON = gql`
+  mutation createLesson(
+    $lessonTitle:String!,
+    $lessonDescription:String!,
+    $maxStudents: Int!,
+    $guide: GuideWhereUniqueInput!,
+    $account: AccountWhereUniqueInput!
+  ) {
+    createLesson(data: {
+      status: PUBLISHED
+      lessonTitle: $lessonTitle
+      lessonDescription: $lessonDescription
+      maxStudents: $maxStudents
+      guide: { connect: $guide }
+      account: { connect: $account }
+    }){
+    id
+    }
+  }
 `

@@ -24,40 +24,14 @@ import { UserContext } from './context/UserContext'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
 import gql from 'graphql-tag'
+import Temp from './components/Pages/Temp'
 
 const client = new ApolloClient({ uri: 'https://api-euwest.graphcms.com/v1/ck56vnvt50t7301gifvv37btb/master' });
-
-/*
-const testQuery = gql`
-  {
-    accounts {
-      id
-      nameFirst
-      nameLast
-      email
-      type
-    }
-  }
-`
-
-client.query({
-  query: testQuery
-}).then((result) => {
-  console.log(result);
-})
-*/
 
 function App() {
 
   const [lesson, setLesson] = useState(null);
   const [user, setUser] = useState(auth.isAuthenticated() ? getLocalStorage("profile") : null);
-
-  /*
-    TODO Setup the default data if it has been reset
-    This will all be connected to a datasource of some kind
-    but it is in Local Storage for prototyping
-  */
-  setLocalStorage("guides", JSON.stringify(data.guides));
 
   return (
     <ApolloProvider client={client}>
@@ -66,6 +40,7 @@ function App() {
           <Layout>
             <Switch>
               <Route exact path="/" component={RapGuides} />
+              <Route path="/temp" component={Temp} />
               <Route path="/lessons" component={Lessons} />
               <Route path="/request" component={Request} />
               <Route path="/about" component={About} />

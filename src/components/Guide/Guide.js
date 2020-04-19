@@ -10,6 +10,9 @@ import AddAnnotation from '../Annotation/AddAnnotation'
 import { motion } from 'framer-motion'
 import Lyric from '../Guide/Lyric'
 import { UserContext } from '../../context/UserContext'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+
 
 const variants = {
   open: { x: "-50vw" },
@@ -18,51 +21,55 @@ const variants = {
 
 export const Guide = () => {
 
+  /* Context */
   const { user } = useContext(UserContext);
 
+  /* Paramaters */
   let { id } = useParams();
-  const [guide, setGuide] = useState();
 
-  useEffect(() => {
-    // TODO Get from actual datasource
-    const selectedGuide = getLocalStorage("guides").filter(guide => guide.videoId === id)[0];
-    setGuide(selectedGuide);
-  }, [])
+  /* Queries */
+  const { loading, data } = useQuery(GET_GUIDE_BY_ID, {
+    variables: {
+      id: id
+    }
+  });
 
+
+  if (loading) return false;
+  const { guide } = data;
+  console.log(data);
   return (
     <StyledContent>
-      {!guide ? <div>LOADING...</div> : (
-        <div>
-          <Heading>
-            <h1>{guide.title}</h1>
-          </Heading>
-          <StyledVideo>
-            <div className="video">
-              <iframe title={guide.title} width="100%" src={guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
-            </div>
-            {
-              user && user.type === 'educator' &&
-              <LargeSpace>
-                <Link className="button" to={'/lesson/add/' + id}>
-                  <Button>Create a Lesson</Button>
-                </Link>
-              </LargeSpace>
-            }
-          </StyledVideo>
+      <div>
+        <Heading>
+          <h1>{guide.title}</h1>
+        </Heading>
+        <StyledVideo>
+          <div className="video">
+            <iframe title={guide.title} width="100%" src={guide.videoUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+          </div>
+          {
+            user && user.type === 'educator' &&
+            <LargeSpace>
+              <Link className="button" to={'/lesson/add/' + id}>
+                <Button>Create a Lesson</Button>
+              </Link>
+            </LargeSpace>
+          }
+        </StyledVideo>
 
-          <StyledColumns>
-            <div>
-              <h3>Lyrics</h3>
-              {guide.lyrics.map(lyric => (
-                <StyledLyric>{lyric.lyric}</StyledLyric>
-              ))}
-            </div>
-            <div>
-              <h3>Annotations</h3>
-            </div>
-          </StyledColumns>
-        </div>
-      )}
+        <StyledColumns>
+          <div>
+            <h3>Lyrics</h3>
+            {guide.lyricses.map(lyric => (
+              <StyledLyric>{lyric.lyric}</StyledLyric>
+            ))}
+          </div>
+          <div>
+            <h3>Annotations</h3>
+          </div>
+        </StyledColumns>
+      </div>
     </StyledContent>
   )
 }
@@ -117,4 +124,24 @@ const StyledLyric = styled.div`
     background-color:  rgba(221, 51, 51, 0.2);
   }
 
+`
+
+const GET_GUIDE_BY_ID = gql`
+  query getGuide($id:ID!) {
+    guide(where: {id:$id}) {
+      id
+      videoId
+      videoUrl
+      videoTitle
+      videoThumb
+      topics {
+        id
+        topic
+      }
+      lyrics {
+        id
+        lyric
+      }
+    }
+  }
 `

@@ -6,20 +6,25 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import TagCloud from '../Guide/TagCloud'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
 export const Home = () => {
 
-  const [guides, setGuides] = useState([]);
+  /* Queries */
+  const { loading, data: guides } = useQuery(GET_ALL_GUIDES);
+  const { loading: topics_loading, data: topicses } = useQuery(GET_TOPICS, {
+    variables: {
+      max: 10
+    }
+  });
 
-  useEffect(() => {
-    // TODO Get actual data
-    setGuides(getLocalStorage("guides"));
-  }, [])
-
+  /* Functions */
   function selectTag(tag) {
     console.log(tag);
   }
 
+  if (loading || topics_loading) return null
   return (
     <StyledContent>
       <Heading>
@@ -30,20 +35,20 @@ export const Home = () => {
         </Search>
       </Heading>
 
-      <TagCloud selectTag={selectTag} />
+      <TagCloud selectTag={selectTag} tags={topicses.topicses} />
 
       <MediumSpace>
         <h1>Rap Guides</h1>
       </MediumSpace>
 
       <FourGrid>
-        {guides && guides.map(guide => {
+        {guides.guides.map(guide => {
           return (<VideoThumb
-            key={guide.videoId}
-            id={guide.videoId}
-            title={guide.title}
-            thumbnail={guide.thumbnail}
-            topics={guide.topics} />)
+            key={guide.id}
+            id={guide.id}
+            title={guide.videoTitle}
+            thumbnail={guide.videoThumb}
+            topics={guide.topicses} />)
         })}
       </FourGrid>
     </StyledContent>
@@ -70,7 +75,6 @@ const Search = styled.div`
     border-bottom-left-radius: 3px;
     font-size: 1.6rem;
     outline: none;
-
   }
 
   button {
@@ -93,4 +97,33 @@ const Search = styled.div`
       background-color: #999;
       border-color: #999;
     }
+  }
+`
+
+const GET_TOPICS = gql`
+  query getTopics($max: Int!) {
+    topicses(first:$max){
+      id
+      topic
+      lessons {
+        id
+      }
+    }
+  }
+`
+
+const GET_ALL_GUIDES = gql`
+  query getGuides {
+    guides {
+      id
+      videoId
+      videoUrl
+      videoTitle
+      videoThumb
+      topicses {
+        id
+        topic
+      }
+    }
+  }
 `

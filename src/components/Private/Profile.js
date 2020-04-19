@@ -1,31 +1,42 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { StyledContent, Heading, TwoGrid } from '../../styles/PageStyles'
-import { FormBlock, ButtonBlock, Button, Form, Autoreply } from '../../styles/FormStyles'
-import { getLocalStorage } from '../../utilities/LocalStorage'
+import { FormBlock, ButtonBlock, Button, Form } from '../../styles/FormStyles'
 import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
 import Message from '../Layout/Message'
-import { graphql } from 'react-apollo'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 
-export const Profile = ({ data }) => {
+export const Profile = () => {
 
-  console.log(data);
+  /* Context */
+  const { user, setUser } = useContext(UserContext);
 
-  const { user, setUser } = useContext(UserContext)
+  /* Queries */
+  const { loading, data } = useQuery(GET_ACCOUNT_BY_EMAIL, {
+    variables: {
+      email: user.email
+    }
+  });
+  const [updateAccount] = useMutation(UPDATE_ACCOUNT);
 
-  const [nameFirst, setNameFirst] = useState(user.nameFirst);
-  const [nameLast, setNameLast] = useState(user.nameLast);
-  const [email, setEmail] = useState(user.email);
-  const [type, setType] = useState(user.type);
-  const [image, setImage] = useState(user.image);
+  /* State */
+  const [accountId, setAccountId] = useState("");
+  const [nameFirst, setNameFirst] = useState("");
+  const [nameLast, setNameLast] = useState("");
+  const [email, setEmail] = useState("");
+  const [type, setType] = useState("");
+  const [image, setImage] = useState("");
 
+  /* Helpers */
   const [message, setMessage] = useState(null);
 
+  /* Functions */
   function saveProfile(e) {
     e.preventDefault();
 
     const profile = {
+      accountId,
       nameFirst,
       nameLast,
       email,
@@ -33,33 +44,44 @@ export const Profile = ({ data }) => {
       image
     }
 
-    setUser(profile);
-    auth.login(profile);
+    // Update Database
+    updateAccount({
+      variables: {
+        image: user.image,
+        ...profile
+      }
+    }).then(() => {
+      // Update Context
+      setUser(profile);
+      auth.login(profile);
 
-    setMessage({
-      text: "Your profile has been saved."
+      setMessage({
+        text: "Your profile has been saved."
+      })
     })
   }
 
   useEffect(() => {
-    // TODO Get actual data
-    const profile = getLocalStorage("profile");
+    if (!loading) {
+      const { account } = data;
 
-    setNameFirst(profile.nameFirst);
-    setNameLast(profile.nameLast);
-    setEmail(profile.email);
-    setType(profile.type);
-    setImage(profile.image);
-  }, [])
+      setAccountId(account.accountId);
+      setNameFirst(account.nameFirst);
+      setNameLast(account.nameLast);
+      setEmail(account.email);
+      setType(account.type);
+      setImage(user.image);
+    }
+  }, [data])
 
+  if (loading) return null
   return (
     <StyledContent>
-      {image &&
-        <Heading>
-          <h1 style={{ display: "flex", alignItems: "center" }}>
-            <img src={image} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {nameFirst} {nameLast}
-          </h1>
-        </Heading>}
+      <Heading>
+        <h1 style={{ display: "flex", alignItems: "center" }}>
+          <img src={image} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {nameFirst} {nameLast}
+        </h1>
+      </Heading>
       <Form onSubmit={saveProfile}>
         <Message message={message} />
         <TwoGrid>
@@ -74,7 +96,7 @@ export const Profile = ({ data }) => {
         </TwoGrid>
         <FormBlock>
           <label>Email</label>
-          <input type="text" placeholder="email" value={email} onChange={(e) => setEmail(e.target.value)} />
+          <input type="text" placeholder="email" disabled value={email} />
         </FormBlock>
         <FormBlock>
           <label>Account Type</label>
@@ -94,17 +116,42 @@ export const Profile = ({ data }) => {
   )
 }
 
-const PROFILE_QUERY = gql`
-  query getAccount {
-    accounts {
+const GET_ACCOUNT_BY_EMAIL = gql`
+  query getAccount($email: String!) {
+    account(where: {
+      email: $email
+    }){
       id
+      accountId
+      email
       nameFirst
       nameLast
-      email
+      type
     }
   }
 `
 
-export default graphql(PROFILE_QUERY)(Profile)
+const UPDATE_ACCOUNT = gql`
+  mutation updateAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
+    updateAccount(
+      where: { accountId: $accountId }
+      data: {
+      status: PUBLISHED
+      email: $email
+      nameFirst: $nameFirst
+      nameLast: $nameLast
+      type: $type
+    }) {
+      id
+      accountId
+      nameFirst
+      nameLast
+      email
+      type
+    }
+  }
+`
+
+export default Profile;
 
 
