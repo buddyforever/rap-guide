@@ -8,6 +8,7 @@ class auth {
   }
   static logout() {
     localStorage.removeItem("authenticated");
+    localStorage.removeItem("profile");
   }
   static isAuthenticated() {
     return localStorage.getItem("authenticated") || false

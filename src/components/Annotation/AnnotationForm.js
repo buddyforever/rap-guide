@@ -3,13 +3,25 @@ import { Form, FormBlock, ButtonBlock, Button, LinkButton } from '../../styles/F
 import { Heading } from '../../styles/PageStyles'
 import { Editor } from '@tinymce/tinymce-react';
 
-export const AnnotationForm = ({ lyric, saveAnnotation, cancel }) => {
+export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
 
   const [annotation, setAnnotation] = useState("");
 
-  function handleAddAnnotation(e) {
+  function handleSaveAnnotation(e) {
     e.preventDefault();
-    saveAnnotation(annotation);
+    saveAnnotation({
+      lessonLyricId: lessonLyric.id,
+      annotation,
+      isSubmitted: false
+    });
+  }
+
+  function handleSubmitAnnotation(e) {
+    e.preventDefault();
+    saveAnnotation({
+      annotation,
+      isSubmitted: true
+    });
   }
 
   function handleCancel(e) {
@@ -22,12 +34,12 @@ export const AnnotationForm = ({ lyric, saveAnnotation, cancel }) => {
   }
 
   return (
-    <Form onSubmit={saveAnnotation}>
+    <Form>
       <Heading>
         <h1>Add Annotation</h1>
-        <h2>{lyric.lyric}</h2>
-        {lyric.notes.length > 0 &&
-          <div dangerouslySetInnerHTML={{ __html: lyric.notes }}></div>
+        <h2>{lessonLyric.lyric}</h2>
+        {lessonLyric.notes.length > 0 &&
+          <div dangerouslySetInnerHTML={{ __html: lessonLyric.notes }}></div>
         }
       </Heading>
       <FormBlock>
@@ -52,8 +64,8 @@ export const AnnotationForm = ({ lyric, saveAnnotation, cancel }) => {
       <ButtonBlock>
         <LinkButton onClick={handleCancel}>Cancel</LinkButton>
         <div>
-          <Button className="secondary" style={{ marginRight: "1rem" }} onClick={handleAddAnnotation}>Save Annotation</Button>
-          <Button onClick={handleAddAnnotation}>Submit Annotation</Button>
+          <Button className="secondary" style={{ marginRight: "1rem" }} onClick={handleSaveAnnotation}>Save Annotation</Button>
+          <Button onClick={handleSubmitAnnotation}>Submit Annotation</Button>
         </div>
       </ButtonBlock>
     </Form>

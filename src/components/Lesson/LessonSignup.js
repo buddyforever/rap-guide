@@ -2,42 +2,44 @@ import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import Login from '../Pages/Login'
-import { useParams, Link } from "react-router-dom"
-import { getLocalStorage } from '../../utilities/LocalStorage'
-import useGlobal from '../../store/Store'
-import { LessonContext } from '../../context/LessonContext'
+import { useParams } from "react-router-dom"
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
 const LessonSignup = () => {
 
+  /* Params */
   let { id } = useParams();
-  const [globalState, globalActions] = useGlobal();
-  //const { lesson, setLesson } = useContext(LessonContext);
-  const [lesson, setLesson] = useState(null);
 
-  function loadLesson() {
-    if (getLocalStorage("lessons")) {
-      setLesson(getLocalStorage("lessons").filter(lesson => lesson.lessonId === id)[0]);
+  /* Queries */
+  // TODO - use actual account ID
+  const { loading, data } = useQuery(GET_LESSON_BY_ID, {
+    variables: {
+      id: id
     }
-  }
+  });
 
-  useEffect(() => {
-    loadLesson();
-  }, []);
-
-  if (lesson) {
-    return (
-      <StyledContent>
-        <Heading>
-          <h1>Lesson Signup</h1>
-          <h2>Enrollment for ~ {lesson.title}</h2>
-        </Heading>
-        <Login lesson={lesson} />
-      </StyledContent>
-    )
-  } else {
-    return (<StyledContent><h1>Loading...</h1></StyledContent>)
-  }
+  if (loading) return null
+  return (
+    <StyledContent>
+      <Heading>
+        <h1>Lesson Signup</h1>
+        <h2>Enrollment for ~ {data.lesson.lessonTitle}</h2>
+      </Heading>
+      <Login lesson={data.lesson} />
+    </StyledContent>
+  )
 }
 
 export default LessonSignup;
 
+const GET_LESSON_BY_ID = gql`
+  query getLesson($id: ID!) {
+    lesson(where: {
+        id: $id
+    }) {
+      id
+      lessonTitle
+    }
+  }
+`

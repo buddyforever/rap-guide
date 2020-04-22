@@ -5,7 +5,6 @@ import { Redirect } from 'react-router-dom'
 import Message from '../Layout/Message'
 import FacebookLogin from 'react-facebook-login'
 import GoogleLogin from 'react-google-login'
-import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { UserContext } from '../../context/UserContext'
@@ -17,14 +16,11 @@ const Login = ({ lesson = null }) => {
 
   const { user, setUser } = useContext(UserContext);
 
-  /* TODO find a better way to handle this. useLazyQuery doesn't return a promise so
-    it doesn't appear that you can await the response the way you can with useQuery
-    Check Account */
   const { refetch } = useQuery(GET_ACCOUNT, { variables: { accountId: "" } });
 
   const [createAccount] = useMutation(CREATE_ACCOUNT);
   const [updateAccount] = useMutation(UPDATE_ACCOUNT);
-  const [createLessonStudents] = useMutation(ENROLL_STUDENT);
+  const [createLessonStudent] = useMutation(ENROLL_STUDENT);
 
   /* TODO MAKE THE ACCOUNT BASED ON EMAIL ADDRESS - ONE ACCOUNT PER EMAIL */
   async function loginUser(profile) {
@@ -37,10 +33,10 @@ const Login = ({ lesson = null }) => {
           email: profile.email,
           nameFirst: profile.nameFirst || '',
           nameLast: profile.nameLast || '',
+          image: profile.image,
           type: lesson ? "student" : "public"
         }
       }).then(({ data: { createAccount } }) => {
-        createAccount.image = profile.image;
         setUser(createAccount);
       });
     } else {
@@ -54,13 +50,10 @@ const Login = ({ lesson = null }) => {
   }
 
   async function enrollStudent(user) {
-    await createLessonStudents({
+    await createLessonStudent({
       variables: {
-        "lessonId": lesson.lessonId,
-        "accountId": user.accountId,
-        "email": user.email,
-        "nameFirst": user.nameFirst || '',
-        "nameLast": user.nameLast || '',
+        "lessonId": lesson.id,
+        "accountId": user.id,
         "type": "student"
       }
     }).then(() => {
@@ -127,13 +120,13 @@ const Login = ({ lesson = null }) => {
           <p>Please login with Google or Facebook to enroll yourself in <strong>{lesson.title}</strong>.</p>
         </MediumSpace>
       )}
-      <FacebookLogin
+      {/*<FacebookLogin
         appId="665758824197396"
         fields="name,email,picture"
         callback={responseFacebook}
       />
       <br />
-      <br />
+      <br />*/}
       <GoogleLogin
         clientId="898142775962-ib0uaie5botfugao80pjjn9nae1387fl.apps.googleusercontent.com"
         buttonText="LOGIN WITH GOOGLE"
@@ -153,6 +146,7 @@ const GET_ACCOUNT = gql`
       accountId: $accountId
     }){
       id
+      accountId
       email
       nameFirst
       nameLast
@@ -162,24 +156,26 @@ const GET_ACCOUNT = gql`
 `
 
 const ENROLL_STUDENT = gql`
-  mutation createLessonStudents($lessonId: String!, $accountId: String!,$email: String!,$nameFirst: String!,$nameLast: String!,$type: String!) {
-    createLessonStudents(data: {
+  mutation createLessonStudent(
+      $accountId:ID!,
+      $lessonId:ID!,
+      $type:String!
+    ){
+    createLessonStudent(data: {
       status: PUBLISHED
-      lessonId: $lessonId
-      accountId: $accountId
-      hasSubmitted: false
-    }) {
+      account: {
+        connect: {id:$accountId}
+      }
+      lessons: {
+        connect: {id:$lessonId}
+      }
+    }){
       id
     }
     updateAccount(
-      where: { accountId: $accountId }
+      where: { id: $accountId }
       data: {
-      status: PUBLISHED
-      email: $email
-      nameFirst: $nameFirst
-      nameLast: $nameLast
       type: $type
-      accountId: $accountId
     }) {
       id
       accountId
@@ -192,12 +188,19 @@ const ENROLL_STUDENT = gql`
 `;
 
 const CREATE_ACCOUNT = gql`
-  mutation createAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
+  mutation createAccount(
+    $email: String!,
+    $nameFirst: String!,
+    $nameLast: String!,
+    $type: String!,
+    $image: String!,
+    $accountId: String!) {
     createAccount(data: {
       status: PUBLISHED
       email: $email
       nameFirst: $nameFirst
       nameLast: $nameLast
+      image: $image
       type: $type
       accountId: $accountId
     }) {
@@ -205,6 +208,7 @@ const CREATE_ACCOUNT = gql`
       accountId
       nameFirst
       nameLast
+      image
       email
       type
     }
@@ -212,7 +216,13 @@ const CREATE_ACCOUNT = gql`
 `
 
 const UPDATE_ACCOUNT = gql`
-  mutation updateAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
+  mutation updateAccount(
+    $email: String!,
+    $nameFirst: String!,
+    $nameLast: String!,
+    $image: String!,
+    $type: String!,
+    $accountId: String!) {
     updateAccount(
       where: { accountId: $accountId }
       data: {
@@ -220,6 +230,7 @@ const UPDATE_ACCOUNT = gql`
       email: $email
       nameFirst: $nameFirst
       nameLast: $nameLast
+      image: $image
       type: $type
       accountId: $accountId
     }) {
@@ -227,6 +238,7 @@ const UPDATE_ACCOUNT = gql`
       accountId
       nameFirst
       nameLast
+      image
       email
       type
     }

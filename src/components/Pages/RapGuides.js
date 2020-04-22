@@ -1,30 +1,40 @@
 import React, { useEffect, useState } from 'react'
 import { StyledContent, Heading, FourGrid, MediumSpace } from '../../styles/PageStyles'
 import VideoThumb from '../Guide/VideoThumb'
-import { getLocalStorage } from '../../utilities/LocalStorage'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import TagCloud from '../Guide/TagCloud'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { useQuery } from '@apollo/react-hooks'
+import { GET_ALL_GUIDES } from '../../queries/guides'
 
 export const Home = () => {
 
   /* Queries */
   const { loading, data: guides } = useQuery(GET_ALL_GUIDES);
-  const { loading: topics_loading, data: topicses } = useQuery(GET_TOPICS, {
-    variables: {
-      max: 10
-    }
-  });
+
+  /* State */
+  const [topics, setTopics] = useState([]);
 
   /* Functions */
   function selectTag(tag) {
     console.log(tag);
   }
 
-  if (loading || topics_loading) return null
+  /* Effects */
+  useEffect(() => {
+    if (!guides) return
+    let topicsArr = []
+    guides.guides.map(guide => {
+      return topicsArr = [
+        ...topicsArr,
+        ...guide.topics
+      ]
+    })
+    setTopics(topicsArr);
+  }, [guides])
+
+  if (loading) return null
   return (
     <StyledContent>
       <Heading>
@@ -35,7 +45,7 @@ export const Home = () => {
         </Search>
       </Heading>
 
-      <TagCloud selectTag={selectTag} tags={topicses.topicses} />
+      <TagCloud selectTag={selectTag} tags={topics} />
 
       <MediumSpace>
         <h1>Rap Guides</h1>
@@ -48,7 +58,7 @@ export const Home = () => {
             id={guide.id}
             title={guide.videoTitle}
             thumbnail={guide.videoThumb}
-            topics={guide.topicses} />)
+            topics={guide.topics} />)
         })}
       </FourGrid>
     </StyledContent>
@@ -100,30 +110,3 @@ const Search = styled.div`
   }
 `
 
-const GET_TOPICS = gql`
-  query getTopics($max: Int!) {
-    topicses(first:$max){
-      id
-      topic
-      lessons {
-        id
-      }
-    }
-  }
-`
-
-const GET_ALL_GUIDES = gql`
-  query getGuides {
-    guides {
-      id
-      videoId
-      videoUrl
-      videoTitle
-      videoThumb
-      topicses {
-        id
-        topic
-      }
-    }
-  }
-`

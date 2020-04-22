@@ -60,18 +60,13 @@ const StyledVideoThumb = styled.div`
   }
 
   .video_link:hover {
-
     img {
       transform: scale(1.1);
-    }
-
-    h4 {
-      letter-spacing: 1px;
     }
   }
 
   h4 {
-    margin: 1rem 0;
+    margin: 1rem auto;
     font-size: 1.8rem;
     transition: all .3s ease;
     font-weight: 400;

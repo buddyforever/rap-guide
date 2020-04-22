@@ -98,7 +98,7 @@ export const Profile = () => {
           <label>Email</label>
           <input type="text" placeholder="email" disabled value={email} />
         </FormBlock>
-        <FormBlock>
+        <FormBlock className={email === 'jessejburton@gmail.com' ? '' : 'hidden'}>
           <label>Account Type</label>
           <select value={type} onChange={(e) => setType(e.target.value)}>
             <option value="administrator">Administrator</option>

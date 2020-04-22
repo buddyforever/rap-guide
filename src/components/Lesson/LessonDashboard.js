@@ -2,18 +2,21 @@ import React, { useState, useEffect, useContext } from 'react'
 import { StyledContent, Heading, Split, StyledVideo, LargeSpace, ActivityList } from '../../styles/PageStyles'
 import { Button, Autoreply, FormBlock } from '../../styles/FormStyles'
 import { Link } from 'react-router-dom'
-import { getLocalStorage } from '../../utilities/LocalStorage'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
-import { LessonContext } from '../../context/LessonContext'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
-const EditLesson = () => {
+const LessonDashboard = ({ id }) => {
 
-  const [video, setVideo] = useState();
-
-  const { lesson, setLesson } = useContext(LessonContext);
+  /* Queries */
+  const { loading, data } = useQuery(GET_LESSON_BY_ID, {
+    variables: {
+      id
+    }
+  });
 
   let domain
   if (window.location.port) {
@@ -22,130 +25,123 @@ const EditLesson = () => {
     domain = window.location.protocol + "//" + window.location.hostname;
   }
 
-  const [lessonSignupUrl, setLessonSignupUrl] = useState(domain + "/lesson/signup/" + lesson.lessonId);
+  const [lessonSignupUrl, setLessonSignupUrl] = useState("");
   const [copied, setCopied] = useState(false);
-  const [students, setStudents] = useState(lesson.students || [])
-
-  function loadVideo() {
-    if (getLocalStorage("guides")) {
-      setVideo(getLocalStorage("guides").filter(guide => guide.videoId === lesson.videoId)[0]);
-    }
-  }
 
   useEffect(() => {
-    loadVideo();
-  }, []);
+    if (!data) return
+    setLessonSignupUrl(domain + "/lesson/signup/" + data.lesson.id)
+  }, [data]);
 
+  if (loading) return null
   return (
     <StyledContent>
-      {lesson &&
-        <>
-          <Heading>
-            <h1>Educator Dashboard</h1>
-          </Heading>
-          {copied && (
-            <Autoreply
-              initial={{ height: 0 }}
-              animate={{ height: "auto" }}
-            >
-              <p>The signup url for this lesson has been copied to your clipboard.</p>
-              <p style={{ "fontStyle": "italic", "fontSize": "1.2rem" }}>{lessonSignupUrl}</p>
-            </Autoreply>
-          )}
-          <Heading>
-            <Split>
+      <Heading>
+        <h1>Educator Dashboard</h1>
+      </Heading>
+      {copied && (
+        <Autoreply
+          initial={{ height: 0 }}
+          animate={{ height: "auto" }}
+        >
+          <p>The signup url for this lesson has been copied to your clipboard.</p>
+          <p style={{ "fontStyle": "italic", "fontSize": "1.2rem" }}>{lessonSignupUrl}</p>
+        </Autoreply>
+      )}
+      <Heading>
+        <Split>
+          <div>
+            <h2>{data.lesson.lessonTitle}</h2>
+          </div>
+          <div style={{ display: "flex", "justifyContent": "flex-end" }}>
+            <CopyToClipboard
+              text={lessonSignupUrl}
+              onCopy={() => setCopied(true)}>
               <div>
-                <h2>{lesson.title}</h2>
-              </div>
-              <div style={{ display: "flex", "justifyContent": "flex-end" }}>
-                <CopyToClipboard
-                  text={lessonSignupUrl}
-                  onCopy={() => setCopied(true)}>
-                  <div>
-                    <input
-                      type="hidden"
-                      readonly
-                      value={lessonSignupUrl}
-                    />
-                    <Button
-                      title="Click to copy the signup url to your clipboard"
-                      style={{ marginRight: "1rem" }}
-                      onClick={(e) => e.preventDefault()}>
-                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+                <input
+                  type="hidden"
+                  readOnly
+                  value={lessonSignupUrl}
+                />
+                <Button
+                  title="Click to copy the signup url to your clipboard"
+                  style={{ marginRight: "1rem" }}
+                  onClick={(e) => e.preventDefault()}>
+                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
                     </Button>
-                  </div>
-                </CopyToClipboard>
-                <Link to={"/lesson/edit/" + lesson.lessonId}>
-                  <Button>Edit Lesson</Button>
-                </Link>
               </div>
-            </Split>
-          </Heading>
-          <LargeSpace>
-            <Split>
-              <div>
-                <p><Data>{lesson.students ? lesson.students.length : 0}/{lesson.maxStudents}</Data> <span>Students enrolled</span></p>
-                <p><Data>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</Data> Lyrics assigned</p>
-                <p><Data>{lesson.annotations.length}</Data> Submitted annotations</p>
-              </div>
-              <div>
-                <h2>Recent Activity</h2>
-                <ActivityList>
-                  <li><a href="mailto:jessejburton@gmail.com">jessejburton@gmail.com</a> just enrolled in your course.</li>
-                  <li><a href="mailto:jessejburton@gmail.com">jessejburton@gmail.com</a> just submitted an <a href="#">annotation</a>.</li>
-                </ActivityList>
-              </div>
-            </Split>
-          </LargeSpace>
-          <LargeSpace>
-            <Heading>
-              <h2>Students</h2>
-            </Heading>
-            {!students.length && (<div>
-              <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
-              <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
-              <FormBlock style={{ margin: "5rem 0" }}>
-                <CopyToClipboard
-                  text={lessonSignupUrl}
-                  onCopy={() => setCopied(true)}>
-                  <div style={{ display: "flex" }}>
-                    <input
-                      type="text"
-                      readonly
-                      value={lessonSignupUrl}
-                    />
-                    <Button
-                      title="Click to copy the signup url to your clipboard"
-                      style={{ marginLeft: "1rem", width: "200px" }}
-                      onClick={(e) => e.preventDefault()}>
-                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+            </CopyToClipboard>
+            <Link to={"/lesson/edit/" + data.lesson.id}>
+              <Button>Edit Lesson</Button>
+            </Link>
+          </div>
+        </Split>
+      </Heading>
+      <LargeSpace>
+        <Split>
+          <div>
+            <p><Data>{data.lesson.lessonStudents ? data.lesson.lessonStudents.length : 0}/{data.lesson.maxStudents}</Data> <span>Students enrolled</span></p>
+            <p><Data>{data.lesson.lessonLyrics.filter(lyric => lyric.isAssigned).length}/{data.lesson.lessonLyrics.length}</Data> Lyrics assigned</p>
+            <p><Data>{data.lesson.lessonLyrics.annotations ? data.lesson.lessonLyrics.annotations.length : 0}</Data> Submitted annotations</p>
+          </div>
+          <div>
+            {/*
+            <h2>Recent Activity</h2>
+            <ActivityList>
+              <li><a href="mailto:jessejburton@gmail.com">jessejburton@gmail.com</a> just enrolled in your course.</li>
+              <li><a href="mailto:jessejburton@gmail.com">jessejburton@gmail.com</a> just submitted an <a href="#">annotation</a>.</li>
+            </ActivityList>
+            */}
+          </div>
+        </Split>
+      </LargeSpace>
+      <LargeSpace>
+        <Heading>
+          <h2>Students</h2>
+        </Heading>
+        {!data.lesson.lessonStudents.length && (<div>
+          <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
+          <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
+          <FormBlock style={{ margin: "5rem 0" }}>
+            <CopyToClipboard
+              text={lessonSignupUrl}
+              onCopy={() => setCopied(true)}>
+              <div style={{ display: "flex" }}>
+                <input
+                  type="text"
+                  readOnly
+                  value={lessonSignupUrl}
+                />
+                <Button
+                  title="Click to copy the signup url to your clipboard"
+                  style={{ marginLeft: "1rem", width: "200px" }}
+                  onClick={(e) => e.preventDefault()}>
+                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
                     </Button>
-                  </div>
-                </CopyToClipboard>
-              </FormBlock>
-            </div>)}
-            {students.map((student, index) => (
-              <Student key={index}>
-                <div>
-                  <div className="image">
-                    <img src={student.image} alt={student.nameFirst + ' ' + student.nameLast} />
-                  </div>
-                </div>
-                <div>{student.nameFirst} {student.nameLast}</div>
-                <div><a href={`mailto:${student.email}`}>{student.email}</a></div>
-                <div>
-                  {student.submitted.length ? "submitted" : "not submitted"}
-                </div>
-              </Student>
-            ))}
-          </LargeSpace>
-        </>
-      }
+              </div>
+            </CopyToClipboard>
+          </FormBlock>
+        </div>)}
+        {data.lesson.lessonStudents.map(({ account }) => (
+          <Student key={account.id}>
+            <div>
+              <div className="image">
+                <img src={account.image} alt={account.nameFirst + ' ' + account.nameLast} />
+              </div>
+            </div>
+            <div>{account.nameFirst} {account.nameLast}</div>
+            <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
+            <div>
+              {account.annotations.length ? account.annotations.length : "no annotations"}
+            </div>
+          </Student>
+        ))}
+      </LargeSpace>
     </StyledContent>
   )
 }
 
-export default EditLesson;
+export default LessonDashboard;
 
 const Student = styled.div`
   width: 100%;
@@ -193,4 +189,49 @@ const Data = styled.span`
   margin-right: 1rem;
   color: #DD3333;
   font-weight: 700;
+`
+
+const GET_LESSON_BY_ID = gql`
+  query getLesson($id: ID!) {
+    lesson(where: { id: $id }) {
+      id
+      lessonTitle
+      lessonDescription
+      maxStudents
+      account {
+        id
+      }
+      guide {
+        videoTitle
+      }
+      lessonLyrics {
+        lyric {
+          id
+          lyric
+        }
+        annotations {
+          id
+          annotation
+        }
+        isAssigned
+      }
+      lessonStudents {
+        account {
+          id
+          nameFirst
+          nameLast
+          email
+          image
+          annotations {
+            isSubmitted
+            isApproved
+          }
+        }
+      }
+      topics {
+        id
+        topic
+      }
+    }
+  }
 `

@@ -173,6 +173,11 @@ export const AddLesson = () => {
       domain = window.location.protocol + "//" + window.location.hostname;
     }
 
+    let filteredLyrics = lyrics.filter(lyric => {
+      if (!lyric.assigned && !lyric.example) return false
+      return true
+    });
+
     await createLesson({
       variables: {
         lessonTitle,
@@ -183,7 +188,31 @@ export const AddLesson = () => {
         },
         account: {
           id: "ck8qmxihbkhqq0b20saifky4d"
-        }
+        },
+        topics: topics.map(topic => {
+          return {
+            status: "PUBLISHED",
+            topic,
+            guides: {
+              connect: {
+                id: guide.id
+              }
+            }
+          }
+        }),
+        lessonLyrics: filteredLyrics.map(lyric => {
+          return {
+            status: "PUBLISHED",
+            isExample: lyric.example,
+            isAssigned: lyric.assigned,
+            notes: lyric.notes,
+            lyric: {
+              connect: {
+                id: lyric.id
+              }
+            }
+          }
+        })
       }
     }).then(({ data: { createLesson } }) => {
       setLessonSignupUrl(domain + "/lesson/signup/" + createLesson.id);
@@ -588,7 +617,9 @@ const CREATE_LESSON = gql`
     $lessonDescription:String!,
     $maxStudents: Int!,
     $guide: GuideWhereUniqueInput!,
-    $account: AccountWhereUniqueInput!
+    $account: AccountWhereUniqueInput!,
+    $topics: [TopicCreateWithoutLessonsInput!],
+    $lessonLyrics: [LessonLyricCreateWithoutLessonInput!]
   ) {
     createLesson(data: {
       status: PUBLISHED
@@ -597,6 +628,8 @@ const CREATE_LESSON = gql`
       maxStudents: $maxStudents
       guide: { connect: $guide }
       account: { connect: $account }
+      topics: { create: $topics }
+      lessonLyrics: { create: $lessonLyrics }
     }){
     id
     }

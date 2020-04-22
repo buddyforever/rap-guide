@@ -1,83 +1,49 @@
-import React, { useState, useEffect } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { StyledContent, Heading, Thumbnail } from '../../styles/PageStyles'
-import { getLocalStorage } from '../../utilities/LocalStorage'
+import { StyledContent, Heading } from '../../styles/PageStyles'
 import { FourGrid } from '../../styles/PageStyles'
 import { Link } from 'react-router-dom'
+import { useQuery } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
+import { UserContext } from '../../context/UserContext'
 
 export const Lessons = () => {
 
-  const [guides, setGuides] = useState();
-  const [lessons, setLessons] = useState([]);
-  const [profile, setProfile] = useState(getLocalStorage("profile"));
+  /* Context */
+  const { user } = useContext(UserContext);
 
-  /* LESSONS */
-  function loadLessons() {
-    if (guides) {
-      // TODO Get actual data
-      if (getLocalStorage("lessons")) {
-        let filteredLessons = getLocalStorage("lessons");
-
-        if (profile.type === "student") {
-          filteredLessons = filteredLessons.filter(lesson => {
-            if (lesson.students) {
-              if (lesson.students.some(student => student.email === profile.email)) {
-                return true
-              }
-            }
-            return false
-          });
-        }
-
-        setLessons(filteredLessons.map(lesson => {
-          const guide = guides.filter(guide => guide.videoId === lesson.videoId)[0];
-          return {
-            ...lesson,
-            thumbnail: guide.thumbnail,
-            videoTitle: guide.title
-          }
-        }));
-      }
+  /* Queries */
+  const { loading, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
+    variables: {
+      id: user.id
     }
-  }
+  });
 
-  useEffect(() => {
-    loadLessons();
-  }, [guides]);
-
-  /* GUIDES */
-  function loadGuides() {
-    setGuides(getLocalStorage("guides"));
-  }
-
-  useEffect(() => {
-    loadGuides();
-  }, []);
-
+  if (loading) return null
   return (
     <StyledContent>
       <Heading>
         <h1>Lessons</h1>
       </Heading>
-      {lessons.length === 0 && <p>There are no lessons available.</p>}
+      {data.lessons.length === 0 && <p>There are no lessons available.</p>}
       <FourGrid>
-        {lessons.map(lesson => (
-          <StyledVideoThumb>
-            <h4>{lesson.title}</h4>
-            <Link className="video_link" to={`/lesson/${lesson.lessonId}`}>
+        {data.lessons.map(lesson => (
+          <StyledVideoThumb key={lesson.id}>
+            <h4>{lesson.lessonTitle}</h4>
+            <Link className="video_link" to={`/lesson/${lesson.id}`}>
               <div className="video_thumbnail">
-                <img src={lesson.thumbnail} alt={lesson.title} />
+                <img src={lesson.guide.videoThumb} alt={lesson.guide.videoTitle} />
               </div>
-              <h4>{lesson.videoTitle}</h4>
+              <h4>{lesson.guide.videoTitle}</h4>
             </Link>
             <div className="video_details">
               <div style={{ marginBottom: "1rem" }}>
-                <p><strong>Students</strong> <span>{lesson.students ? lesson.students.length : 0}/{lesson.maxStudents}</span></p>
-                <p><strong>Lyrics</strong> <span>{lesson.lyrics.filter(lyric => lyric.assigned).length}/{lesson.lyrics.length}</span></p>
+                <p><strong>Students</strong> <span>{lesson.lessonStudents.length}/{lesson.maxStudents}</span></p>
+                <p><strong>Lyrics</strong> <span>{lesson.lessonLyrics.filter(lyric => lyric.lyric.isAssigned).length}/{lesson.guide.lyrics.length}</span></p>
               </div>
               {
-                lesson.topics.map((topic, index) => {
-                  return (<a href="#" key={index}>{topic}</a>)
+                lesson.topics.map(({ id, topic }) => {
+                  return (<a href="#" key={id}>{topic}</a>)
                 })
               }
             </div>
@@ -114,9 +80,6 @@ const StyledVideoThumb = styled.div`
       transform: scale(1.1);
     }
 
-    h4 {
-      letter-spacing: 1px;
-    }
   }
 
   h4 {
@@ -153,5 +116,56 @@ const StyledVideoThumb = styled.div`
       font-size: 2rem;
     }
   }
-
 `;
+
+const GET_LESSONS_BY_ACCOUNT = gql`
+  query getLessons($id: ID!) {
+    lessons(where: {
+      OR: [
+        { account: { id: $id } }
+        { lessonStudents_some: {
+            account: {
+              id: $id
+            }
+        }}
+      ]
+    }) {
+      id
+      lessonTitle
+      lessonDescription
+      maxStudents
+      lessonStudents {
+        account {
+          id
+        }
+      }
+      account {
+        id
+      }
+      guide {
+        videoTitle
+        videoThumb
+        lyrics {
+          id
+          lyric
+        }
+      }
+      lessonLyrics {
+        lyric {
+          id
+          lyric
+        }
+        isAssigned
+      }
+      lessonStudents {
+        account {
+          email
+        }
+      }
+      topics {
+        id
+        topic
+      }
+    }
+  }
+`

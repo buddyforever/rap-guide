@@ -1,52 +1,107 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { Heading, MediumSpace, StyledContent } from '../../styles/PageStyles'
+import { Heading, MediumSpace, StyledContent, HtmlContent } from '../../styles/PageStyles'
 import DisplayGuide from '../Guide/DisplayGuide'
-import { getLocalStorage, setLocalStorage } from '../../utilities/LocalStorage'
-import { LessonContext } from '../../context/LessonContext'
 import { UserContext } from '../../context/UserContext'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import gql from 'graphql-tag'
 
-const DisplayLesson = () => {
+const DisplayLesson = ({ id }) => {
 
-  const { lesson, setLesson } = useContext(LessonContext);
-  const { user } = useContext(UserContext);
+  /* Context */
+  const { user } = useContext(UserContext)
 
-  // Need to make this accept an annotation object containing the lyric ID
-  // User, annotation, date etc and it needs to go to lesson.annotations
-  // Then the hover in DisplayGuide.js needs to check lesson.annotations to display
-  // instead of the lyric.
-  function handleAddAnnotation(annotation, lyric) {
-    let annotationObj = {
-      userId: user.id,
-      annotation: annotation,
-      lyricId: lyric.id,
-      status: "saved"
+  /* Queries */
+  const { loading, data, refetch } = useQuery(GET_LESSON_BY_ID, {
+    variables: {
+      id
     }
-    lesson.annotations.push(annotationObj);
-    setLesson({ ...lesson });
-    saveLessons(); // TODO this will update the database
-  }
+  });
+  const [createAnnotation] = useMutation(CREATE_ANNOTATION)
 
-  function saveLessons() {
-    const newLessons = getLocalStorage("lessons").map(l => {
-      if (l.id === lesson.id) {
-        return lesson;
-      } else {
-        return l
+  function handleAddAnnotation(annotation) {
+    createAnnotation({
+      variables: {
+        isSubmitted: annotation.isSubmitted,
+        account: user.id,
+        lessonLyric: annotation.lessonLyricId
       }
-    });
-    setLocalStorage("lessons", JSON.stringify(newLessons));
+    })
   }
 
+  if (loading) return null
   return (
     <StyledContent>
       <Heading>
-        <h1>{lesson.title}</h1>
+        <h1>{data.lesson.lessonTitle}</h1>
       </Heading>
-      <MediumSpace dangerouslySetInnerHTML={{ __html: lesson.details }} />
+      <HtmlContent>
+        <MediumSpace dangerouslySetInnerHTML={{ __html: data.lesson.lessonDescription }} />
+      </HtmlContent>
       <hr />
-      <DisplayGuide guide={lesson.guide} annotations={lesson.annotations} addAnnotation={handleAddAnnotation} />
+      <DisplayGuide guide={data.lesson.guide} addAnnotation={handleAddAnnotation} refetch={refetch} />
     </StyledContent>
   )
 }
 
 export default DisplayLesson
+
+const GET_LESSON_BY_ID = gql`
+  query getLesson($id: ID!) {
+    lesson(where: { id: $id }) {
+      id
+      lessonTitle
+      lessonDescription
+      maxStudents
+      account {
+        id
+      }
+      guide {
+        videoUrl
+        videoTitle
+        topics {
+          id
+          topic
+        }
+        lyrics {
+          id
+          lyric
+          lessonLyrics(where: { lesson: {id: $id } }) {
+            id
+            annotations {
+              id
+              annotation
+            }
+            isAssigned
+            isExample
+            notes
+          }
+        }
+      }
+      topics {
+        id
+        topic
+      }
+    }
+  }
+`
+
+const CREATE_ANNOTATION = gql`
+  mutation createAnnotation(
+    $isSubmitted: Boolean!,
+    $account: ID!,
+    $lessonLyric: ID!
+  ){
+    createAnnotation(data: {
+      status:PUBLISHED
+      isSubmitted: $isSubmitted
+      account: {
+        connect: { id: $account }
+      }
+      lessonLyric: {
+        connect: { id: $lessonLyric }
+      }
+    }){
+      id
+    }
+  }
+`

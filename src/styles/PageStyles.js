@@ -9,6 +9,16 @@ export const StyledContent = styled.div`
   }
 `
 
+export const HtmlContent = styled.div`
+  p {
+    margin: 1rem 0;
+  }
+  ul {
+    margin: 1rem 0;
+    padding-left: 3rem;
+  }
+`
+
 export const LargeSpace = styled.div`
   margin: 5rem 0;
 `

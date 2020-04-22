@@ -6,16 +6,13 @@ import AddAnnotation from '../Annotation/AddAnnotation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 import { motion } from 'framer-motion'
-import { LessonContext } from '../../context/LessonContext'
 
 const variants = {
   open: { x: "-50vw" },
   closed: { x: "100%" },
 }
 
-const DisplayGuide = ({ annotations, addAnnotation }) => {
-
-  const { lesson, setLesson } = useContext(LessonContext);
+const DisplayGuide = ({ guide, addAnnotation, refetch }) => {
 
   const [annotationTop, setAnnotationTop] = useState("15rem");
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
@@ -26,26 +23,33 @@ const DisplayGuide = ({ annotations, addAnnotation }) => {
     setIsAnnotationOpen(false);
   }
 
-  function handleAddAnnotation(annotation) {
-    addAnnotation(annotation, selectedLyric);
+  async function handleAddAnnotation(annotation) {
+    await addAnnotation(annotation);
+    refetch();
   }
 
   function handleLyricClick(lyric) {
-    if (lyric.example) {
+    if (!lyric.lessonLyrics.length) return
+    let lessonLyric = lyric.lessonLyrics[0]
+    let isExample = lessonLyric.isExample
+    if (isExample) {
       setSelectedAnnotation({
-        annotation: lyric.notes,
+        annotation: lessonLyric.notes,
       })
     } else {
-      setSelectedLyric(lyric);
+      setSelectedLyric(lessonLyric);
       setIsAnnotationOpen(true);
     }
   }
 
   function handleLyricHover(lyric, position) {
-    if (lyric.example) {
-      showAnnotation(lyric.notes, position);
-    } else if (lyric.annotations && lyric.annotations.length) {
-      showAnnotation(lyric.annotations[0], position);
+    if (!lyric.lessonLyrics.length) return
+    let lessonLyric = lyric.lessonLyrics[0]
+    let isExample = lessonLyric.isExample
+    if (isExample) {
+      showAnnotation(lessonLyric.notes, position);
+    } else if (lessonLyric.annotations.length) {
+      showAnnotation(lessonLyric.annotations[0], position);
     }
   }
 
@@ -58,29 +62,38 @@ const DisplayGuide = ({ annotations, addAnnotation }) => {
     <div>
       <div>
         <Heading>
-          <h1>{lesson.guide.title}</h1>
+          <h1>{guide.videoTitle}</h1>
         </Heading>
         <MediumSpace>
           <StyledVideo>
             <div className="video">
-              <iframe title={lesson.guide.title} width="100%" src={lesson.guide.embedUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+              <iframe title={guide.videoTitle} width="100%" src={guide.videoUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
             </div>
           </StyledVideo>
         </MediumSpace>
         <StyledColumns>
           <div>
-            {lesson.guide.lyrics.map(lyric => (
-              <StyledLyric
-                key={lyric.id}
-                onClick={() => handleLyricClick(lyric)}
-                onMouseOver={(e) => {
-                  let position = window.pageYOffset + e.target.getBoundingClientRect().top + "px";
-                  handleLyricHover(lyric, position);
-                }}
-                className={lyric.assigned && !lyric.example ? "assigned" : lyric.example ? "example" : ""}>
-                {lyric.lyric} {lyric.example && <FontAwesomeIcon icon={faStar} />}
-              </StyledLyric>
-            ))}
+            {guide.lyrics.map(lyric => {
+              let isAssigned = false
+              let isExample = false
+              if (lyric.lessonLyrics.length) {
+                isAssigned = lyric.lessonLyrics[0].isAssigned
+                isExample = lyric.lessonLyrics[0].isExample
+              }
+              return (
+                <StyledLyric
+                  key={lyric.id}
+                  onClick={() => handleLyricClick(lyric)}
+                  onMouseOver={(e) => {
+                    let position = window.pageYOffset + e.target.getBoundingClientRect().top + "px";
+                    handleLyricHover(lyric, position);
+                  }}
+                  className={isAssigned && !isExample ? "assigned" : isExample ? "example" : ""}>
+                  {lyric.lyric} {isExample && <FontAwesomeIcon icon={faStar} />}
+                </StyledLyric>
+              )
+            })
+            }
           </div>
           <div>
             {selectedAnnotation &&
@@ -102,7 +115,7 @@ const DisplayGuide = ({ annotations, addAnnotation }) => {
           transition={{ damping: 300 }} >
           {selectedLyric &&
             <AddAnnotation
-              lyric={selectedLyric}
+              lessonLyric={selectedLyric}
               closeModal={closeModal}
               saveAnnotation={handleAddAnnotation} />
           }

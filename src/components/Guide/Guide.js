@@ -61,7 +61,7 @@ export const Guide = () => {
         <StyledColumns>
           <div>
             <h3>Lyrics</h3>
-            {guide.lyricses.map(lyric => (
+            {guide.lyrics.map(lyric => (
               <StyledLyric>{lyric.lyric}</StyledLyric>
             ))}
           </div>

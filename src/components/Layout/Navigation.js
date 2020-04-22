@@ -38,7 +38,7 @@ const StyledNavigation = styled.div`
   position: fixed;
   height: 100vh;
   top: 0;
-  left: -30rem;
+  right: -30rem;
   background-color: black;
   color: white;
   display: flex;
@@ -49,7 +49,7 @@ const StyledNavigation = styled.div`
   z-index: 5000;
 
   &.open {
-    left: 0;
+    right: 0;
   }
 
   a,
@@ -61,17 +61,18 @@ const StyledNavigation = styled.div`
     position: relative;
     display: inline;
     transition: all .2s ease;
+    text-align: center;
   }
 
   button {
     background-color: transparent;
     border: none;
     text-transform: uppercase;
-    text-align: left;
     cursor: pointer;
     font-size: 1.6rem;
     font-weight: 300;
     font-family: 'Ubuntu', sans-serif;
+    text-align: center;
   }
 
   a.active {

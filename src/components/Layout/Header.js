@@ -23,34 +23,31 @@ export const Header = () => {
   return (
     <>
       <StyledHeader>
-        <div className="logo">
-          <button
-            className={menuIsOpen ? "hamburger hamburger--collapse is-active" : "hamburger hamburger--collapse"}
-            type="button"
-            onClick={toggleMenu}
-          >
-            <span className="hamburger-box">
-              <span className="hamburger-inner"></span>
-            </span>
-          </button>
-          <div className="logo__image">
+        <div className="wrapper">
+          <div className="logo">
             <Link to="/">
               <Logo alt="RapGuide.com" />
             </Link>
           </div>
-          {user && (
-            <div className="profile">
-              <Link to="/profile">
-                <span className="profile__image">
-                  <img src={user.image} alt="Profile Image" />
-                </span> <span>{user.nameFirst} {user.nameLast}<br /><em style={{ fontSize: "1.2rem" }}>{user.type}</em></span>
-              </Link>
-            </div>
-          )}
-        </div>
-        <div className="header-right">
-          <div className="header-right__social">
-            <SocialIcons />
+          <div className="header-right">
+            {user && (
+              <div className="profile">
+                <Link to="/profile">
+                  <span className="profile__image">
+                    <img src={user.image} alt="Profile Image" />
+                  </span> <span>{user.nameFirst} {user.nameLast}<br /><em style={{ fontSize: "1.2rem" }}>{user.type}</em></span>
+                </Link>
+              </div>
+            )}
+            <button
+              className={menuIsOpen ? "hamburger hamburger--collapse is-active" : "hamburger hamburger--collapse"}
+              type="button"
+              onClick={toggleMenu}
+            >
+              <span className="hamburger-box">
+                <span className="hamburger-inner"></span>
+              </span>
+            </button>
           </div>
         </div>
       </StyledHeader>
@@ -68,14 +65,28 @@ const StyledHeader = styled.header`
   background-color: #0A0405;
   color: white;
   margin-bottom: 5rem;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
   z-index: 5000;
 
-  .logo {
+  .wrapper {
+    max-width: 1200px;
+    padding: 0 3rem;
+    margin: 0 auto;
     display: flex;
     align-items: center;
+    justify-content: space-between;
+  }
+
+  .menu__button {
+    position: absolute;
+    right: 3rem;
+    top: 2rem;
+  }
+
+  .profile {
+    padding-right: 3rem;
+    @media only screen and (max-width: 575px) {
+      display: none;
+    }
   }
 
   .profile a {
@@ -88,12 +99,7 @@ const StyledHeader = styled.header`
 
   .header-right {
     display: flex;
-  }
-
-  .header-right__social {
-    padding: 0 4rem;
-    text-align: right;
-    margin-top: 7px;
+    align-items: center;
   }
 
   img {
