@@ -7,6 +7,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import TagCloud from '../Guide/TagCloud'
 import { useQuery } from '@apollo/react-hooks'
 import { GET_ALL_GUIDES } from '../../queries/guides'
+import Loader from '../Loader'
 
 export const Home = () => {
 
@@ -34,7 +35,7 @@ export const Home = () => {
     setTopics(topicsArr);
   }, [guides])
 
-  if (loading) return null
+  if (loading) return <Loader />
   return (
     <StyledContent>
       <Heading>

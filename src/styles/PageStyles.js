@@ -9,6 +9,15 @@ export const StyledContent = styled.div`
   }
 `
 
+export const CenteredContent = styled.div`
+  min-height: 50vh;
+  height: 100%;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 export const HtmlContent = styled.div`
   p {
     margin: 1rem 0;

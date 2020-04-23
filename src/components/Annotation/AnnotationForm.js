@@ -5,23 +5,29 @@ import { Editor } from '@tinymce/tinymce-react';
 
 export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
 
-  const [annotation, setAnnotation] = useState("");
+  const [annotation, setAnnotation] = useState({
+    annotation: lessonLyric.annotations.length ? lessonLyric.annotations[0].annotation : "<p></p>",
+    id: lessonLyric.annotations.length ? lessonLyric.annotations[0].id : null
+  });
 
   function handleSaveAnnotation(e) {
     e.preventDefault();
     saveAnnotation({
       lessonLyricId: lessonLyric.id,
       annotation,
-      isSubmitted: false
+      isSubmitted: false,
     });
+    cancel();
   }
 
   function handleSubmitAnnotation(e) {
     e.preventDefault();
     saveAnnotation({
+      lessonLyricId: lessonLyric.id,
       annotation,
-      isSubmitted: true
+      isSubmitted: true,
     });
+    cancel();
   }
 
   function handleCancel(e) {
@@ -30,7 +36,10 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
   }
 
   function handleEditorChange(content, editor) {
-    setAnnotation(content);
+    setAnnotation(prevState => ({
+      ...prevState,
+      annotation: content,
+    }));
   }
 
   return (
@@ -45,7 +54,7 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
       <FormBlock>
         <label>Annotation</label>
         <Editor
-          initialValue="<p></p>"
+          initialValue={annotation.annotation}
           apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
           init={{
             height: 300,

@@ -1,23 +1,12 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import { Button } from "../../styles/FormStyles"
 import { Heading, StyledContent, LargeSpace, StyledVideo } from "../../styles/PageStyles"
-import auth from '../../auth/auth'
-import { getLocalStorage } from '../../utilities/LocalStorage'
-import { Modal } from "../../styles/ModalStyles"
-import AddAnnotation from '../Annotation/AddAnnotation'
-import { motion } from 'framer-motion'
-import Lyric from '../Guide/Lyric'
 import { UserContext } from '../../context/UserContext'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
-
-
-const variants = {
-  open: { x: "-50vw" },
-  closed: { x: "100%" },
-}
+import { useQuery } from '@apollo/react-hooks'
+import { GET_GUIDE_BY_ID } from '../../queries/guides'
+import Loader from '../Loader'
 
 export const Guide = () => {
 
@@ -34,10 +23,8 @@ export const Guide = () => {
     }
   });
 
-
-  if (loading) return false;
+  if (loading) return <Loader />;
   const { guide } = data;
-  console.log(data);
   return (
     <StyledContent>
       <div>
@@ -60,13 +47,12 @@ export const Guide = () => {
 
         <StyledColumns>
           <div>
-            <h3>Lyrics</h3>
             {guide.lyrics.map(lyric => (
               <StyledLyric>{lyric.lyric}</StyledLyric>
             ))}
           </div>
           <div>
-            <h3>Annotations</h3>
+
           </div>
         </StyledColumns>
       </div>
@@ -126,22 +112,3 @@ const StyledLyric = styled.div`
 
 `
 
-const GET_GUIDE_BY_ID = gql`
-  query getGuide($id:ID!) {
-    guide(where: {id:$id}) {
-      id
-      videoId
-      videoUrl
-      videoTitle
-      videoThumb
-      topics {
-        id
-        topic
-      }
-      lyrics {
-        id
-        lyric
-      }
-    }
-  }
-`

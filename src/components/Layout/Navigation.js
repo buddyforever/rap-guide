@@ -44,12 +44,20 @@ const StyledNavigation = styled.div`
   display: flex;
   flex-direction: column;
   width: 30rem;
-  margin-top: 10rem;
+  margin-top: 9.9rem;
   transition: all .4s ease-in-out;
   z-index: 5000;
 
+  @media only screen and (max-width: 400px) {
+    left: 100vw;
+    width: 100vw;
+  }
+
   &.open {
     right: 0;
+    @media only screen and (max-width: 400px) {
+      left: 0;
+    }
   }
 
   a,

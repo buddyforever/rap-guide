@@ -5,7 +5,7 @@ export const Modal = styled(motion.div)`
   position: fixed;
   top: 0;
   padding: 2.5rem;
-  z-index: 5000;
+  z-index: 1050;
   left: 100%;
   min-height: 100vh;
   width: 50vw;

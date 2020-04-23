@@ -5,7 +5,8 @@ import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
 import Message from '../Layout/Message'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from '../../queries/accounts'
+import Loader from '../Loader'
 
 export const Profile = () => {
 
@@ -74,7 +75,7 @@ export const Profile = () => {
     }
   }, [data])
 
-  if (loading) return null
+  if (loading) return <Loader />
   return (
     <StyledContent>
       <Heading>
@@ -115,42 +116,6 @@ export const Profile = () => {
     </StyledContent>
   )
 }
-
-const GET_ACCOUNT_BY_EMAIL = gql`
-  query getAccount($email: String!) {
-    account(where: {
-      email: $email
-    }){
-      id
-      accountId
-      email
-      nameFirst
-      nameLast
-      type
-    }
-  }
-`
-
-const UPDATE_ACCOUNT = gql`
-  mutation updateAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
-    updateAccount(
-      where: { accountId: $accountId }
-      data: {
-      status: PUBLISHED
-      email: $email
-      nameFirst: $nameFirst
-      nameLast: $nameLast
-      type: $type
-    }) {
-      id
-      accountId
-      nameFirst
-      nameLast
-      email
-      type
-    }
-  }
-`
 
 export default Profile;
 

@@ -1,9 +1,10 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import { Heading, MediumSpace, StyledContent, HtmlContent } from '../../styles/PageStyles'
 import DisplayGuide from '../Guide/DisplayGuide'
 import { UserContext } from '../../context/UserContext'
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
+import { GET_LESSON_BY_ID } from '../../queries/lessons'
 
 const DisplayLesson = ({ id }) => {
 
@@ -17,15 +18,31 @@ const DisplayLesson = ({ id }) => {
     }
   });
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
+  const [updateAnnotation] = useMutation(UPDATE_ANNOTATION)
 
-  function handleAddAnnotation(annotation) {
-    createAnnotation({
-      variables: {
-        isSubmitted: annotation.isSubmitted,
-        account: user.id,
-        lessonLyric: annotation.lessonLyricId
-      }
-    })
+  function handleAddAnnotation({ annotation, isSubmitted, lessonLyricId }) {
+    if (!annotation.id) {
+      createAnnotation({
+        variables: {
+          isSubmitted: isSubmitted,
+          account: user.id,
+          lessonLyric: lessonLyricId,
+          annotation: annotation.annotation
+        }
+      }).then((createAnnotation) => {
+        refetch()
+      })
+    } else {
+      updateAnnotation({
+        variables: {
+          id: annotation.id,
+          isSubmitted: isSubmitted,
+          annotation: annotation.annotation
+        }
+      }).then((updateAnnotation) => {
+        refetch()
+      })
+    }
   }
 
   if (loading) return null
@@ -38,68 +55,48 @@ const DisplayLesson = ({ id }) => {
         <MediumSpace dangerouslySetInnerHTML={{ __html: data.lesson.lessonDescription }} />
       </HtmlContent>
       <hr />
-      <DisplayGuide guide={data.lesson.guide} addAnnotation={handleAddAnnotation} refetch={refetch} />
+      <DisplayGuide guide={data.lesson.guide} addAnnotation={handleAddAnnotation} />
     </StyledContent>
   )
 }
 
 export default DisplayLesson
 
-const GET_LESSON_BY_ID = gql`
-  query getLesson($id: ID!) {
-    lesson(where: { id: $id }) {
-      id
-      lessonTitle
-      lessonDescription
-      maxStudents
-      account {
-        id
-      }
-      guide {
-        videoUrl
-        videoTitle
-        topics {
-          id
-          topic
-        }
-        lyrics {
-          id
-          lyric
-          lessonLyrics(where: { lesson: {id: $id } }) {
-            id
-            annotations {
-              id
-              annotation
-            }
-            isAssigned
-            isExample
-            notes
-          }
-        }
-      }
-      topics {
-        id
-        topic
-      }
-    }
-  }
-`
-
 const CREATE_ANNOTATION = gql`
   mutation createAnnotation(
     $isSubmitted: Boolean!,
     $account: ID!,
+    $annotation: String!,
     $lessonLyric: ID!
   ){
     createAnnotation(data: {
       status:PUBLISHED
       isSubmitted: $isSubmitted
+      annotation: $annotation
       account: {
         connect: { id: $account }
       }
       lessonLyric: {
         connect: { id: $lessonLyric }
       }
+    }){
+      id
+    }
+  }
+`
+
+const UPDATE_ANNOTATION = gql`
+  mutation updateAnnotation(
+    $id: ID,
+    $isSubmitted: Boolean!,
+    $annotation: String!,
+  ){
+    updateAnnotation(
+      where: { id: $id },
+      data: {
+      status:PUBLISHED
+      isSubmitted: $isSubmitted
+      annotation: $annotation
     }){
       id
     }

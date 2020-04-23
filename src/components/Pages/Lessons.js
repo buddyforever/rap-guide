@@ -1,11 +1,12 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { StyledContent, Heading } from '../../styles/PageStyles'
+import Loader from '../Loader'
 import { FourGrid } from '../../styles/PageStyles'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
 import { UserContext } from '../../context/UserContext'
+import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
 
 export const Lessons = () => {
 
@@ -19,7 +20,7 @@ export const Lessons = () => {
     }
   });
 
-  if (loading) return null
+  if (loading) return <Loader />
   return (
     <StyledContent>
       <Heading>
@@ -39,7 +40,7 @@ export const Lessons = () => {
             <div className="video_details">
               <div style={{ marginBottom: "1rem" }}>
                 <p><strong>Students</strong> <span>{lesson.lessonStudents.length}/{lesson.maxStudents}</span></p>
-                <p><strong>Lyrics</strong> <span>{lesson.lessonLyrics.filter(lyric => lyric.lyric.isAssigned).length}/{lesson.guide.lyrics.length}</span></p>
+                <p><strong>Lyrics</strong> <span>{lesson.lessonLyrics.filter(lyric => lyric.isAssigned).length}/{lesson.guide.lyrics.length}</span></p>
               </div>
               {
                 lesson.topics.map(({ id, topic }) => {
@@ -118,54 +119,3 @@ const StyledVideoThumb = styled.div`
   }
 `;
 
-const GET_LESSONS_BY_ACCOUNT = gql`
-  query getLessons($id: ID!) {
-    lessons(where: {
-      OR: [
-        { account: { id: $id } }
-        { lessonStudents_some: {
-            account: {
-              id: $id
-            }
-        }}
-      ]
-    }) {
-      id
-      lessonTitle
-      lessonDescription
-      maxStudents
-      lessonStudents {
-        account {
-          id
-        }
-      }
-      account {
-        id
-      }
-      guide {
-        videoTitle
-        videoThumb
-        lyrics {
-          id
-          lyric
-        }
-      }
-      lessonLyrics {
-        lyric {
-          id
-          lyric
-        }
-        isAssigned
-      }
-      lessonStudents {
-        account {
-          email
-        }
-      }
-      topics {
-        id
-        topic
-      }
-    }
-  }
-`

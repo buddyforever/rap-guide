@@ -15,7 +15,8 @@ import { faComment, faCopy, faStar } from '@fortawesome/free-solid-svg-icons'
 import { Redirect } from 'react-router-dom'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { GET_GUIDE_BY_ID } from '../../queries/guides'
+import { CREATE_LESSON } from '../../queries/lessons'
 import Message from '../Layout/Message'
 import { UserContext } from '../../context/UserContext'
 
@@ -39,7 +40,7 @@ export const AddLesson = () => {
   let { id } = useParams(); // Guide
 
   /* Queries */
-  const { loading, data } = useQuery(GET_GUIDE, {
+  const { loading, data } = useQuery(GET_GUIDE_BY_ID, {
     variables: {
       id: id
     }
@@ -591,47 +592,3 @@ const StyledLyric = styled.div`
 
 `
 
-const GET_GUIDE = gql`
-  query getGuide($id:ID!) {
-    guide(where: {id:$id}) {
-      id
-      videoId
-      videoUrl
-      videoTitle
-      videoThumb
-      topics {
-        id
-        topic
-      }
-      lyrics {
-        id
-        lyric
-      }
-    }
-  }
-`
-
-const CREATE_LESSON = gql`
-  mutation createLesson(
-    $lessonTitle:String!,
-    $lessonDescription:String!,
-    $maxStudents: Int!,
-    $guide: GuideWhereUniqueInput!,
-    $account: AccountWhereUniqueInput!,
-    $topics: [TopicCreateWithoutLessonsInput!],
-    $lessonLyrics: [LessonLyricCreateWithoutLessonInput!]
-  ) {
-    createLesson(data: {
-      status: PUBLISHED
-      lessonTitle: $lessonTitle
-      lessonDescription: $lessonDescription
-      maxStudents: $maxStudents
-      guide: { connect: $guide }
-      account: { connect: $account }
-      topics: { create: $topics }
-      lessonLyrics: { create: $lessonLyrics }
-    }){
-    id
-    }
-  }
-`

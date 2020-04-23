@@ -1,13 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react'
-import { StyledContent, Heading, Split, StyledVideo, LargeSpace, ActivityList } from '../../styles/PageStyles'
+import React, { useState, useEffect } from 'react'
+import { StyledContent, Heading, Split, LargeSpace, ActivityList } from '../../styles/PageStyles'
 import { Button, Autoreply, FormBlock } from '../../styles/FormStyles'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { useQuery } from '@apollo/react-hooks'
+import { GET_LESSON_BY_ID } from '../../queries/lessons'
+import Loader from '../Loader'
+import Message from '../Layout/Message'
 
 const LessonDashboard = ({ id }) => {
 
@@ -17,6 +19,9 @@ const LessonDashboard = ({ id }) => {
       id
     }
   });
+
+  /* State */
+  const [message, setMessage] = useState(false);
 
   let domain
   if (window.location.port) {
@@ -33,21 +38,14 @@ const LessonDashboard = ({ id }) => {
     setLessonSignupUrl(domain + "/lesson/signup/" + data.lesson.id)
   }, [data]);
 
-  if (loading) return null
+  if (loading) return <Loader />
+  console.log(data.lesson)
   return (
     <StyledContent>
       <Heading>
         <h1>Educator Dashboard</h1>
       </Heading>
-      {copied && (
-        <Autoreply
-          initial={{ height: 0 }}
-          animate={{ height: "auto" }}
-        >
-          <p>The signup url for this lesson has been copied to your clipboard.</p>
-          <p style={{ "fontStyle": "italic", "fontSize": "1.2rem" }}>{lessonSignupUrl}</p>
-        </Autoreply>
-      )}
+      <Message message={message} />
       <Heading>
         <Split>
           <div>
@@ -56,7 +54,7 @@ const LessonDashboard = ({ id }) => {
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
             <CopyToClipboard
               text={lessonSignupUrl}
-              onCopy={() => setCopied(true)}>
+              onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
               <div>
                 <input
                   type="hidden"
@@ -67,7 +65,7 @@ const LessonDashboard = ({ id }) => {
                   title="Click to copy the signup url to your clipboard"
                   style={{ marginRight: "1rem" }}
                   onClick={(e) => e.preventDefault()}>
-                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Link
                     </Button>
               </div>
             </CopyToClipboard>
@@ -80,9 +78,24 @@ const LessonDashboard = ({ id }) => {
       <LargeSpace>
         <Split>
           <div>
-            <p><Data>{data.lesson.lessonStudents ? data.lesson.lessonStudents.length : 0}/{data.lesson.maxStudents}</Data> <span>Students enrolled</span></p>
-            <p><Data>{data.lesson.lessonLyrics.filter(lyric => lyric.isAssigned).length}/{data.lesson.lessonLyrics.length}</Data> Lyrics assigned</p>
-            <p><Data>{data.lesson.lessonLyrics.annotations ? data.lesson.lessonLyrics.annotations.length : 0}</Data> Submitted annotations</p>
+            <p>
+              <Data>
+                {data.lesson.lessonStudents ? data.lesson.lessonStudents.length : 0}/{data.lesson.maxStudents}
+              </Data>
+              <span>Students enrolled</span>
+            </p>
+            <p>
+              <Data>
+                {data.lesson.lessonLyrics.filter(lyric => lyric.isAssigned).length}/{data.lesson.guide.lyrics.length}
+              </Data>
+              <span>Lyrics assigned</span>
+            </p>
+            <p>
+              <Data>
+                {data.lesson.lessonLyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length}
+              </Data>
+              <span>Submitted annotations</span>
+            </p>
           </div>
           <div>
             {/*
@@ -132,7 +145,7 @@ const LessonDashboard = ({ id }) => {
             <div>{account.nameFirst} {account.nameLast}</div>
             <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
             <div>
-              {account.annotations.length ? account.annotations.length : "no annotations"}
+              {account.annotations.length && account.annotations.find(annotation => annotation.isSubmitted) ? "Submitted" : account.annotations.find(annotation => annotation.isApproved) ? "Approved" : "Not Submitted"}
             </div>
           </Student>
         ))}
@@ -191,47 +204,3 @@ const Data = styled.span`
   font-weight: 700;
 `
 
-const GET_LESSON_BY_ID = gql`
-  query getLesson($id: ID!) {
-    lesson(where: { id: $id }) {
-      id
-      lessonTitle
-      lessonDescription
-      maxStudents
-      account {
-        id
-      }
-      guide {
-        videoTitle
-      }
-      lessonLyrics {
-        lyric {
-          id
-          lyric
-        }
-        annotations {
-          id
-          annotation
-        }
-        isAssigned
-      }
-      lessonStudents {
-        account {
-          id
-          nameFirst
-          nameLast
-          email
-          image
-          annotations {
-            isSubmitted
-            isApproved
-          }
-        }
-      }
-      topics {
-        id
-        topic
-      }
-    }
-  }
-`

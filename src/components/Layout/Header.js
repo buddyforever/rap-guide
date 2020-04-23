@@ -35,7 +35,12 @@ export const Header = () => {
                 <Link to="/profile">
                   <span className="profile__image">
                     <img src={user.image} alt="Profile Image" />
-                  </span> <span>{user.nameFirst} {user.nameLast}<br /><em style={{ fontSize: "1.2rem" }}>{user.type}</em></span>
+                  </span>
+                  <span>{user.nameFirst} {user.nameLast}<br />
+                    {user.type !== 'public' &&
+                      <em style={{ fontSize: "1.2rem" }}>{user.type}</em>
+                    }
+                  </span>
                 </Link>
               </div>
             )}
@@ -65,10 +70,10 @@ const StyledHeader = styled.header`
   background-color: #0A0405;
   color: white;
   margin-bottom: 5rem;
-  z-index: 5000;
+  z-index: 1000;
 
   .wrapper {
-    max-width: 1200px;
+    max-width: 100vw;
     padding: 0 3rem;
     margin: 0 auto;
     display: flex;

@@ -1,10 +1,10 @@
-import React, { useState, useContext } from 'react'
+import React, { useState } from 'react'
 import { Heading, StyledVideo, MediumSpace } from "../../styles/PageStyles"
 import styled from 'styled-components'
 import { Modal } from "../../styles/ModalStyles"
 import AddAnnotation from '../Annotation/AddAnnotation'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faStar } from '@fortawesome/free-solid-svg-icons'
+import { faStar, faComment, faChalkboardTeacher } from '@fortawesome/free-solid-svg-icons'
 import { motion } from 'framer-motion'
 
 const variants = {
@@ -12,7 +12,7 @@ const variants = {
   closed: { x: "100%" },
 }
 
-const DisplayGuide = ({ guide, addAnnotation, refetch }) => {
+const DisplayGuide = ({ guide, addAnnotation }) => {
 
   const [annotationTop, setAnnotationTop] = useState("15rem");
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
@@ -20,18 +20,25 @@ const DisplayGuide = ({ guide, addAnnotation, refetch }) => {
   const [selectedLyric, setSelectedLyric] = useState(null);
 
   function closeModal() {
+    setSelectedLyric(null);
     setIsAnnotationOpen(false);
   }
 
-  async function handleAddAnnotation(annotation) {
-    await addAnnotation(annotation);
-    refetch();
+  function handleAddAnnotation(annotation) {
+    showAnnotation(annotation.annotation.annotation, annotationTop);
+    addAnnotation(annotation);
   }
 
   function handleLyricClick(lyric) {
     if (!lyric.lessonLyrics.length) return
     let lessonLyric = lyric.lessonLyrics[0]
     let isExample = lessonLyric.isExample
+    let hasAnnotations = lessonLyric.annotations.length > 0
+    let isSubmitted = false;
+    if (hasAnnotations) {
+      isSubmitted = lessonLyric.annotations[0].isSubmitted
+    }
+    if (isSubmitted) return // TODO add a toast message
     if (isExample) {
       setSelectedAnnotation({
         annotation: lessonLyric.notes,
@@ -45,11 +52,16 @@ const DisplayGuide = ({ guide, addAnnotation, refetch }) => {
   function handleLyricHover(lyric, position) {
     if (!lyric.lessonLyrics.length) return
     let lessonLyric = lyric.lessonLyrics[0]
+    let hasAnnotation = lessonLyric.annotations.length;
     let isExample = lessonLyric.isExample
+    if (!hasAnnotation && !isExample) {
+      setSelectedAnnotation(null);
+      return
+    }
     if (isExample) {
       showAnnotation(lessonLyric.notes, position);
-    } else if (lessonLyric.annotations.length) {
-      showAnnotation(lessonLyric.annotations[0], position);
+    } else if (hasAnnotation) {
+      showAnnotation(lessonLyric.annotations[0].annotation, position);
     }
   }
 
@@ -71,25 +83,53 @@ const DisplayGuide = ({ guide, addAnnotation, refetch }) => {
             </div>
           </StyledVideo>
         </MediumSpace>
+        <MediumSpace>
+          <h3>Legend</h3>
+          <StyledLegend>
+            <li><span className="assigned"></span> Available for Annotation</li>
+            <li>
+              <span className="example">
+                <FontAwesomeIcon icon={faStar} />
+              </span> Example Annotation
+            </li>
+            <li>
+              <span className="assigned">
+                <FontAwesomeIcon icon={faComment} />
+              </span> Saved Annotation
+            </li>
+            <li>
+              <span className="submitted">
+                <FontAwesomeIcon icon={faChalkboardTeacher} />
+              </span> Submitted Annotation
+            </li>
+          </StyledLegend>
+        </MediumSpace>
         <StyledColumns>
           <div>
             {guide.lyrics.map(lyric => {
               let isAssigned = false
               let isExample = false
+              let hasAnnotations = false
+              let isSubmitted = false
               if (lyric.lessonLyrics.length) {
                 isAssigned = lyric.lessonLyrics[0].isAssigned
                 isExample = lyric.lessonLyrics[0].isExample
+                hasAnnotations = lyric.lessonLyrics[0].annotations.length > 0
+                if (hasAnnotations) {
+                  isSubmitted = lyric.lessonLyrics[0].annotations[0].isSubmitted
+                }
               }
               return (
                 <StyledLyric
                   key={lyric.id}
+                  title={isSubmitted ? "Lyric has been submitted" : ""}
                   onClick={() => handleLyricClick(lyric)}
                   onMouseOver={(e) => {
                     let position = window.pageYOffset + e.target.getBoundingClientRect().top + "px";
                     handleLyricHover(lyric, position);
                   }}
-                  className={isAssigned && !isExample ? "assigned" : isExample ? "example" : ""}>
-                  {lyric.lyric} {isExample && <FontAwesomeIcon icon={faStar} />}
+                  className={isSubmitted ? "submitted" : isAssigned && !isExample ? "assigned" : isExample ? "example" : ""}>
+                  {lyric.lyric} {isExample && <FontAwesomeIcon icon={faStar} />} {!isSubmitted && hasAnnotations && <FontAwesomeIcon icon={faComment} />} {isSubmitted && <FontAwesomeIcon icon={faChalkboardTeacher} />}
                 </StyledLyric>
               )
             })
@@ -168,8 +208,11 @@ const StyledLyric = styled.div`
   padding: .5rem;
   display: block;
 
+  svg {
+    float: right;
+  }
+
   &.example {
-    cursor: pointer;
     background-color:  rgba(35,163,213,0.3);
   }
 
@@ -182,4 +225,43 @@ const StyledLyric = styled.div`
     background-color:  rgba(221, 51, 51, 0.2);
   }
 
+  &.submitted {
+    background-color: rgba(244, 247, 46, 0.2);
+  }
+
+`
+
+const StyledLegend = styled.ul`
+  list-style: none;
+  margin-top: 2rem;
+
+  li {
+    display: flex;
+    align-items: center;
+    margin-bottom: .5rem;
+  }
+
+  span {
+    display: inline-block;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 1rem;
+  }
+
+  span.example {
+    cursor: pointer;
+    background-color:  rgba(35,163,213,0.3);
+  }
+
+  span.assigned {
+    cursor: pointer;
+    background-color:  rgba(221, 51, 51, 0.2);
+  }
+
+  span.submitted {
+    background-color: rgba(244, 247, 46, 0.2);
+  }
 `
