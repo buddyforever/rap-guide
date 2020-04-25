@@ -1,19 +1,32 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Form, FormBlock, ButtonBlock, Button, LinkButton } from '../../styles/FormStyles'
 import { Heading } from '../../styles/PageStyles'
 import { Editor } from '@tinymce/tinymce-react';
 import ConfirmButton from '../Form/ConfirmButton'
 import styled from 'styled-components'
 import { dateFormat } from '../../utilities/DateFormat'
+import { UserContext } from '../../context/UserContext'
+import { useMutation } from '@apollo/react-hooks'
+import { CREATE_NOTE } from '../../queries/notes'
+import Checkbox from "../Form/Checkbox"
 
 export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
 
+  /* Context */
+  const { user } = useContext(UserContext)
+
+  /* Queries */
+  const [createNote] = useMutation(CREATE_NOTE)
+
+  /* State */
   const [annotation, setAnnotation] = useState({
     annotation: lessonLyric.annotations.length ? lessonLyric.annotations[0].annotation : "<p></p>",
     id: lessonLyric.annotations.length ? lessonLyric.annotations[0].id : null,
-    notes: lessonLyric.annotations[0].notes
   });
+  const [notes, setNotes] = useState(lessonLyric.annotations[0].notes)
   const [submitting, setSubmitting] = useState(false);
+  const [note, setNote] = useState("");
+  const [noteOnEnter, setNoteOnEnter] = useState(true);
 
   function handleSaveAnnotation(e) {
     e.preventDefault();
@@ -33,6 +46,31 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
       isSubmitted: true,
     });
     cancel();
+  }
+
+  function addNote(e) {
+    e.preventDefault()
+    createNote({
+      variables: {
+        note: note,
+        annotationId: annotation.id,
+        account: user.id
+      }
+    }).then(data => {
+      setNotes(prevState => {
+        return [
+          ...prevState,
+          data.data.createNote
+        ]
+      })
+      setNote("");
+    })
+  }
+
+  function handleKeyPress(e) {
+    if (noteOnEnter && e.key === 'Enter') {
+      addNote(e);
+    }
   }
 
   function handleCancel(e) {
@@ -56,11 +94,10 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
           <div dangerouslySetInnerHTML={{ __html: lessonLyric.notes }}></div>
         }
       </Heading>
-      {annotation.notes.length > 0 &&
+      {notes.length > 0 &&
         <FormBlock>
           <label>Notes</label>
-          {annotation.notes.map(note => {
-            console.log(note)
+          {notes.map(note => {
             return (
               <StyledNote style={{ margin: "1rem 0" }} key={note.id}>
                 <div className="image">
@@ -73,6 +110,23 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
               </StyledNote>
             )
           })}
+          <label>Reply</label>
+          <textarea
+            style={{ minHeight: "50px" }}
+            value={note}
+            onChange={(e) => setNote(e.target.value)}
+            onKeyPress={handleKeyPress}>
+          </textarea>
+          <Button onClick={addNote}>Reply</Button>
+          <label style={{ display: "inline-block", marginLeft: "1rem" }}>
+            <Checkbox
+              alt="Add note on enter"
+              style={{ cursor: "pointer" }}
+              checked={noteOnEnter}
+              onChange={(e) => { setNoteOnEnter(e.target.checked) }}
+            />
+            <em style={{ marginLeft: "1rem", fontSize: "1.2rem", fontStyle: "italic" }}>pressing enter adds note</em>
+          </label>
         </FormBlock>
       }
       <FormBlock>
