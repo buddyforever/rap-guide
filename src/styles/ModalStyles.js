@@ -4,7 +4,7 @@ import { motion } from "framer-motion"
 export const Modal = styled(motion.div)`
   position: fixed;
   top: 0;
-  padding: 2.5rem;
+  padding: 2.5rem 5rem;
   z-index: 1050;
   left: 100%;
   min-height: 100vh;
@@ -12,4 +12,10 @@ export const Modal = styled(motion.div)`
   background-color: white;
   border-left: 1px solid rgba(0,0,0,0.3);
   box-shadow: -10px 0 10px 0 rgba(0,0,0,0.3);
+
+  form {
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 3rem;
+  }
 `

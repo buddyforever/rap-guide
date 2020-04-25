@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { useQuery } from '@apollo/react-hooks'
 import { UserContext } from '../../context/UserContext'
 import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
+import Message from '../Layout/Message'
 
 export const Lessons = () => {
 

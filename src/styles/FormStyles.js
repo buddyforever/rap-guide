@@ -67,6 +67,11 @@ export const Button = styled.button`
   cursor: pointer;
   outline: none;
 
+  &:disabled {
+    filter: grayscale(1)!important;
+    cursor: not-allowed!important;
+  }
+
   &:hover {
     background-color: #b51e1e;
   }
@@ -108,7 +113,8 @@ export const FormBlock = styled.div`
   input[type=number],
   input[type=email],
   input[type=password],
-  select
+  select,
+  textarea
   {
     width: 100%;
     font-size: 1.6rem;
@@ -117,6 +123,10 @@ export const FormBlock = styled.div`
     border-radius: 2px;
     border-color: #CCCCCC;
     outline: none;
+  }
+
+  textarea {
+    min-height: 15rem;
   }
 `
 

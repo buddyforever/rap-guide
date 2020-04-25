@@ -2,6 +2,7 @@ import React from 'react'
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import auth from '../../auth/auth'
+import { motion } from 'framer-motion'
 
 export const Navigation = ({ isOpen, toggleMenu }) => {
 
@@ -11,7 +12,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
   }
 
   return (
-    <StyledNavigation className={isOpen ? 'open' : ''}>
+    <StyledNavigation animate className={isOpen ? 'open' : ''}>
       <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Explore</NavLink>
       <NavLink to="/lessons" activeClassName="active" onClick={toggleMenu}>Lessons</NavLink>
       <NavLink to="/request" activeClassName="active" onClick={toggleMenu}>Request</NavLink>
@@ -34,7 +35,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
 
 export default Navigation;
 
-const StyledNavigation = styled.div`
+const StyledNavigation = styled(motion.div)`
   position: fixed;
   height: 100vh;
   top: 0;

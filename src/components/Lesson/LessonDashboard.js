@@ -1,27 +1,40 @@
 import React, { useState, useEffect } from 'react'
 import { StyledContent, Heading, Split, LargeSpace, ActivityList } from '../../styles/PageStyles'
-import { Button, Autoreply, FormBlock } from '../../styles/FormStyles'
+import { Button, LinkButton, FormBlock } from '../../styles/FormStyles'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_LESSON_BY_ID } from '../../queries/lessons'
+import { REVIEW_ANNOTATION } from '../../queries/annotations'
 import Loader from '../Loader'
 import Message from '../Layout/Message'
+import { dateFormat } from '../../utilities/DateFormat'
+import { Modal } from "../../styles/ModalStyles"
+import ReviewAnnotation from '../Annotation/ReviewAnnotation'
+
+const variants = {
+  open: { x: "-50vw" },
+  closed: { x: "100%" },
+}
 
 const LessonDashboard = ({ id }) => {
 
   /* Queries */
-  const { loading, data } = useQuery(GET_LESSON_BY_ID, {
+  const { loading, data, refetch } = useQuery(GET_LESSON_BY_ID, {
     variables: {
       id
     }
   });
+  const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
 
   /* State */
   const [message, setMessage] = useState(false);
+  const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
+  const [selectedAnnotation, setSelectedAnnotation] = useState(null);
+  const [lessonSignupUrl, setLessonSignupUrl] = useState("");
 
   let domain
   if (window.location.port) {
@@ -30,8 +43,46 @@ const LessonDashboard = ({ id }) => {
     domain = window.location.protocol + "//" + window.location.hostname;
   }
 
-  const [lessonSignupUrl, setLessonSignupUrl] = useState("");
-  const [copied, setCopied] = useState(false);
+  /* Functions */
+  function openAnnotationReview(annotation) {
+    setSelectedAnnotation(annotation);
+    setIsAnnotationOpen(true);
+  }
+
+  function closeModal() {
+    setSelectedAnnotation(null);
+    setIsAnnotationOpen(false);
+  }
+
+  function handleApproveAnnotation(annotation) {
+    reviewAnnotation({
+      variables: {
+        id: annotation.id,
+        isApproved: annotation.isApproved ? annotation.isApproved : false,
+        isSubmitted: annotation.isSubmitted,
+        note: annotation.note.note,
+        teacherAccountId: annotation.note.account.id
+      }
+    }).then(() => {
+      refetch();
+      closeModal();
+    });
+  }
+
+  function handleRejectAnnotation(annotation) {
+    reviewAnnotation({
+      variables: {
+        id: annotation.id,
+        isApproved: annotation.isApproved ? annotation.isApproved : false,
+        isSubmitted: annotation.isSubmitted,
+        note: annotation.note.note,
+        teacherAccountId: annotation.note.account.id
+      }
+    }).then(() => {
+      refetch();
+      closeModal();
+    });;
+  }
 
   useEffect(() => {
     if (!data) return
@@ -39,7 +90,6 @@ const LessonDashboard = ({ id }) => {
   }, [data]);
 
   if (loading) return <Loader />
-  console.log(data.lesson)
   return (
     <StyledContent>
       <Heading>
@@ -118,7 +168,7 @@ const LessonDashboard = ({ id }) => {
           <FormBlock style={{ margin: "5rem 0" }}>
             <CopyToClipboard
               text={lessonSignupUrl}
-              onCopy={() => setCopied(true)}>
+              onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
               <div style={{ display: "flex" }}>
                 <input
                   type="text"
@@ -135,8 +185,17 @@ const LessonDashboard = ({ id }) => {
             </CopyToClipboard>
           </FormBlock>
         </div>)}
-        {data.lesson.lessonStudents.map(({ account }) => (
-          <Student key={account.id}>
+        {data.lesson.lessonStudents.map(({ account }) => {
+          let hasAnnotations = account.annotations.length;
+          let submittedAnnotations = [];
+          let approvedAnnotations = [];
+          let savedAnnotations = [];
+          if (hasAnnotations) {
+            savedAnnotations = account.annotations.filter(annotation => !annotation.isSubmitted)
+            submittedAnnotations = account.annotations.filter(annotation => annotation.isSubmitted)
+            approvedAnnotations = account.annotations.filter(annotation => annotation.isApproved)
+          }
+          return (<Student key={account.id}>
             <div>
               <div className="image">
                 <img src={account.image} alt={account.nameFirst + ' ' + account.nameLast} />
@@ -145,11 +204,49 @@ const LessonDashboard = ({ id }) => {
             <div>{account.nameFirst} {account.nameLast}</div>
             <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
             <div>
-              {account.annotations.length && account.annotations.find(annotation => annotation.isSubmitted) ? "Submitted" : account.annotations.find(annotation => annotation.isApproved) ? "Approved" : "Not Submitted"}
+              {!hasAnnotations && "No Annotations"}
+              {savedAnnotations.map(annotation => (
+                <div key={annotation.id}>
+                  <LinkButton
+                    onClick={() => openAnnotationReview(annotation)}>
+                    Saved {dateFormat(annotation.updatedAt)}
+                  </LinkButton>
+                </div>
+              ))}
+              {submittedAnnotations.map(annotation => (
+                <div key={annotation.id}>
+                  <LinkButton
+                    onClick={() => openAnnotationReview(annotation)}>
+                    Submitted {dateFormat(annotation.updatedAt)}
+                  </LinkButton>
+                </div>
+              ))}
+              {approvedAnnotations.map(annotation => (
+                <div key={annotation.id}>
+                  <LinkButton
+                    onClick={() => openAnnotationReview(annotation)}>
+                    Approved {dateFormat(annotation.updatedAt)}
+                  </LinkButton>
+                </div>
+              ))}
             </div>
           </Student>
-        ))}
+          )
+        })}
       </LargeSpace>
+      <Modal
+        variants={variants}
+        initial="closed"
+        animate={isAnnotationOpen ? "open" : "closed"}
+        transition={{ damping: 300 }} >
+        {selectedAnnotation &&
+          <ReviewAnnotation
+            annotation={selectedAnnotation}
+            closeModal={closeModal}
+            rejectAnnotation={handleRejectAnnotation}
+            approveAnnotation={handleApproveAnnotation} />
+        }
+      </Modal>
     </StyledContent>
   )
 }

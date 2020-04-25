@@ -79,6 +79,27 @@ export const GET_LESSON_BY_ID = gql`
               annotation
               isSubmitted
               isApproved
+              updatedAt
+              notes {
+                id
+                note
+                updatedAt
+                account {
+                  nameFirst
+                  nameLast
+                  image
+                }
+              }
+              account {
+                nameFirst
+                nameLast
+                image
+              }
+              lessonLyric {
+                lyric {
+                  lyric
+                }
+              }
             }
             isAssigned
             isExample
@@ -91,11 +112,32 @@ export const GET_LESSON_BY_ID = gql`
           id
           lyric
         }
-        annotations{
+        annotations {
           id
           annotation
           isSubmitted
           isApproved
+          updatedAt
+          notes {
+            id
+            note
+            updatedAt
+            account {
+              nameFirst
+              nameLast
+              image
+            }
+          }
+          account {
+            nameFirst
+            nameLast
+            image
+          }
+          lessonLyric {
+            lyric {
+              lyric
+            }
+          }
         }
         isAssigned
       }
@@ -107,8 +149,31 @@ export const GET_LESSON_BY_ID = gql`
           email
           image
           annotations(where: { lessonLyric: {lesson: {id: $id} } }) {
+            id
+            annotation
             isSubmitted
             isApproved
+            updatedAt
+            notes {
+              id
+              note
+              updatedAt
+              account {
+                nameFirst
+                nameLast
+                image
+              }
+            }
+            account {
+              nameFirst
+              nameLast
+              image
+            }
+            lessonLyric {
+              lyric {
+                lyric
+              }
+            }
           }
         }
       }

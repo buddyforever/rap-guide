@@ -59,7 +59,7 @@ const Login = ({ lesson = null }) => {
     }).then(() => {
       // A user has been logged in
       auth.login(user).then(() => {
-        setRedirect("/profile");
+        setRedirect("/");
       });
     });
   }
@@ -72,7 +72,7 @@ const Login = ({ lesson = null }) => {
       enrollStudent(user);
     } else {
       auth.login(user).then(() => {
-        setRedirect("/profile");
+        setRedirect("/");
       });
     }
 

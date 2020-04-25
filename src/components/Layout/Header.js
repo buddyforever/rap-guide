@@ -38,7 +38,7 @@ export const Header = () => {
                   </span>
                   <span>{user.nameFirst} {user.nameLast}<br />
                     {user.type !== 'public' &&
-                      <em style={{ fontSize: "1.2rem" }}>{user.type}</em>
+                      <em>{user.type}</em>
                     }
                   </span>
                 </Link>
@@ -91,6 +91,11 @@ const StyledHeader = styled.header`
     padding-right: 3rem;
     @media only screen and (max-width: 575px) {
       display: none;
+    }
+
+    em {
+      font-size: 1.2rem;
+      color: #999;
     }
   }
 

@@ -54,10 +54,7 @@ const DisplayGuide = ({ guide, addAnnotation }) => {
     let lessonLyric = lyric.lessonLyrics[0]
     let hasAnnotation = lessonLyric.annotations.length;
     let isExample = lessonLyric.isExample
-    if (!hasAnnotation && !isExample) {
-      setSelectedAnnotation(null);
-      return
-    }
+    if (!hasAnnotation && !isExample) return
     if (isExample) {
       showAnnotation(lessonLyric.notes, position);
     } else if (hasAnnotation) {
@@ -125,7 +122,9 @@ const DisplayGuide = ({ guide, addAnnotation }) => {
                   title={isSubmitted ? "Lyric has been submitted" : ""}
                   onClick={() => handleLyricClick(lyric)}
                   onMouseOver={(e) => {
+                    //let position = document.documentElement.scrollTop + 120 + "px"
                     let position = window.pageYOffset + e.target.getBoundingClientRect().top + "px";
+                    //console.log(position);
                     handleLyricHover(lyric, position);
                   }}
                   className={isSubmitted ? "submitted" : isAssigned && !isExample ? "assigned" : isExample ? "example" : ""}>
@@ -137,8 +136,6 @@ const DisplayGuide = ({ guide, addAnnotation }) => {
           </div>
           <div>
             {selectedAnnotation &&
-              // Need to make it so that the annotation only shows up when one is selected or hovering.
-              // If you hover over anything else the annotation stays where it is.
               <StyledAnnotation
                 top={annotationTop}
                 initial={{ opacity: 0, x: 20 }}
@@ -168,10 +165,25 @@ const DisplayGuide = ({ guide, addAnnotation }) => {
 export default DisplayGuide
 
 const StyledAnnotation = styled(motion.div)`
-  border-left: 3px solid #dd3333;
+  border-left: 4px solid #dd3333;
   padding: 2.5rem;
   position: absolute;
   top: ${props => props.top};
+  max-width: 500px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    display: block;
+    top: 0.5rem;
+    left: -1.5rem;
+    width: 2rem;
+    height: 2rem;
+    background-color: white;
+    border-left: 4px solid #D33333;
+    border-top: 4px solid #D33333;
+    transform: rotate(-45deg);
+  }
 `;
 
 const StyledColumns = styled.div`
@@ -227,6 +239,7 @@ const StyledLyric = styled.div`
 
   &.submitted {
     background-color: rgba(244, 247, 46, 0.2);
+    cursor: not-allowed;
   }
 
 `

@@ -9,6 +9,12 @@ export const StyledContent = styled.div`
   }
 `
 
+export const Cite = styled.p`
+  font-size: 1.6rem;
+  color: #333;
+  font-style: italic;
+`
+
 export const CenteredContent = styled.div`
   min-height: 50vh;
   height: 100%;
