@@ -1,14 +1,14 @@
 import gql from 'graphql-tag'
 
-export const CREATE_NOTE = gql`
-  mutation createNote(
-    $note: String!,
+export const CREATE_COMMENT = gql`
+  mutation createcomment(
+    $comment: String!,
     $annotationId: ID!,
     $account: ID!
   ){
-    createNote(data: {
+    createcomment(data: {
       status:PUBLISHED
-      note: $note
+      comment: $comment
       annotation:{
         connect: { id: $annotationId }
       }
@@ -18,7 +18,7 @@ export const CREATE_NOTE = gql`
     }){
       id
       updatedAt
-      note
+      comment
       account {
         nameFirst
         nameLast

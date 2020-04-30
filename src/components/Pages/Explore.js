@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyledContent, Heading, FourGrid, MediumSpace } from '../../styles/PageStyles'
+import { StyledContent, Heading, ThreeGrid, MediumSpace } from '../../styles/PageStyles'
 import VideoThumb from '../Guide/VideoThumb'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -49,10 +49,10 @@ export const Home = () => {
       <TagCloud selectTag={selectTag} tags={topics} />
 
       <MediumSpace>
-        <h1>Rap Guides</h1>
+        <h1>Videos</h1>
       </MediumSpace>
 
-      <FourGrid>
+      <ThreeGrid>
         {guides.guides.map(guide => {
           return (<VideoThumb
             key={guide.id}
@@ -61,7 +61,7 @@ export const Home = () => {
             thumbnail={guide.videoThumb}
             topics={guide.topics} />)
         })}
-      </FourGrid>
+      </ThreeGrid>
     </StyledContent>
   )
 }

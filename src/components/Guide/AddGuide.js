@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { StyledContent, Heading } from '../../styles/PageStyles'
-import { Button } from '../../styles/FormStyles'
+import { Button } from '../ui/Button'
 
 const AddGuide = () => {
 

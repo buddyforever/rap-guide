@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { StyledContent, Heading, Split, LargeSpace, ActivityList } from '../../styles/PageStyles'
-import { Button, LinkButton, FormBlock } from '../../styles/FormStyles'
+import { FormBlock } from '../../styles/FormStyles'
+import { Button } from '../ui/Button'
+import { LinkButton } from '../ui/LinkButton'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
@@ -10,7 +12,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_LESSON_BY_ID } from '../../queries/lessons'
 import { REVIEW_ANNOTATION } from '../../queries/annotations'
 import Loader from '../Loader'
-import Message from '../Layout/Message'
+import { Message } from '../ui/Message'
 import { dateFormat } from '../../utilities/DateFormat'
 import { Modal } from "../../styles/ModalStyles"
 import ReviewAnnotation from '../Annotation/ReviewAnnotation'
@@ -20,28 +22,23 @@ const variants = {
   closed: { x: "100%" },
 }
 
-const LessonDashboard = ({ id }) => {
+const domain = window.location.port ?
+  window.location.protocol + "//" + window.location.hostname + ":" + window.location.port :
+  window.location.protocol + "//" + window.location.hostname
+
+const LessonDashboardTeacher = ({ lesson, refetch }) => {
 
   /* Queries */
-  const { loading, data, refetch } = useQuery(GET_LESSON_BY_ID, {
-    variables: {
-      id
-    }
-  });
   const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
 
   /* State */
   const [message, setMessage] = useState(false);
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
   const [selectedAnnotation, setSelectedAnnotation] = useState(null);
-  const [lessonSignupUrl, setLessonSignupUrl] = useState("");
+  const [lessonSignupUrl, setLessonSignupUrl] = useState(domain + "/lesson/signup/" + lesson.id);
 
-  let domain
-  if (window.location.port) {
-    domain = window.location.protocol + "//" + window.location.hostname + ":" + window.location.port;
-  } else {
-    domain = window.location.protocol + "//" + window.location.hostname;
-  }
+  /* Non State Variables */
+  const students = lesson.accounts.filter(account => account.type === 'student');
 
   /* Functions */
   function openAnnotationReview(annotation) {
@@ -84,27 +81,29 @@ const LessonDashboard = ({ id }) => {
     });;
   }
 
-  useEffect(() => {
-    if (!data) return
-    setLessonSignupUrl(domain + "/lesson/signup/" + data.lesson.id)
-  }, [data]);
-
-  if (loading) return <Loader />
   return (
     <StyledContent>
       <Heading>
         <h1>Educator Dashboard</h1>
       </Heading>
-      <Message message={message} />
+      {message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          title={message.title || ""}
+          type={message.type || "default"}>
+          {message.text}
+        </Message>
+      }
       <Heading>
         <Split>
           <div>
-            <h2>{data.lesson.lessonTitle}</h2>
+            <h2>{lesson.lessonTitle}</h2>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
             <CopyToClipboard
               text={lessonSignupUrl}
-              onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
+              onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
               <div>
                 <input
                   type="hidden"
@@ -119,7 +118,7 @@ const LessonDashboard = ({ id }) => {
                     </Button>
               </div>
             </CopyToClipboard>
-            <Link to={"/lesson/edit/" + data.lesson.id}>
+            <Link to={"/lesson/edit/" + lesson.id}>
               <Button>Edit Lesson</Button>
             </Link>
           </div>
@@ -130,19 +129,19 @@ const LessonDashboard = ({ id }) => {
           <div>
             <p>
               <Data>
-                {data.lesson.lessonStudents ? data.lesson.lessonStudents.length : 0}/{data.lesson.maxStudents}
+                {students.length}/{lesson.maxStudents}
               </Data>
               <span>Students enrolled</span>
             </p>
             <p>
               <Data>
-                {data.lesson.lessonLyrics.filter(lyric => lyric.isAssigned).length}/{data.lesson.guide.lyrics.length}
+                {lesson.lyrics.length}/{lesson.guide.lyrics.length}
               </Data>
               <span>Lyrics assigned</span>
             </p>
             <p>
               <Data>
-                {data.lesson.lessonLyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length}
+                {lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length}
               </Data>
               <span>Submitted annotations</span>
             </p>
@@ -162,7 +161,7 @@ const LessonDashboard = ({ id }) => {
         <Heading>
           <h2>Students</h2>
         </Heading>
-        {!data.lesson.lessonStudents.length && (<div>
+        {!students.length && (<div>
           <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
           <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
           <FormBlock style={{ margin: "5rem 0" }}>
@@ -185,7 +184,7 @@ const LessonDashboard = ({ id }) => {
             </CopyToClipboard>
           </FormBlock>
         </div>)}
-        {data.lesson.lessonStudents.map(({ account }) => {
+        {students.map(account => {
           let hasAnnotations = account.annotations.length;
           let submittedAnnotations = [];
           let approvedAnnotations = [];
@@ -251,7 +250,7 @@ const LessonDashboard = ({ id }) => {
   )
 }
 
-export default LessonDashboard;
+export default LessonDashboardTeacher;
 
 const Student = styled.div`
   width: 100%;

@@ -1,5 +1,5 @@
 import React, { useState, useContext } from 'react'
-import { Form, FormBlock, ButtonBlock, Button, LinkButton } from '../../styles/FormStyles'
+import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
 import { Heading } from '../../styles/PageStyles'
 import { Editor } from '@tinymce/tinymce-react';
 import ConfirmButton from '../Form/ConfirmButton'
@@ -7,8 +7,10 @@ import styled from 'styled-components'
 import { dateFormat } from '../../utilities/DateFormat'
 import { UserContext } from '../../context/UserContext'
 import { useMutation } from '@apollo/react-hooks'
-import { CREATE_NOTE } from '../../queries/notes'
+import { CREATE_COMMENT } from '../../queries/comments'
 import Checkbox from "../Form/Checkbox"
+import { Button } from '../ui/Button'
+import { LinkButton } from '../ui/LinkButton'
 
 export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
 
@@ -16,14 +18,14 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
   const { user } = useContext(UserContext)
 
   /* Queries */
-  const [createNote] = useMutation(CREATE_NOTE)
+  const [createNote] = useMutation(CREATE_COMMENT)
 
   /* State */
   const [annotation, setAnnotation] = useState({
     annotation: lessonLyric.annotations.length ? lessonLyric.annotations[0].annotation : "<p></p>",
     id: lessonLyric.annotations.length ? lessonLyric.annotations[0].id : null,
   });
-  const [notes, setNotes] = useState(lessonLyric.annotations[0].notes)
+  const [notes, setNotes] = useState(lessonLyric.annotations.length ? lessonLyric.annotations[0].notes : null)
   const [submitting, setSubmitting] = useState(false);
   const [note, setNote] = useState("");
   const [noteOnEnter, setNoteOnEnter] = useState(true);
@@ -90,11 +92,11 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
       <Heading>
         <h1>Add Annotation</h1>
         <h2>{lessonLyric.lyric}</h2>
-        {lessonLyric.notes.length > 0 &&
+        {lessonLyric.notes &&
           <div dangerouslySetInnerHTML={{ __html: lessonLyric.notes }}></div>
         }
       </Heading>
-      {notes.length > 0 &&
+      {notes &&
         <FormBlock>
           <label>Notes</label>
           {notes.map(note => {

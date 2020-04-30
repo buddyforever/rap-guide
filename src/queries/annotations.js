@@ -5,7 +5,7 @@ export const REVIEW_ANNOTATION = gql`
     $id: ID!,
     $isSubmitted: Boolean!,
     $isApproved: Boolean!,
-    $note: String,
+    $comment: String,
     $teacherAccountId: ID
   ) {
     updateAnnotation(
@@ -13,10 +13,10 @@ export const REVIEW_ANNOTATION = gql`
       data: {
       	isSubmitted: $isSubmitted
       	isApproved:$isApproved
-        notes: {
+        comments: {
           create: {
             status: PUBLISHED
-            note: $note
+            comment: $comment
             account: {
               connect: {
                 id: $teacherAccountId
@@ -24,6 +24,47 @@ export const REVIEW_ANNOTATION = gql`
             }
           }
         }
+    }){
+      id
+    }
+  }
+`
+
+export const CREATE_ANNOTATION = gql`
+  mutation createAnnotation(
+    $isSubmitted: Boolean!,
+    $account: ID!,
+    $annotation: String!,
+    $lessonLyric: ID!
+  ){
+    createAnnotation(data: {
+      status:PUBLISHED
+      isSubmitted: $isSubmitted
+      annotation: $annotation
+      account: {
+        connect: { id: $account }
+      }
+      lessonLyric: {
+        connect: { id: $lessonLyric }
+      }
+    }){
+      id
+    }
+  }
+`
+
+export const UPDATE_ANNOTATION = gql`
+  mutation updateAnnotation(
+    $id: ID,
+    $isSubmitted: Boolean!,
+    $annotation: String!,
+  ){
+    updateAnnotation(
+      where: { id: $id },
+      data: {
+      status:PUBLISHED
+      isSubmitted: $isSubmitted
+      annotation: $annotation
     }){
       id
     }

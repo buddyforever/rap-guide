@@ -1,9 +1,12 @@
 import React, { useState, useContext } from 'react'
 import { Heading, MediumSpace, Cite, SmallSpace } from '../../styles/PageStyles'
-import { Form, ButtonBlock, Button, LinkButton, FormBlock } from '../../styles/FormStyles'
+import { Form, ButtonBlock, FormBlock } from '../../styles/FormStyles'
 import { UserContext } from '../../context/UserContext'
 import { dateFormat } from '../../utilities/DateFormat'
 import styled from 'styled-components'
+import { Button } from '../ui/Button'
+import { LinkButton } from '../ui/LinkButton'
+
 
 const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnnotation }) => {
 

@@ -25,12 +25,19 @@ export const CenteredContent = styled.div`
 `
 
 export const HtmlContent = styled.div`
+  max-width: 80ch;
+  margin: 0 auto;
+
   p {
     margin: 1rem 0;
+    line-height: 1.5em;
   }
   ul {
-    margin: 1rem 0;
+    margin: 2rem 0;
     padding-left: 3rem;
+  }
+  p+h2, ul+h2 {
+    margin-top: 2.5rem;
   }
 `
 
@@ -63,6 +70,13 @@ export const FourGrid = styled.div`
   row-gap: 5rem;
 `
 
+export const ThreeGrid = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-gap: 2.5rem;
+  row-gap: 5rem;
+`
+
 export const TwoGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -79,6 +93,8 @@ export const Thumbnail = styled.div`
 `
 
 export const StyledVideo = styled.div`
+  margin-bottom: 5rem;
+
   .video {
     position: relative;
     padding-bottom: 56.25%;
@@ -127,3 +143,15 @@ export const ActivityList = styled.div`
     box-shadow: inset 0 -4px rgba(221, 51, 51, 0);
   }
 `
+
+export const StyledColumns = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 5rem;
+
+  h3 {
+    margin: 2.5rem;
+    font-size: 1.8rem;
+    font-weight: 500;
+  }
+`;

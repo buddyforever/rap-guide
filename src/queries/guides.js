@@ -28,12 +28,13 @@ export const GET_GUIDE_BY_ID = gql`
       videoTitle
       videoThumb
       topics {
-        id
         topic
       }
-      lyrics {
+      lyrics(orderBy: order_ASC) {
         id
         lyric
+        order
+        bar
       }
     }
   }

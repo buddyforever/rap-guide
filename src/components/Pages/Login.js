@@ -9,7 +9,7 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
 import { UserContext } from '../../context/UserContext'
 
-const Login = ({ lesson = null }) => {
+const Login = ({ lesson }) => {
 
   const [redirect, setRedirect] = useState(null);
   const [message, setMessage] = useState(null);
@@ -20,7 +20,7 @@ const Login = ({ lesson = null }) => {
 
   const [createAccount] = useMutation(CREATE_ACCOUNT);
   const [updateAccount] = useMutation(UPDATE_ACCOUNT);
-  const [createLessonStudent] = useMutation(ENROLL_STUDENT);
+  const [enrollStudentInLesson] = useMutation(ENROLL_STUDENT);
 
   /* TODO MAKE THE ACCOUNT BASED ON EMAIL ADDRESS - ONE ACCOUNT PER EMAIL */
   async function loginUser(profile) {
@@ -50,11 +50,13 @@ const Login = ({ lesson = null }) => {
   }
 
   async function enrollStudent(user) {
-    await createLessonStudent({
+    await enrollStudentInLesson({
       variables: {
-        "lessonId": lesson.id,
-        "accountId": user.id,
-        "type": "student"
+        id: user.id,
+        type: "student",
+        lesson: {
+          id: lesson.id
+        }
       }
     }).then(() => {
       // A user has been logged in
@@ -156,33 +158,18 @@ const GET_ACCOUNT = gql`
 `
 
 const ENROLL_STUDENT = gql`
-  mutation createLessonStudent(
-      $accountId:ID!,
-      $lessonId:ID!,
-      $type:String!
-    ){
-    createLessonStudent(data: {
-      status: PUBLISHED
-      account: {
-        connect: {id:$accountId}
-      }
-      lessons: {
-        connect: {id:$lessonId}
-      }
-    }){
-      id
-    }
+  mutation updateAccount(
+    $id:ID!,
+    $type:String!
+    $lesson: [LessonWhereUniqueInput!],
+  ){
     updateAccount(
-      where: { id: $accountId }
+      where: { id: $id }
       data: {
-      type: $type
-    }) {
+        type: $type
+        lessons: { connect: $lesson }
+      }){
       id
-      accountId
-      nameFirst
-      nameLast
-      email
-      type
     }
   }
 `;

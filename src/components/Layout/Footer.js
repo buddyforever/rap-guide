@@ -52,7 +52,7 @@ const StyledFooter = styled.footer`
     max-width: 100rem;
     margin: 0 auto;
     display: grid;
-    grid-template-columns: 25% 25% 25% 25%;
+    grid-template-columns: repeat(4, 1fr);
     grid-gap: 2.5rem;
   }
 

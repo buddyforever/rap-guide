@@ -1,9 +1,14 @@
-import React, { useState, useEffect, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useParams } from "react-router-dom"
-import DisplayLesson from '../Lesson/DisplayLesson'
+
+import LessonDashboardTeacher from '../Lesson/LessonDashboardTeacher'
+import LessonDashboardStudent from '../Lesson/LessonDashboardStudent'
 import { StyledContent } from '../../styles/PageStyles'
-import LessonDashboard from '../Lesson/LessonDashboard'
 import { UserContext } from '../../context/UserContext'
+import Loader from '../Loader'
+
+import { useQuery } from '@apollo/react-hooks'
+import { GET_LESSON_BY_ID } from '../../queries/lessons'
 
 export const Lesson = () => {
 
@@ -14,11 +19,18 @@ export const Lesson = () => {
   /* Paramaters */
   let { id } = useParams();
 
-  if (!id) return null
+  /* Queries */
+  const { loading, data, refetch } = useQuery(GET_LESSON_BY_ID, {
+    variables: {
+      id: id
+    }
+  });
+
+  if (loading) return <Loader />
   return (
     <StyledContent>
       {user && user.type === 'educator' ?
-        <LessonDashboard id={id} /> : (<DisplayLesson id={id} />)
+        <LessonDashboardTeacher lesson={data.lesson} refetch={refetch} /> : (<LessonDashboardStudent lesson={data.lesson} refetch={refetch} />)
       }
     </StyledContent>
   )

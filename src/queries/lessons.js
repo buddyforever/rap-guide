@@ -2,51 +2,56 @@ import gql from 'graphql-tag'
 
 export const GET_LESSONS_BY_ACCOUNT = gql`
   query getLessons($id: ID!) {
-    lessons(where: {
-      OR: [
-        { account: { id: $id } }
-        { lessonStudents_some: {
-            account: {
-              id: $id
-            }
-        }}
-      ]
-    }) {
+    lessons(where: {accounts_some: { id: $id } }){
       id
       lessonTitle
       lessonDescription
       maxStudents
-      lessonStudents {
-        account {
-          id
-        }
-      }
-      account {
+      accounts {
         id
+        image
+        email
+        nameFirst
+        nameLast
+        type
       }
-      guide {
-        videoTitle
-        videoThumb
-        lyrics {
+      lyrics {
+        id
+        lyric
+        annotations {
           id
-          lyric
-        }
-      }
-      lessonLyrics {
-        lyric {
-          id
-          lyric
-        }
-        isAssigned
-      }
-      lessonStudents {
-        account {
-          email
+          annotation
+          isExample
+          isSubmitted
+          isApproved
+          account {
+            id
+            nameFirst
+            nameLast
+            email
+            image
+          }
         }
       }
       topics {
         id
         topic
+      }
+      guide {
+        id
+        videoId
+        videoUrl
+        videoTitle
+        videoThumb
+        topics {
+          topic
+        }
+        lyrics(orderBy: order_ASC) {
+          id
+          lyric
+          order
+          bar
+        }
       }
     }
   }
@@ -59,127 +64,59 @@ export const GET_LESSON_BY_ID = gql`
       lessonTitle
       lessonDescription
       maxStudents
-      account {
+      accounts {
         id
-      }
-      guide {
-        videoUrl
-        videoTitle
-        topics {
-          id
-          topic
-        }
-        lyrics {
-          id
-          lyric
-          lessonLyrics(where: { lesson: {id: $id } }) {
-            id
-            annotations {
-              id
-              annotation
-              isSubmitted
-              isApproved
-              updatedAt
-              notes {
-                id
-                note
-                updatedAt
-                account {
-                  nameFirst
-                  nameLast
-                  image
-                }
-              }
-              account {
-                nameFirst
-                nameLast
-                image
-              }
-              lessonLyric {
-                lyric {
-                  lyric
-                }
-              }
-            }
-            isAssigned
-            isExample
-            notes
-          }
-        }
-      }
-      lessonLyrics(where: { lesson: {id: $id } }) {
-        lyric {
-          id
-          lyric
-        }
+        image
+        email
+        nameFirst
+        nameLast
+        type
         annotations {
           id
           annotation
           isSubmitted
           isApproved
           updatedAt
-          notes {
-            id
-            note
-            updatedAt
-            account {
-              nameFirst
-              nameLast
-              image
-            }
-          }
+        }
+      }
+      lyrics {
+        id
+        lyric
+        annotations {
+          id
+          annotation
+          updatedAt
+          isExample
+          isSubmitted
+          isApproved
           account {
+            id
             nameFirst
             nameLast
+            email
             image
-          }
-          lessonLyric {
-            lyric {
-              lyric
-            }
-          }
-        }
-        isAssigned
-      }
-      lessonStudents(where: { lessons_some: {id: $id } }) {
-        account {
-          id
-          nameFirst
-          nameLast
-          email
-          image
-          annotations(where: { lessonLyric: {lesson: {id: $id} } }) {
-            id
-            annotation
-            isSubmitted
-            isApproved
-            updatedAt
-            notes {
-              id
-              note
-              updatedAt
-              account {
-                nameFirst
-                nameLast
-                image
-              }
-            }
-            account {
-              nameFirst
-              nameLast
-              image
-            }
-            lessonLyric {
-              lyric {
-                lyric
-              }
-            }
           }
         }
       }
       topics {
         id
         topic
+      }
+      guide {
+        id
+        videoId
+        videoUrl
+        videoTitle
+        videoThumb
+        topics {
+          topic
+        }
+        lyrics(orderBy: order_ASC) {
+          id
+          lyric
+          order
+          bar
+        }
       }
     }
   }
@@ -191,9 +128,7 @@ export const CREATE_LESSON = gql`
     $lessonDescription:String!,
     $maxStudents: Int!,
     $guide: GuideWhereUniqueInput!,
-    $account: AccountWhereUniqueInput!,
-    $topics: [TopicCreateWithoutLessonsInput!],
-    $lessonLyrics: [LessonLyricCreateWithoutLessonInput!]
+    $accounts: [AccountWhereUniqueInput!]
   ) {
     createLesson(data: {
       status: PUBLISHED
@@ -201,10 +136,28 @@ export const CREATE_LESSON = gql`
       lessonDescription: $lessonDescription
       maxStudents: $maxStudents
       guide: { connect: $guide }
-      account: { connect: $account }
-      topics: { create: $topics }
-      lessonLyrics: { create: $lessonLyrics }
+      accounts: { connect: $accounts }
     }){
+    id
+    }
+  }
+`
+
+export const UPDATE_LESSON_DETAILS = gql`
+  mutation updateLesson(
+    $id: ID!,
+    $lessonTitle:String!,
+    $lessonDescription:String!,
+    $maxStudents: Int!
+  ) {
+    updateLesson(
+      where: { id: $id }
+      data: {
+        status: PUBLISHED
+        lessonTitle: $lessonTitle
+        lessonDescription: $lessonDescription
+        maxStudents: $maxStudents
+      }){
     id
     }
   }

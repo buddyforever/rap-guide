@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button } from '../../styles/FormStyles'
+import { Button } from '../ui/Button'
 import { motion } from 'framer-motion'
 
 const ConfirmButton = ({ handleClick = null, handleConfirm, children }) => {

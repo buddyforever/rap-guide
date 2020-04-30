@@ -18,7 +18,7 @@ export const Layout = ({ children }) => {
 export default Layout;
 
 const StyledMainContent = styled.main`
-  max-width: 100rem;
+  max-width: 110rem;
   margin: 0 auto;
-  padding-top: 10rem;
+  padding-top: 12rem;
 `;

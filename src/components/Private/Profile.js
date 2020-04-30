@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { StyledContent, Heading, TwoGrid } from '../../styles/PageStyles'
-import { FormBlock, ButtonBlock, Button, Form } from '../../styles/FormStyles'
+import { FormBlock, ButtonBlock, Form } from '../../styles/FormStyles'
+import { Button } from '../ui/Button'
 import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
 import Message from '../Layout/Message'

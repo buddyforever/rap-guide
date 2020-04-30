@@ -12,7 +12,6 @@ const LessonSignup = () => {
   let { id } = useParams();
 
   /* Queries */
-  // TODO - use actual account ID
   const { loading, data } = useQuery(GET_LESSON_BY_ID, {
     variables: {
       id: id
@@ -24,7 +23,9 @@ const LessonSignup = () => {
     <StyledContent>
       <Heading>
         <h1>Lesson Signup</h1>
-        <h2>Enrollment for ~ {data.lesson.lessonTitle}</h2>
+        <MediumSpace>
+          <h2>Enrollment for ~ {data.lesson.lessonTitle}</h2>
+        </MediumSpace>
       </Heading>
       <Login lesson={data.lesson} />
     </StyledContent>
