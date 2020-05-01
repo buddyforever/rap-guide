@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
-const Lyric = ({ lyric, selected = false, ...rest }) => {
+const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
 
   let isAssigned = lyric.annotations
   let isAnnotated = lyric.anotations && lyric.annotations.length
@@ -19,6 +19,7 @@ const Lyric = ({ lyric, selected = false, ...rest }) => {
   if (isSubmitted) classes.push("submitted");
   if (isExample) classes.push("example");
   if (selected) classes.push("selected");
+  if (isSelectable || isAssigned || isAnnotated || isSubmitted || isExample) classes.push("selectable");
 
   return (
     <StyledLyric className={classes.length ? classes.join(" ") : ""} {...rest}>
@@ -36,9 +37,12 @@ const StyledLyric = styled.div`
   padding-left: .5rem;
   transition: background-color .3s ease;
 
+  &.selectable {
+    cursor: pointer;
+  }
+
   &.assigned {
     background-color: #EDF2F7;
-    cursor: pointer;
 
     &:hover {
       background-color: #E2E8F0;
@@ -47,7 +51,6 @@ const StyledLyric = styled.div`
 
   &.selected {
     background-color: #FEFCBF;
-    cursor: pointer;
 
     &:hover {
       background-color: #FAF089;

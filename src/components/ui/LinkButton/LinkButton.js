@@ -4,20 +4,22 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import styled from 'styled-components'
 import { hexToRgba } from '../../../utilities/colors'
 
-const LinkButton = ({ children, iconLeft, iconRight, onClick, active, round }) => {
+const LinkButton = ({ children, iconLeft, iconRight, onClick, disabled, round, ...rest }) => {
 
   /* Theme Context */
   const themeContext = useContext(ThemeContext);
 
   /* Handle adding any necessary classes */
   let classes = []
-  if (active) classes.push("active");
+  if (disabled) classes.push("disabled")
   if (round | themeContext.buttons.defaultRound) classes.push("round");
 
   return (
     <StyledLinkButton
+      disabled={disabled | false}
       onClick={onClick}
-      className={classes.length ? classes.join(" ") : ""}>
+      className={classes.length ? classes.join(" ") : ""}
+      {...rest}>
       {iconLeft && <FontAwesomeIcon icon={iconLeft} />}
       <span>{children}</span>
       {iconRight && <FontAwesomeIcon icon={iconRight} />}
@@ -35,7 +37,10 @@ const StyledLinkButton = styled.button`
   padding: 1rem 1.5rem;
   cursor: pointer;
   font-weight: 500;
+  font-family: inherit;
   outline: none;
+  color: inherit;
+  text-decoration: none;
   transition: background-color .3s ease;
 
   /* Give some space for an icon */
@@ -60,6 +65,16 @@ const StyledLinkButton = styled.button`
   &.active {
     color: ${props => props.theme.colors.primary};
     font-weight: 600;
+  }
+
+  &.disabled {
+    color: rgba(${props => hexToRgba(props.theme.colors.primary, 0.3)})!important;
+    cursor: not-allowed;
+
+    &:hover {
+      color: rgba(${props => hexToRgba(props.theme.colors.primary, 0.3)})!important;
+      background-color: transparent;
+    }
   }
 `
 

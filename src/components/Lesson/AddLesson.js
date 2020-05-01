@@ -1,9 +1,10 @@
-import React, { useContext, useState } from 'react'
-import { useParams } from "react-router-dom"
-import Loader from '../Loader'
+import React, { useState } from 'react'
+import { useParams, Redirect } from "react-router-dom"
 
 import LessonDetailsForm from './LessonDetailsForm'
-import { StyledContent } from '../../styles/PageStyles'
+import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
+import { LinkButton } from '../ui/LinkButton'
+import Loader from '../Loader'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_LESSON } from '../../queries/lessons'
@@ -13,6 +14,9 @@ const AddLesson = () => {
 
   /* Paramaters */
   let { id } = useParams();
+
+  /* State */
+  const [redirect, setRedirect] = useState(null);
 
   /* Queries */
   const { loading, data } = useQuery(GET_GUIDE_BY_ID, {
@@ -29,10 +33,11 @@ const AddLesson = () => {
         ...lesson
       }
     }).then(response => {
-      console.log("RESPONSE: ", response);
-      alert("Lesson Added");
+      setRedirect(`/lesson/edit/${response.data.createLesson.id}/2`);
     });
   }
+
+
 
   if (loading) return <Loader />
   const lesson = {
@@ -41,7 +46,16 @@ const AddLesson = () => {
 
   return (
     <StyledContent>
+      <Heading>
+        <h1>Lesson Editor</h1>
+        <MediumSpace>
+          <LinkButton className="active">Lesson Details</LinkButton>
+          <LinkButton disabled>Assign Lyrics</LinkButton>
+          <LinkButton disabled>Lesson Dashboard</LinkButton>
+        </MediumSpace>
+      </Heading>
       <LessonDetailsForm lesson={lesson} onSubmit={addLesson} />
+      {redirect && <Redirect to={redirect} />}
     </StyledContent>
   )
 }

@@ -10,12 +10,6 @@ import styled from 'styled-components'
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
 
-/* Get Full Document Height */
-let body = document.body
-let html = document.documentElement;
-let height = Math.max(body.scrollHeight, body.offsetHeight,
-  html.clientHeight, html.scrollHeight, html.offsetHeight)
-
 const LessonDashboardStudent = ({ lesson, refetch }) => {
 
   /* Refs */
@@ -60,6 +54,8 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
     }
   }
 
+  /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
+  any lyrics that are associated with the specific annotation */
   async function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
     // Select or deselect the lyric
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
@@ -79,7 +75,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
         available space then center it */
     if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
       let diff = (arrowTop - (contentHeight / 2))
-      setOffset(diff > 0 ? diff : 0)
+      setOffset(diff > 0 ? diff + 10 : 0) // + 10px for half the height of the arrow
     } else if ((arrowTop + contentHeight) > lyricsHeight) {
       setOffset(lyricsHeight - contentHeight)
     } else {
@@ -171,6 +167,7 @@ const StyledMovingColumn = styled.div`
     border-left: 3px solid #DD3333;
     transition: all .3s ease;
     z-index: 5;
+    min-height: 7rem;
     top: ${props => props.contentTop}px;
   }
 `

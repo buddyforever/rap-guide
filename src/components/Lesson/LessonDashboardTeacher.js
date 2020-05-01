@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from 'react'
-import { StyledContent, Heading, Split, LargeSpace, ActivityList } from '../../styles/PageStyles'
-import { FormBlock } from '../../styles/FormStyles'
-import { Button } from '../ui/Button'
-import { LinkButton } from '../ui/LinkButton'
-import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faCopy } from '@fortawesome/free-solid-svg-icons'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_LESSON_BY_ID } from '../../queries/lessons'
-import { REVIEW_ANNOTATION } from '../../queries/annotations'
+import { Link } from 'react-router-dom'
+
+import { StyledContent, Heading, Split, LargeSpace, MediumSpace } from '../../styles/PageStyles'
+import { FormBlock } from '../../styles/FormStyles'
+import { Button } from '../ui/Button'
+import { LinkButton } from '../ui/LinkButton'
 import Loader from '../Loader'
 import { Message } from '../ui/Message'
 import { dateFormat } from '../../utilities/DateFormat'
 import { Modal } from "../../styles/ModalStyles"
 import ReviewAnnotation from '../Annotation/ReviewAnnotation'
+import { faBackward } from '@fortawesome/free-solid-svg-icons'
+
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { GET_LESSON_BY_ID } from '../../queries/lessons'
+import { REVIEW_ANNOTATION } from '../../queries/annotations'
 
 const variants = {
   open: { x: "-50vw" },
@@ -82,9 +85,15 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   }
 
   return (
-    <StyledContent>
+    <StyledContent className="dashboard">
       <Heading>
-        <h1>Educator Dashboard</h1>
+        <h1>Lesson Dashboard</h1>
+        <MediumSpace>
+          <LinkButton
+            iconLeft={faBackward}
+            as={Link}
+            to="/lessons">Back to Lessons</LinkButton>
+        </MediumSpace>
       </Heading>
       {message &&
         <Message

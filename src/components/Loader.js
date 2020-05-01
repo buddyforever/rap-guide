@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react'
-import { StyledContent, CenteredContent } from '../styles/PageStyles'
 import styled from 'styled-components'
+import { AnimatePresence, motion } from 'framer-motion'
+
 import { useInterval } from './Hooks/useInterval'
+import Logo from './Layout/Logo'
+import { StyledContent, CenteredContent } from '../styles/PageStyles'
+
+const logoVariants = {
+  initial: { scale: 0.9, opacity: 1, rotate: 360 },
+  show: { scale: 1.1, opacity: 1, rotate: 0 },
+  exit: { scale: 0, opacity: 0 }
+}
 
 const Loader = () => {
 
@@ -23,7 +32,19 @@ const Loader = () => {
   return (
     <StyledContent>
       <CenteredContent>
-        <StyledLoader><span>Loading</span> <span>{dots}</span></StyledLoader>
+        <AnimatePresence exitBeforeEnter>
+          <StyledLoader>
+            <Logo
+              variants={logoVariants}
+              id="loader"
+              transition={{
+                yoyo: Infinity,
+                duration: 2,
+                ease: "backInOut"
+              }} />
+            {/*<span>{dots}</span>*/}
+          </StyledLoader>
+        </AnimatePresence>
       </CenteredContent>
     </StyledContent>
   )
@@ -31,11 +52,10 @@ const Loader = () => {
 
 export default Loader
 
-const StyledLoader = styled.div`
+const StyledLoader = styled(motion.div)`
   width: 300px;
   font-size: 4rem;
-
-  span {
-    display: inline;
-  }
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 `

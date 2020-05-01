@@ -1,10 +1,10 @@
 import React, { useContext } from 'react'
 import styled from 'styled-components'
-import { UserContext } from '../../context/UserContext'
+import { Link } from 'react-router-dom'
 
+import { UserContext } from '../../context/UserContext'
 import { StyledContent, Heading } from '../../styles/PageStyles'
 import { ThreeGrid } from '../../styles/PageStyles'
-import { Link } from 'react-router-dom'
 import Loader from '../Loader'
 
 import { useQuery } from '@apollo/react-hooks'
@@ -18,11 +18,22 @@ export const Lessons = () => {
   /* Queries */
   const { loading, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
     variables: {
-      id: user.id
+      id: user ? user.id : null
     }
   });
 
   if (loading) return <Loader />
+  if (!data) {
+    return (
+      <StyledContent>
+        <Heading>
+          <h1>Lessons</h1>
+          <p>Currently only students and teachers are able to view lessons. Please <Link to="/login">Login</Link> to access this content.</p>
+        </Heading>
+      </StyledContent>
+    )
+  }
+
   return (
     <StyledContent>
       <Heading>

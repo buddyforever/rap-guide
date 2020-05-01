@@ -1,24 +1,27 @@
 import React from 'react'
+import { useLocation } from 'react-router-dom'
+
+import { StyledMainContent } from '../../styles/PageStyles.js'
 import Header from './Header'
 import Footer from './Footer'
-import styled from 'styled-components'
+import { useMessage } from '../ui/Message/useMessage'
 
 export const Layout = ({ children }) => {
+
+  const location = useLocation();
+  //const { message, setMessage, Message } = useMessage()
+
+
   return (
-    <div>
+    <>
       <Header />
-      <StyledMainContent>
+      <StyledMainContent location={location} key={location.pathname}>
         {children}
       </StyledMainContent>
       <Footer />
-    </div>
+    </>
   )
 }
 
 export default Layout;
 
-const StyledMainContent = styled.main`
-  max-width: 110rem;
-  margin: 0 auto;
-  padding-top: 12rem;
-`;

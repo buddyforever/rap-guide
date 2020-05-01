@@ -28,11 +28,11 @@ export const Lesson = () => {
 
   if (loading) return <Loader />
   return (
-    <StyledContent>
+    <>
       {user && user.type === 'educator' ?
         <LessonDashboardTeacher lesson={data.lesson} refetch={refetch} /> : (<LessonDashboardStudent lesson={data.lesson} refetch={refetch} />)
       }
-    </StyledContent>
+    </>
   )
 }
 

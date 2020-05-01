@@ -54,11 +54,3 @@ export const Guide = () => {
 
 export default Guide;
 
-const StyledAnnotation = styled.div`
-  border-left: 3px solid #dd3333;
-  padding: 2.5rem;
-  position: sticky;
-  top: 10rem;
-`;
-
-

@@ -1,125 +1,238 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { Link } from "react-router-dom"
+import React, { useContext, useState, useEffect, useRef } from 'react'
 
-import { ButtonBlock, FormBlock, FormPage } from '../../styles/FormStyles'
-import { MediumSpace, Heading } from '../../styles/PageStyles'
-import { Tag } from '../../styles/TagStyles'
-import { Editor } from '@tinymce/tinymce-react';
-import { Button } from '../ui/Button'
 import { UserContext } from '../../context/UserContext'
-import { Message } from '../ui/Message'
-import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import NoteForm from '../Lesson/NoteForm'
+import { Heading, MediumSpace, LargeSpace, StyledContent, HtmlContent, StyledColumns } from '../../styles/PageStyles'
+import Lyrics from '../Lyric/Lyrics'
+import Loader from '../Loader'
+import styled from 'styled-components'
 
-const variants = {
-  open: { x: "-50vw", opacity: 1 },
-  closed: { x: "100%", opacity: 0 }
-}
+import { useMutation } from '@apollo/react-hooks'
+import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
+import { ASSIGN_LYRIC, UNASSIGN_LYRIC } from '../../queries/lyric'
 
-const LessonLyricsForm = ({ lesson, onSubmit }) => {
+const LessonLyricsForm = ({ lesson, refetch }) => {
 
-  /* Fields */
+  /* Refs */
+  const ref = useRef();
 
-  /* Message */
-  const [message, setMessage] = useState(null);
+  /* Context */
+  const { user } = useContext(UserContext)
 
-  /* Functions */
-  function handleSubmit(e) {
-    e.preventDefault()
+  /* State */
+  const [lyrics, setLyrics] = useState(null);
+  const [annotation, setAnnotation] = useState(null);
+  const [top, setTop] = useState(120);
+  const [offset, setOffset] = useState(120);
+  const [selectedLyrics, setSelectedLyrics] = useState([]);
+  const [assignedLyrics, setAssignedLyrics] = useState([]);
 
-    onSubmit({
-      //data
-    });
+  /* Queries */
+  const [createAnnotation] = useMutation(CREATE_ANNOTATION)
+  const [updateAnnotation] = useMutation(UPDATE_ANNOTATION)
+  const [assignLyricMutation] = useMutation(ASSIGN_LYRIC);
+  const [unAssignLyricMutation] = useMutation(UNASSIGN_LYRIC);
+
+  function handleAddAnnotation({ annotation, isSubmitted, lessonLyricId }) {
+    if (!annotation.id) {
+      createAnnotation({
+        variables: {
+          isSubmitted: isSubmitted,
+          account: user.id,
+          lessonLyric: lessonLyricId,
+          annotation: annotation.annotation
+        }
+      }).then((createAnnotation) => {
+        refetch()
+      })
+    } else {
+      updateAnnotation({
+        variables: {
+          id: annotation.id,
+          isSubmitted: isSubmitted,
+          annotation: annotation.annotation
+        }
+      }).then((updateAnnotation) => {
+        refetch()
+      })
+    }
   }
 
-  /* Effects */
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [message]);
+  /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
+  any lyrics that are associated with the specific annotation */
+  async function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
+    // Select or deselect the lyric
+    if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
+      selectLyric(lyric)
+    } else {
+      deSelectLyric(lyric);
+    }
+    await setAnnotation(lyric.lyric); // Display Annotation or Annotation Form
+    let contentHeight = ref.current.getBoundingClientRect().height;
+    setTop(arrowTop);
 
+    /*  If the content is shorter than the
+        available space then center it */
+    if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
+      let diff = (arrowTop - (contentHeight / 2))
+      setOffset(diff > 0 ? diff + 10 : 0) // + 10px for half the height of the arrow
+    } else if ((arrowTop + contentHeight) > lyricsHeight) {
+      setOffset(lyricsHeight - contentHeight)
+    } else {
+      let newTop = arrowTop - maxY;
+      setOffset(newTop > 0 ? newTop : 0)
+    }
+  }
+
+  function handleToggleChecked(lyric, checked) {
+    if (checked) {
+      assignLyric(lyric)
+    } else {
+      unAssignLyric(lyric)
+    }
+  }
+
+  function assignLyric(lyric) {
+    if (assignedLyrics.find(assignedLyric => assignedLyric.id === lyric.id)) return
+
+    assignLyricMutation({
+      variables: {
+        lessonId: lesson.id,
+        lyricId: lyric.id
+      }
+    }).then(response => {
+      setAssignedLyrics(prevState => ([
+        ...prevState,
+        lyric
+      ]));
+    })
+  }
+
+  function unAssignLyric(lyric) {
+    unAssignLyricMutation({
+      variables: {
+        lessonId: lesson.id,
+        lyricId: lyric.id
+      }
+    }).then(response => {
+      if (assignedLyrics.length === 0) {
+        setAssignedLyrics([]);
+      } else {
+        setAssignedLyrics(prevState => {
+          return prevState.filter(assignedLyric => assignedLyric.id !== lyric.id)
+        });
+        deSelectLyric(lyric);
+      }
+    })
+  }
+
+  function selectLyric(lyric) {
+    selectedLyrics.push(lyric);
+    let sortedLyrics = selectedLyrics.sort((a, b) => {
+      return a.order > b.order ? 1 : b.order > a.order ? -1 : 0
+    })
+    assignLyric(lyric);
+    setSelectedLyrics(sortedLyrics);
+  }
+
+  function deSelectLyric(lyric) {
+    let sortedLyrics = selectedLyrics.filter(selectedLyric => selectedLyric.id !== lyric.id)
+    sortedLyrics = sortedLyrics.sort((a, b) => {
+      return a.order > b.order ? 1 : b.order > a.order ? -1 : 0
+    })
+    setSelectedLyrics(sortedLyrics);
+  }
+
+  function combineLyrics() {
+    /* Combine Guide Lyrics with Lesson Lyrics */
+    var combinedLyrics = lesson.guide.lyrics.map(l1 => {
+      return Object.assign({}, l1, lesson.lyrics.filter(l2 => l1.id === l2.id)[0])
+    });
+
+    setAssignedLyrics(lesson.lyrics);
+    setLyrics(combinedLyrics);
+  }
+
+  useEffect(() => {
+    combineLyrics();
+  }, [])
+
+  if (!lyrics) return <Loader />
   return (
-    <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
+    <>
       <Heading>
-        <h1>{lesson.id ? "Edit Lesson" : "Create New Lesson"}</h1>
+        <h2>Assign Lyrics</h2>
         <MediumSpace>
-          <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
+          <h2>{lesson.lessonTitle}</h2>
           <h3>A lesson plan for <a href={`https://www.youtube.com/watch?v=${lesson.guide.videoId}`} target="_blank">{lesson.guide.videoTitle}</a></h3>
         </MediumSpace>
       </Heading>
 
-      {message && <Message type={message.type} title={message.title}>{message.text}</Message>}
+      <LargeSpace>
+        <p>Select lyrics to make them annotatable for this lesson. You can add notes to the lyrics that will be displayed to the students. You can also create an example annotation to further illustrate your expectations.</p>
+      </LargeSpace>
 
-      <FormBlock>
-        <h3>Lesson Name</h3>
-        <input
-          style={{ width: "100%" }}
-          type="text"
-          value={lessonTitle}
-          onChange={(e) => setLessonTitle(e.target.value)}
-          placeholder="Give this lesson a name..." />
-      </FormBlock>
-
-      <FormBlock>
-        <h3>Lesson Plan</h3>
-        <p>This is placeholder text that will describe what this rich text editor is for.</p>
-        <Editor
-          initialValue={lessonDescription}
-          apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
-          init={{
-            height: 300,
-            menubar: false,
-            plugins: [
-              'advlist autolink lists link image charmap print preview anchor',
-              'searchreplace visualblocks code fullscreen',
-              'insertdatetime media table paste code help wordcount'
-            ],
-            toolbar:
-              'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-          }}
-          onEditorChange={handleLessonDescription}
-        />
-      </FormBlock>
-
-      <FormBlock>
-        <h3>Students</h3>
-        <p>Enter the maximum number of students expected to enroll in this class.</p>
-        <input
-          type="number"
-          value={maxStudents}
-          onChange={(e) => setMaxStudents(e.target.value)}
-          placeholder="20..." />
-      </FormBlock>
-
-      <FormBlock>
-        <h3>Topics</h3>
-        <p>Enter the topic(s) that this lesson plan aim's to cover.</p>
-        <div style={{ display: "flex" }}>
-          <input
-            type="text"
-            value={topic}
-            placeholder="Climate Chaos..."
-            onKeyPress={handleKeyPress}
-            onChange={(e) => setTopic(e.target.value)} />
-          <Button
-            secondary
-            style={{ marginLeft: "1rem", width: "100px", height: "auto" }}
-            onClick={(e) => { e.preventDefault(); addTopic(e.target.value) }}
-            iconLeft={faPlus}>Add</Button>
-        </div>
-        <MediumSpace>
-          {topics.map(topic => (
-            <Tag
-              key={topic}
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}>{topic}</Tag>
-          ))}
-        </MediumSpace>
-      </FormBlock>
-      <ButtonBlock>
-        <Link to="/lessons">Back to lessons</Link>
-        <Button onClick={handleSubmit}>{lesson.id ? "Save & Continue" : "Create Lesson"}</Button>
-      </ButtonBlock>
-    </FormPage>
+      <StyledColumns>
+        <Lyrics
+          isSelectable={true}
+          lyrics={lyrics}
+          assignedLyrics={assignedLyrics}
+          selectedLyrics={selectedLyrics}
+          refetch={refetch}
+          toggleChecked={handleToggleChecked}
+          onClick={handleLyricClick} />
+        <StyledMovingColumn
+          arrowTop={top}
+          contentTop={offset}
+          className={selectedLyrics.length ? "" : "hidden"}>
+          <div className="arrow"></div>
+          <div className="content" ref={ref}>
+            <NoteForm
+              selectedLyrics={selectedLyrics}
+              setSelectedLyrics={setSelectedLyrics}
+              lesson={lesson} />
+            {/*<div dangerouslySetInnerHTML={{ __html: annotation ? annotation : "<p></p>" }} />*/}
+          </div>
+        </StyledMovingColumn>
+      </StyledColumns>
+    </>
   )
 }
 
 export default LessonLyricsForm
+
+const StyledMovingColumn = styled.div`
+  position: relative;
+  opacity: 1;
+
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .arrow {
+    position: absolute;
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    border-left: 3px solid #DD3333;
+    border-top: 3px solid #DD3333;
+    background-color: #FFFFFF;
+    transform: rotate(-45deg);
+    transition: all .3s ease;
+    left: -0.9rem;
+    z-index: 10;
+
+    top: ${props => props.arrowTop}px;
+  }
+
+  .content {
+    position: absolute;
+    padding-left: 2rem;
+    border-left: 3px solid #DD3333;
+    transition: all .3s ease;
+    z-index: 5;
+    min-height: 7rem;
+    top: ${props => props.contentTop}px;
+  }
+`

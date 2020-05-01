@@ -1,21 +1,22 @@
 import React, { useState } from 'react'
-import Layout from './components/Layout/Layout'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
+import { ApolloProvider } from 'react-apollo'
+import ApolloClient from 'apollo-boost'
+import { ThemeProvider } from 'styled-components'
+
 import Guide from './components/Guide/Guide'
+import Layout from './components/Layout/Layout'
 import AddGuide from './components/Guide/AddGuide'
 import { About, Contact, Lessons, Login, PageNotFound, Request, Explore, Temp } from './components/Pages'
 import LessonSignup from './components/Lesson/LessonSignup'
 import PrivateRoute from './auth/PrivateRoute'
 import Lesson from './components/Private/Lesson'
 import AddLesson from './components/Lesson/AddLesson'
-import EditLesson from './components/Lesson/EditLesson'
+import EditLesson from './components/Lesson/EditLesson.js'
 import Profile from './components/Private/Profile'
 import auth from './auth/auth'
 import { getLocalStorage } from './utilities/LocalStorage'
 import { UserContext } from './context/UserContext'
-import { ApolloProvider } from 'react-apollo'
-import ApolloClient from 'apollo-boost'
-import { ThemeProvider } from 'styled-components'
 import { defaultTheme } from '../src/components/themes/default'
 import RouteChange from './utilities/RouteChange'
 
@@ -46,6 +47,13 @@ function App() {
                 <PrivateRoute
                   path="/lesson/add/:id"
                   component={AddLesson}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404" />
+                <PrivateRoute
+                  path="/lesson/edit/:id/:page"
+                  component={EditLesson}
                   authenticationPath="/login"
                   isAuthenticated={auth.isAuthenticated()}
                   isAllowed={auth.isAuthenticated()}

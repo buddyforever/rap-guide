@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from 'react'
 import { Link } from "react-router-dom"
 
 import { ButtonBlock, FormBlock, FormPage } from '../../styles/FormStyles'
-import { MediumSpace, Heading } from '../../styles/PageStyles'
+import { MediumSpace, Heading, StyledContent } from '../../styles/PageStyles'
 import { Tag } from '../../styles/TagStyles'
 import { Editor } from '@tinymce/tinymce-react';
 import { Button } from '../ui/Button'
@@ -10,11 +10,6 @@ import { UserContext } from '../../context/UserContext'
 import { Message } from '../ui/Message'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 import { EditorPropTypes } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/EditorPropTypes'
-
-const variants = {
-  open: { x: "-50vw", opacity: 1 },
-  closed: { x: "100%", opacity: 0 }
-}
 
 const LessonDetailsForm = ({ lesson, onSubmit }) => {
 
@@ -39,7 +34,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
     let errors = []
     if (!lessonTitle.length) errors = ["Please enter a title", ...errors]
     if (!lessonDescription.length) errors = ["Please enter a description", ...errors]
-    if (!maxStudents.length) errors = ["Please enter the maximum number of students", ...errors]
+    if (isNaN(maxStudents)) errors = ["Please enter the maximum number of students", ...errors]
     if (errors.length) {
       setMessage({
         type: "error",
@@ -110,9 +105,9 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
   }, [message]);
 
   return (
-    <FormPage initial="initial" animate="show" exit="exit" variants={variants}>
+    <>
       <Heading>
-        <h1>{lesson.id ? "Edit Lesson" : "Create New Lesson"}</h1>
+        <h2>Lesson Details</h2>
         <MediumSpace>
           <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
           <h3>A lesson plan for <a href={`https://www.youtube.com/watch?v=${lesson.guide.videoId}`} target="_blank">{lesson.guide.videoTitle}</a></h3>
@@ -191,7 +186,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
         <Link to="/lessons">Back to lessons</Link>
         <Button onClick={handleSubmit}>{lesson.id ? "Save & Continue" : "Create Lesson"}</Button>
       </ButtonBlock>
-    </FormPage>
+    </>
   )
 }
 

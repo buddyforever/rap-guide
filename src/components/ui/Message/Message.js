@@ -47,7 +47,8 @@ const Message = ({ children, toast, round, dismiss, type = "default", title, ...
           exit="exit"
           className={classes.length ? classes.join(" ") : ""}
           type={type}
-          {...props}>
+          {...props}
+          {...rest}>
           <div className="message-content">
             {dismiss &&
               <button className="message-close" onClick={handleClose}>

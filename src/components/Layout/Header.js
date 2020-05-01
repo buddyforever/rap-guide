@@ -71,6 +71,7 @@ const StyledHeader = styled.header`
   color: white;
   margin-bottom: 5rem;
   z-index: 1000;
+  overflow: hidden;
 
   .wrapper {
     max-width: 100vw;

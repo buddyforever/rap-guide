@@ -1,4 +1,11 @@
 import styled from 'styled-components'
+import { motion } from 'framer-motion'
+
+export const StyledMainContent = styled.main`
+  max-width: 110rem;
+  margin: 0 auto;
+  padding-top: 12rem;
+`;
 
 export const StyledContent = styled.div`
   min-height: 50vh;
@@ -148,10 +155,4 @@ export const StyledColumns = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 5rem;
-
-  h3 {
-    margin: 2.5rem;
-    font-size: 1.8rem;
-    font-weight: 500;
-  }
 `;

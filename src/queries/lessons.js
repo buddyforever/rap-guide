@@ -31,6 +31,10 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
             email
             image
           }
+          lyrics {
+            id
+            lyric
+          }
         }
       }
       topics {
@@ -95,6 +99,9 @@ export const GET_LESSON_BY_ID = gql`
             nameLast
             email
             image
+          }
+          lyrics {
+            id
           }
         }
       }
