@@ -18,10 +18,19 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
       lyrics {
         id
         lyric
+        notes {
+          id
+          note
+          isExample
+          lyrics {
+            lyric
+            id
+            order
+          }
+        }
         annotations {
           id
           annotation
-          isExample
           isSubmitted
           isApproved
           account {
@@ -86,11 +95,20 @@ export const GET_LESSON_BY_ID = gql`
       lyrics {
         id
         lyric
+        notes {
+          id
+          note
+          isExample
+          lyrics {
+            lyric
+            id
+            order
+          }
+        }
         annotations {
           id
           annotation
           updatedAt
-          isExample
           isSubmitted
           isApproved
           account {

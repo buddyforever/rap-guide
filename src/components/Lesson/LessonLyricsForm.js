@@ -26,6 +26,7 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
   const [offset, setOffset] = useState(120);
   const [selectedLyrics, setSelectedLyrics] = useState([]);
   const [assignedLyrics, setAssignedLyrics] = useState([]);
+  const [selectedNote, setSelectedNote] = useState(null);
 
   /* Queries */
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
@@ -126,12 +127,31 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
     })
   }
 
+  function deSelectAllLyrics() {
+    setSelectedNote(null);
+    setSelectedLyrics([]);
+  }
+
   function selectLyric(lyric) {
+    if (selectedNote
+      && selectedNote.lyrics
+      && !selectedNote.lyrics.find(selectedLyric => selectedLyric.id === lyric.id)
+    ) {
+      deSelectAllLyrics()
+      setSelectedLyrics([lyric])
+      return
+    }
+    if (lyric.notes && lyric.notes.length) {
+      deSelectAllLyrics()
+      setSelectedNote(lyric.notes[0])
+      return
+    }
     selectedLyrics.push(lyric);
     let sortedLyrics = selectedLyrics.sort((a, b) => {
       return a.order > b.order ? 1 : b.order > a.order ? -1 : 0
     })
     assignLyric(lyric);
+    setSelectedNote(null);
     setSelectedLyrics(sortedLyrics);
   }
 
@@ -155,7 +175,7 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
 
   useEffect(() => {
     combineLyrics();
-  }, [])
+  }, [lesson])
 
   if (!lyrics) return <Loader />
   return (
@@ -188,6 +208,9 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
           <div className="arrow"></div>
           <div className="content" ref={ref}>
             <NoteForm
+              refetch={refetch}
+              note={selectedNote}
+              setSelectedNote={setSelectedNote}
               selectedLyrics={selectedLyrics}
               setSelectedLyrics={setSelectedLyrics}
               lesson={lesson} />

@@ -28,7 +28,7 @@ const EditLesson = () => {
   const [currentPage, setCurrentPage] = useState(page ? parseInt(page) : 1);
 
   /* Queries */
-  const { loading, data } = useQuery(GET_LESSON_BY_ID, {
+  const { loading, data, refetch } = useQuery(GET_LESSON_BY_ID, {
     variables: {
       id: id
     }
@@ -78,7 +78,7 @@ const EditLesson = () => {
       }
       {currentPage === 2 &&
         <FormPage initial="initial" animate="show" exit="exit" variants={pageVariants}>
-          <LessonLyricsForm lesson={data.lesson} onSubmit={updateLessonLyrics} />
+          <LessonLyricsForm refetch={refetch} lesson={data.lesson} onSubmit={updateLessonLyrics} />
         </FormPage>
       }
     </StyledContent>

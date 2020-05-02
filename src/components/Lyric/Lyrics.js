@@ -33,8 +33,10 @@ const Lyrics = ({
       {lyrics.map(lyric => {
         nextBar = (currentBar !== lyric.bar);
         currentBar = lyric.bar;
-        let isSelected = selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id) ? true : false
-        let isAssigned = assignedLyrics.find(assignedLyric => assignedLyric.id === lyric.id) ? true : false
+        let isSelected =
+          selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id) ? true : false
+        let isAssigned =
+          assignedLyrics.find(assignedLyric => assignedLyric.id === lyric.id) ? true : false
         if (isAssigned) {
           lyric.annotations = []
         } else {
@@ -56,9 +58,23 @@ const Lyrics = ({
                 </span>
               }
               <Lyric
+                name={lyric.notes && lyric.notes.length > 0 ? lyric.notes[0].id : null}
                 isSelectable={isSelectable}
                 lyric={lyric}
                 selected={isSelected}
+                onMouseOver={(e) => {
+                  if (lyric.notes && lyric.notes.length) {
+                    let related = document.querySelectorAll(`div[name=${lyric.notes[0].id}]`);
+                    related.forEach(node => {
+                      node.classList.add("hovering");
+                    })
+                  }
+                }}
+                onMouseOut={(e) => {
+                  document.querySelectorAll(".hovering").forEach(node => {
+                    node.classList.remove("hovering")
+                  });
+                }}
                 onClick={(e) => {
                   const pos = e.target.getBoundingClientRect();
                   const maxY = documentOffset(e.target).top - window.scrollY - 130; // How far up I can move

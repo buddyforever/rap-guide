@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export const CREATE_NOTE = gql`
   mutation createNote(
     $note: String!,
+    $isExample: Boolean!,
     $account: AccountWhereUniqueInput!,
     $lyrics: [LyricWhereUniqueInput!],
     $lesson: ID!
@@ -11,6 +12,7 @@ export const CREATE_NOTE = gql`
       data: {
         status: PUBLISHED
         note: $note
+        isExample: $isExample
         account: { connect: $account }
         lyrics: { connect: $lyrics }
         lesson: {
@@ -18,15 +20,20 @@ export const CREATE_NOTE = gql`
         }
     }) {
       id
+      note
+      isExample
+      lyrics {
+        id
+      }
     }
   }
 `
 
 export const DELETE_NOTE = gql`
   mutation deleteNote(
-    $note: NoteWhereUniqueInput!
+    $id: ID!
   ){
-    deleteNote( where: $note ){
+    deleteNote( where: { id: $id } ){
       id
     }
   }

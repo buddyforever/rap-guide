@@ -1,15 +1,21 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
 
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faStar } from '@fortawesome/free-solid-svg-icons'
+
 const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
 
   let isAssigned = lyric.annotations
   let isAnnotated = lyric.anotations && lyric.annotations.length
   let isSubmitted = false
   let isExample = false
+  let hasNote = lyric.notes && lyric.notes.length ? true : false
   if (isAnnotated) {
     isSubmitted = lyric.annotations.find(annotation => annotation.isSubmitted)
-    isExample = lyric.annotations.find(annotation => annotation.isExample)
+  }
+  if (hasNote) {
+    isExample = lyric.notes.find(note => note.isExample)
   }
 
   /* Handle adding any necessary classes */
@@ -19,11 +25,15 @@ const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
   if (isSubmitted) classes.push("submitted");
   if (isExample) classes.push("example");
   if (selected) classes.push("selected");
+  if (hasNote) classes.push("noted");
   if (isSelectable || isAssigned || isAnnotated || isSubmitted || isExample) classes.push("selectable");
 
   return (
     <StyledLyric className={classes.length ? classes.join(" ") : ""} {...rest}>
       {lyric.lyric}
+      {isExample &&
+        <span><FontAwesomeIcon icon={faStar} /></span>
+      }
     </StyledLyric>
   )
 }
@@ -34,8 +44,14 @@ const StyledLyric = styled.div`
   font-size: 1.8rem;
   line-height: 2.75rem;
   margin-bottom: 2px;
-  padding-left: .5rem;
+  padding: 0 .5rem;
   transition: background-color .3s ease;
+
+  span {
+    color: #CBD5E0;
+    margin-left: 0.5rem;
+    font-size: 1.4rem;
+  }
 
   &.selectable {
     cursor: pointer;
@@ -49,11 +65,24 @@ const StyledLyric = styled.div`
     }
   }
 
+  &.noted {
+    background-color: #CBD5E0;
+
+    &:hover,
+    &.hovering {
+      background-color: #FEFCBF;
+    }
+  }
+
   &.selected {
     background-color: #FEFCBF;
 
     &:hover {
       background-color: #FAF089;
+    }
+
+    span {
+      color:  #FAF089;
     }
   }
 
@@ -66,7 +95,11 @@ const StyledLyric = styled.div`
   }
 
   &.example {
-    background-color: blue;
+    background-color: #BEE3F8;
+
+    span {
+      color: #90CDF4;
+    }
   }
 
 `
