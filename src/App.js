@@ -2,6 +2,7 @@ import React, { useState } from 'react'
 import { Switch, Route, BrowserRouter as Router } from 'react-router-dom'
 import { ApolloProvider } from 'react-apollo'
 import ApolloClient from 'apollo-boost'
+import { InMemoryCache } from 'apollo-cache-inmemory';
 import { ThemeProvider } from 'styled-components'
 
 import Guide from './components/Guide/Guide'
@@ -20,7 +21,10 @@ import { UserContext } from './context/UserContext'
 import { defaultTheme } from '../src/components/themes/default'
 import RouteChange from './utilities/RouteChange'
 
-const client = new ApolloClient({ uri: 'https://api-euwest.graphcms.com/v1/ck56vnvt50t7301gifvv37btb/master' });
+const client = new ApolloClient({
+  uri: 'https://api-euwest.graphcms.com/v1/ck56vnvt50t7301gifvv37btb/master',
+  cache: new InMemoryCache()
+});
 
 function App() {
 

@@ -13,6 +13,7 @@
     "@testing-library/user-event": "^7.2.1",
     "@tinymce/tinymce-react": "^3.5.0",
     "apollo-boost": "^0.4.7",
+    "apollo-cache-inmemory": "^1.6.5",
     "apollo-client-preset": "^1.0.8",
     "draft-js": "^0.11.5",
     "framer-motion": "^1.10.3",
