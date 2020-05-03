@@ -70,6 +70,14 @@ export const Heading = styled.header`
   }
 `
 
+export const Centered = styled.div`
+  height: ${props => props.height || "100vh"};
+  width: ${props => props.width || "100%"};
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`
+
 export const FourGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -80,8 +88,38 @@ export const FourGrid = styled.div`
 export const ThreeGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr 1fr;
-  grid-gap: 2.5rem;
-  row-gap: 5rem;
+  grid-gap: 2rem;
+
+  @media screen and (max-width: 1020px) {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  @media screen and (max-width: 926px) {
+    grid-template-columns: 1fr;
+  }
+`
+
+export const ThreeGridFlex = styled.div`
+  display: grid;
+  justify-content: space-around;
+  align-items: flex-start;
+  flex-wrap: wrap;
+
+  &>div {
+    flex: 1 1 32%;
+    margin-bottom: 5rem;
+    max-width: 320px;
+
+    @media screen and (max-width: 1020px) {
+      flex: 1 1 48%;
+      max-width: 420px;
+    }
+
+    @media screen and (max-width: 926px) {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
 `
 
 export const TwoGrid = styled.div`

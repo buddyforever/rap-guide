@@ -6,6 +6,7 @@ import { UserContext } from '../../context/UserContext'
 import { StyledContent, Heading } from '../../styles/PageStyles'
 import { ThreeGrid } from '../../styles/PageStyles'
 import Loader from '../Loader'
+import VideoThumb from '../Guide/VideoThumb'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
@@ -42,29 +43,12 @@ export const Lessons = () => {
       {data.lessons.length === 0 && <p>There are no lessons available.</p>}
       <ThreeGrid>
         {data.lessons.map(lesson => {
-          const students = lesson.accounts.filter(account => account.type === "student").length;
-
           return (
-            <StyledVideoThumb key={lesson.id}>
-              <h4>{lesson.lessonTitle}</h4>
-              <Link className="video_link" to={`/lesson/${lesson.id}`}>
-                <div className="video_thumbnail">
-                  <img src={lesson.guide.videoThumb} alt={lesson.guide.videoTitle} />
-                </div>
-                <h4>{lesson.guide.videoTitle}</h4>
-              </Link>
-              <div className="video_details">
-                <div style={{ marginBottom: "1rem" }}>
-                  <p><strong>Students</strong> <span>{students}/{lesson.maxStudents}</span></p>
-                  <p><strong>Lyrics</strong> <span>{lesson.lyrics.length}/{lesson.guide.lyrics.length}</span></p>
-                </div>
-                {
-                  lesson.topics.map(({ id, topic }) => {
-                    return (<a href="#" key={id}>{topic}</a>)
-                  })
-                }
-              </div>
-            </StyledVideoThumb>
+            <VideoThumb
+              key={lesson.id}
+              link={`/lesson/${lesson.id}`}
+              lesson={lesson}
+              guide={lesson.guide} />
           )
         })}
       </ThreeGrid>

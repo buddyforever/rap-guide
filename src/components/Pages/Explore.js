@@ -1,13 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { StyledContent, Heading, ThreeGrid, MediumSpace } from '../../styles/PageStyles'
-import VideoThumb from '../Guide/VideoThumb'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+
+import { StyledContent, Heading, ThreeGrid, MediumSpace, Centered } from '../../styles/PageStyles'
+import VideoThumb from '../Guide/VideoThumb'
 import TagCloud from '../Guide/TagCloud'
+import Loader from '../Loader'
+import { DotWave } from '../ui/Loader'
+
 import { useQuery } from '@apollo/react-hooks'
 import { GET_ALL_GUIDES } from '../../queries/guides'
-import Loader from '../Loader'
 
 export const Home = () => {
 
@@ -48,20 +51,18 @@ export const Home = () => {
 
       <TagCloud selectTag={selectTag} tags={topics} />
 
-      <MediumSpace>
+      <Heading>
         <h1>Videos</h1>
-      </MediumSpace>
+      </Heading>
 
       <ThreeGrid>
         {guides.guides.map(guide => {
           return (<VideoThumb
             key={guide.id}
-            id={guide.id}
-            title={guide.videoTitle}
-            thumbnail={guide.videoThumb}
-            topics={guide.topics} />)
+            guide={guide} />)
         })}
       </ThreeGrid>
+
     </StyledContent>
   )
 }

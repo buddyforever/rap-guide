@@ -12,7 +12,15 @@ import { Message } from '../ui/Message'
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_NOTE, DELETE_NOTE } from '../../queries/note'
 
-export const NoteForm = ({ refetch, note, setSelectedNote, selectedLyrics, setSelectedLyrics, lesson }) => {
+export const NoteForm = ({
+  refetch,
+  note,
+  setSelectedNote,
+  selectedLyrics,
+  setSelectedLyrics,
+  lesson,
+  hasExample
+}) => {
 
   /* Context */
   const { user } = useContext(UserContext)
@@ -103,7 +111,12 @@ export const NoteForm = ({ refetch, note, setSelectedNote, selectedLyrics, setSe
           <h6 style={{ margin: "1rem 0" }}>Selected Lyrics</h6>
           {selectedLyrics.map(lyric => {
             return (
-              <em style={{ display: "block", marginBottom: ".5rem" }} key={lyric.id}>{lyric.lyric}</em>
+              <em
+                key={lyric.id}
+                style={{ display: "block", marginBottom: ".5rem" }}
+              >
+                {lyric.lyric}
+              </em>
             )
           })}
         </div>
@@ -128,19 +141,23 @@ export const NoteForm = ({ refetch, note, setSelectedNote, selectedLyrics, setSe
           onEditorChange={handleNoteContent}
         />
       </MediumSpace>
-      <SmallSpace style={{ textAlign: "right" }}>
-        <p>
-          <label style={{ cursor: "pointer" }}>
-            <span style={{ marginRight: "1rem" }}>Make this an example annotation </span>
-            <input
-              type="checkbox"
-              value={isExample}
-              checked={isExample}
-              onChange={(e) => { setIsExample(e.target.checked) }}
-            />
-          </label>
-        </p>
-      </SmallSpace>
+      {(!hasExample || isExample) &&
+        <SmallSpace style={{ textAlign: "right" }}>
+          <p>
+            <label style={{ cursor: "pointer" }}>
+              <span
+                style={{ marginRight: "1rem" }}
+              >Make this an example annotation </span>
+              <input
+                type="checkbox"
+                value={isExample}
+                checked={isExample}
+                onChange={(e) => { setIsExample(e.target.checked) }}
+              />
+            </label>
+          </p>
+        </SmallSpace>
+      }
       <ButtonBlock style={{ marginTop: "1rem" }}>
         <LinkButton onClick={cancel}>cancel</LinkButton>
         <div>
