@@ -1,11 +1,13 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { UserContext } from '../../context/UserContext'
 
+import { useStateWithName } from '../Hooks/useStateWithName'
 import { Heading, MediumSpace, StyledContent, HtmlContent, StyledColumns } from '../../styles/PageStyles'
 import Video from '../Guide/Video'
-import Lyrics from '../Lyric/Lyrics'
+import AnnotateLyrics from '../Lyric/AnnotateLyrics'
 import Loader from '../Loader'
 import styled from 'styled-components'
+import AnnotationForm from '../Annotation/AnnotationForm'
 
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
@@ -21,9 +23,13 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   /* State */
   const [lyrics, setLyrics] = useState(null);
   const [annotation, setAnnotation] = useState(null);
+  const [note, setNote] = useState(null);
+  const [item, setItem] = useState(null);
+  const [hidden, setHidden] = useState(true);
   const [top, setTop] = useState(120);
   const [offset, setOffset] = useState(120);
-  const [selectedLyrics, setSelectedLyrics] = useState([]);
+  const [selectedLyrics, setSelectedLyrics] = useStateWithName([], "SelectedLyrics");
+  const [assignedLyrics, setAssignedLyrics] = useStateWithName([], "AssignedLyrics");
 
   /* Queries */
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
@@ -57,6 +63,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
   any lyrics that are associated with the specific annotation */
   async function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
+    setNote(null);
     // Select or deselect the lyric
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
       setSelectedLyrics(prevState => [
@@ -67,7 +74,6 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
       setSelectedLyrics(prevState => prevState.filter(selectedLyric => selectedLyric.id !== lyric.id))
       return false; // We are only deselecting so no need to move the display
     }
-    await setAnnotation(lyric.lyric); // Display Annotation or Annotation Form
     let contentHeight = ref.current.getBoundingClientRect().height;
     setTop(arrowTop);
 
@@ -84,14 +90,74 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
     }
   }
 
+  function handleShowNote(item, lyricsTop, lyricsHeight, arrowTop, maxY) {
+    setHidden(false);
+    let contentHeight = ref.current.getBoundingClientRect().height;
+    setTop(arrowTop);
+
+    /*  If there annotation is shorter then the
+        available space then center it */
+    if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
+      let diff = (arrowTop - (contentHeight / 2))
+      setOffset(diff > 0 ? diff + 10 : 0) // + 10px for half the height of the arrow
+    } else if ((arrowTop + contentHeight) > lyricsHeight) {
+      setOffset(lyricsHeight - contentHeight)
+    } else {
+      let newTop = arrowTop - maxY;
+      setOffset(newTop > 0 ? newTop : 0)
+    }
+
+    console.log(item)
+    if (item.hasOwnProperty("annotation")) {
+      setAnnotation(item);
+      setNote(null);
+      return
+    }
+    if (item.hasOwnProperty("note")) {
+      setNote(item);
+      setAnnotation(null);
+      return
+    }
+    setItem(item)
+  }
+
+  function handleHide() {
+    setHidden(true);
+  }
+
   function combineLyrics() {
     /* Combine Guide Lyrics with Lesson Lyrics */
     var combinedLyrics = lesson.guide.lyrics.map(l1 => {
       return Object.assign({}, l1, lesson.lyrics.filter(l2 => l1.id === l2.id)[0])
     });
 
-    setLyrics(combinedLyrics);
+    // TODO handle this on the server side, for now just remove any annotations that
+    // do not belong to the current user
+    let removedAnnotationLyrics = combinedLyrics.map(lyric => {
+      if (lyric.annotations) {
+        return {
+          ...lyric,
+          annotations: lyric.annotations.filter(annotation => annotation.account.id === user.id)
+        }
+      } else {
+        return lyric
+      }
+    })
+
+    setAssignedLyrics(lesson.lyrics);
+    setLyrics(removedAnnotationLyrics);
   }
+
+  function sortLyrics(lyrics) {
+    let sortedLyrics = lyrics.sort((a, b) => {
+      return a.order > b.order ? 1 : b.order > a.order ? -1 : 0
+    })
+    return sortedLyrics
+  }
+
+  useEffect(() => {
+    if (selectedLyrics.length) setHidden(false);
+  }, [selectedLyrics])
 
   useEffect(() => {
     combineLyrics();
@@ -115,18 +181,62 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
       <Video guide={lesson.guide} />
 
       <StyledColumns>
-        <Lyrics
+        <AnnotateLyrics
           lyrics={lyrics}
+          assignedLyrics={assignedLyrics}
           selectedLyrics={selectedLyrics}
           refetch={refetch}
-          onClick={handleLyricClick} />
+          onClick={handleLyricClick}
+          showNote={handleShowNote}
+          hide={handleHide} />
         <StyledMovingColumn
           arrowTop={top}
           contentTop={offset}
-          className={annotation ? "" : "hidden"}>
+          className={hidden ? "hidden" : ""}>
           <div className="arrow"></div>
-          <div className="annotation" ref={ref}>
-            <div dangerouslySetInnerHTML={{ __html: annotation ? annotation : "<p></p>" }} />
+          <div className="content" ref={ref}>
+            {note &&
+              <div>
+                <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
+                {sortLyrics(note.lyrics).map(lyric => (
+                  <em
+                    key={lyric.id}
+                    style={{ display: "block", marginBottom: ".5rem" }}
+                  >
+                    {lyric.lyric}
+                  </em>
+                ))}
+                <hr />
+                <div dangerouslySetInnerHTML={{ __html: note.note }} />
+              </div>
+            }
+            {annotation &&
+              <div>
+                <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
+                {sortLyrics(annotation.lyrics).map(lyric => (
+                  <em
+                    key={lyric.id}
+                    style={{ display: "block", marginBottom: ".5rem" }}
+                  >
+                    {lyric.lyric}
+                  </em>
+                ))}
+                <hr />
+                <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+              </div>
+            }
+            {item &&
+              <div dangerouslySetInnerHTML={{ __html: item }} />
+            }
+            {selectedLyrics && selectedLyrics.length > 0 &&
+              <AnnotationForm
+                lesson={lesson}
+                selectedLyrics={selectedLyrics}
+                setSelectedLyrics={setSelectedLyrics}
+                saveAnnotation={() => { alert("saved dashboard") }}
+                cancel={handleHide}
+              />
+            }
           </div>
         </StyledMovingColumn>
       </StyledColumns>
@@ -161,7 +271,7 @@ const StyledMovingColumn = styled.div`
     top: ${props => props.arrowTop}px;
   }
 
-  .annotation {
+  .content {
     position: absolute;
     padding-left: 2rem;
     border-left: 3px solid #DD3333;

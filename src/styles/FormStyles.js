@@ -24,7 +24,7 @@ export const Textarea = styled.textarea`
 `
 
 export const FormBlock = styled.div`
-  margin: 5rem 0;
+  margin: ${props => props.space || "5rem"} 0;
 
   input[type=text],
   input[type=number],

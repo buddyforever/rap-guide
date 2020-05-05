@@ -29,6 +29,28 @@ export const CREATE_NOTE = gql`
   }
 `
 
+export const UPDATE_NOTE = gql`
+  mutation updateNote(
+    $id: ID!,
+    $note: String!,
+    $isExample: Boolean!,
+  ){
+    updateNote(
+      where: { id: $id }
+      data: {
+        note: $note
+        isExample: $isExample
+    }) {
+      id
+      note
+      isExample
+      lyrics {
+        id
+      }
+    }
+  }
+`
+
 export const DELETE_NOTE = gql`
   mutation deleteNote(
     $id: ID!

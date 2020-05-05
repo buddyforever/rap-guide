@@ -6,7 +6,9 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
       id
       lessonTitle
       lessonDescription
+      lessonStatus
       maxStudents
+      dueDate
       accounts {
         id
         image
@@ -14,6 +16,10 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
         nameFirst
         nameLast
         type
+        annotations {
+          id
+          annotation
+        }
       }
       lyrics {
         id
@@ -28,7 +34,7 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
             order
           }
         }
-        annotations {
+        annotations{
           id
           annotation
           isSubmitted
@@ -76,7 +82,9 @@ export const GET_LESSON_BY_ID = gql`
       id
       lessonTitle
       lessonDescription
+      lessonStatus
       maxStudents
+      dueDate
       accounts {
         id
         image
@@ -120,6 +128,7 @@ export const GET_LESSON_BY_ID = gql`
           }
           lyrics {
             id
+            lyric
           }
         }
       }
@@ -184,6 +193,22 @@ export const UPDATE_LESSON_DETAILS = gql`
         maxStudents: $maxStudents
       }){
     id
+    }
+  }
+`
+
+export const UPDATE_LESSON_STATUS = gql`
+  mutation updateLesson(
+    $id: ID!,
+    $lessonStatus: String!
+  ) {
+    updateLesson(
+      where: { id: $id }
+      data: {
+        lessonStatus: $lessonStatus
+      }){
+    id
+    lessonStatus
     }
   }
 `

@@ -1,18 +1,38 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faUserFriends, faComments } from '@fortawesome/free-solid-svg-icons'
 
+import { UserContext } from '../../context/UserContext'
+
 export const VideoThumb = ({ guide, lesson, link }) => {
+
+  /* Context */
+  const { user } = useContext(UserContext)
 
   let students;
   let title = guide.videoTitle;
+  let annotations = 0;
   let url = link || `/guide/${guide.id}`
   if (lesson) {
     students = lesson.accounts.filter(account => account.type === "student").length;
-    title = lesson.lessonTitle
+    title = lesson.lessonTitle;
+    annotations = lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length;
+  }
+
+  function getLessonClass() {
+    switch (lesson.lessonStatus) {
+      case "Ready":
+        return "ready"
+      case "In Session":
+        return "active"
+      case "Complete":
+        return "complete"
+      default:
+        return "ready"
+    }
   }
 
   return (
@@ -34,13 +54,16 @@ export const VideoThumb = ({ guide, lesson, link }) => {
               <div className="video__title">{title}</div>
             </div>
           </div>
-          {lesson &&
+          {lesson && user.type === "educator" &&
             <div className="lesson__details">
-              <span>
-                <FontAwesomeIcon icon={faUserFriends} /> {students}/{lesson.maxStudents} Students
+              <span title="Students">
+                <FontAwesomeIcon icon={faUserFriends} /> {students}/{lesson.maxStudents}
               </span>
-              <span>
-                <FontAwesomeIcon icon={faComments} /> 5 Annotations
+              <span title="Annotations">
+                <FontAwesomeIcon icon={faComments} /> {annotations}
+              </span>
+              <span className={getLessonClass()} title="Lesson Status">
+                {lesson.lessonStatus}
               </span>
             </div>
           }
@@ -93,18 +116,35 @@ const StyledVideoThumb = styled(motion.div)`
     }
   }
 
-  .lesson {
-    &__details {
-      display: flex;
-      justify-content: space-around;
-      padding: 1.5rem 1rem 0 1rem;
+  .lesson__details {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    background: linear-gradient(to bottom, rgba(0,0,0,1), rgba(0,0,0,1), rgba(0,0,0,0.5),rgba(0,0,0,0.0));
+    display: flex;
+    justify-content: space-around;
+    padding: 1rem 1rem 3rem 1rem;
 
-      span {
+    span {
+      background-color: #DD3333;
+      display: inline-block;
+      color: #FFFFFF;
+      font-size: 1.2rem;
+      padding: .5rem 1rem;
+
+      &.ready {
+        background-color: #F6E05E;
+        color: #744210;
+      }
+
+      &.active {
+        background-color: #68D391;
+        color: #22543D;
+      }
+
+      &.complete {
         background-color: #DD3333;
         color: #FFFFFF;
-        font-size: 1.2rem;
-        padding: .5rem 1rem;
-        border-radius: 2px;
       }
     }
   }

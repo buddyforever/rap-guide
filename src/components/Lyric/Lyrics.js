@@ -2,7 +2,6 @@ import React, { useRef } from 'react'
 
 import Lyric from './Lyric'
 import { documentOffset } from '../../utilities/Position'
-import Checkbox from "../Form/Checkbox"
 
 const Lyrics = ({
   lyrics,

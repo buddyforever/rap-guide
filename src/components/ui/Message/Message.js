@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faInfoCircle, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { ThemeContext } from 'styled-components';
@@ -10,7 +10,16 @@ const variants = {
   exit: { height: 0, opacity: 0, marginTop: 0 }
 }
 
-const Message = ({ children, toast, round, dismiss, type = "default", title, ...rest }) => {
+const Message = ({
+  children,
+  toast,
+  round,
+  dismiss,
+  autoDismiss = 4000,
+  type = "default",
+  title,
+  ...rest
+}) => {
 
   const [isOpen, setIsOpen] = useState(true);
 
@@ -31,14 +40,16 @@ const Message = ({ children, toast, round, dismiss, type = "default", title, ...
   /* Handle close */
   function handleClose() {
     setIsOpen(false);
-    // TODO Need to wait until animation has completed.
-    if (dismiss instanceof Function) {
-      dismiss();
-    }
   }
 
+  useEffect(() => {
+    if (isOpen && autoDismiss) {
+      setTimeout(handleClose, autoDismiss)
+    }
+  }, [isOpen])
+
   return (
-    <AnimatePresence>
+    <AnimatePresence onExitComplete={dismiss}>
       {isOpen &&
         <StyledMessage
           variants={variants}
@@ -58,7 +69,7 @@ const Message = ({ children, toast, round, dismiss, type = "default", title, ...
             <div className="message-icon"><FontAwesomeIcon icon={icon} /></div>
             <div className="message-text">
               {title && <h5>{title}</h5>}
-              <div>{children}</div>
+              <div dangerouslySetInnerHTML={{ __html: children }} />
             </div>
           </div>
         </StyledMessage>

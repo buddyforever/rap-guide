@@ -1,18 +1,27 @@
 import React, { useState, useContext } from 'react'
-import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
-import { Heading } from '../../styles/PageStyles'
-import { Editor } from '@tinymce/tinymce-react';
-import ConfirmButton from '../Form/ConfirmButton'
 import styled from 'styled-components'
+
+import { ButtonBlock } from '../../styles/FormStyles'
+import { Heading, MediumSpace } from '../../styles/PageStyles'
+import { Editor } from '@tinymce/tinymce-react';
+import { ConfirmButton } from '../ui/ConfirmButton'
 import { dateFormat } from '../../utilities/DateFormat'
 import { UserContext } from '../../context/UserContext'
-import { useMutation } from '@apollo/react-hooks'
-import { CREATE_COMMENT } from '../../queries/comments'
-import Checkbox from "../Form/Checkbox"
 import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
+import { Message } from '../ui/Message'
 
-export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
+import { useMutation } from '@apollo/react-hooks'
+import { CREATE_COMMENT } from '../../queries/comments'
+
+export const AnnotationForm = ({
+  lesson,
+  selectedLyrics,
+  setSelectedLyrics,
+  annotation,
+  saveAnnotation,
+  cancel
+}) => {
 
   /* Context */
   const { user } = useContext(UserContext)
@@ -21,120 +30,73 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
   const [createNote] = useMutation(CREATE_COMMENT)
 
   /* State */
-  const [annotation, setAnnotation] = useState({
-    annotation: lessonLyric.annotations.length ? lessonLyric.annotations[0].annotation : "<p></p>",
-    id: lessonLyric.annotations.length ? lessonLyric.annotations[0].id : null,
-  });
-  const [notes, setNotes] = useState(lessonLyric.annotations.length ? lessonLyric.annotations[0].notes : null)
-  const [submitting, setSubmitting] = useState(false);
-  const [note, setNote] = useState("");
-  const [noteOnEnter, setNoteOnEnter] = useState(true);
+  const [content, setContent] = useState(annotation ? annotation.annotation : "<p></p>");
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [message, setMessage] = useState(null)
 
-  function handleSaveAnnotation(e) {
-    e.preventDefault();
-    saveAnnotation({
-      lessonLyricId: lessonLyric.id,
-      annotation,
-      isSubmitted: false,
-    });
-    cancel();
+  function handleSaveAnnotation() {
+    alert("saved")
   }
 
-  function handleSubmitAnnotation(e) {
-    e.preventDefault();
-    saveAnnotation({
-      lessonLyricId: lessonLyric.id,
-      annotation,
-      isSubmitted: true,
-    });
-    cancel();
+  function handleSubmitAnnotation() {
+    alert("submitted")
   }
 
-  function addNote(e) {
-    e.preventDefault()
-    createNote({
-      variables: {
-        note: note,
-        annotationId: annotation.id,
-        account: user.id
-      }
-    }).then(data => {
-      setNotes(prevState => {
-        return [
-          ...prevState,
-          data.data.createNote
-        ]
+  /*   function addNote(e) {
+      e.preventDefault()
+      createNote({
+        variables: {
+          note: note,
+          annotationId: annotation.id,
+          account: user.id
+        }
+      }).then(data => {
+        setNotes(prevState => {
+          return [
+            ...prevState,
+            data.data.createNote
+          ]
+        })
+        setNote("");
       })
-      setNote("");
-    })
-  }
-
-  function handleKeyPress(e) {
-    if (noteOnEnter && e.key === 'Enter') {
-      addNote(e);
     }
-  }
 
-  function handleCancel(e) {
-    e.preventDefault();
+    function handleKeyPress(e) {
+      if (noteOnEnter && e.key === 'Enter') {
+        addNote(e);
+      }
+    } */
+
+  function handleCancel() {
+    setSelectedLyrics([]);
     cancel();
   }
 
   function handleEditorChange(content, editor) {
-    setAnnotation(prevState => ({
-      ...prevState,
-      annotation: content,
-    }));
+    setContent(content);
   }
 
   return (
-    <Form>
-      <Heading>
-        <h1>Add Annotation</h1>
-        <h2>{lessonLyric.lyric}</h2>
-        {lessonLyric.notes &&
-          <div dangerouslySetInnerHTML={{ __html: lessonLyric.notes }}></div>
-        }
-      </Heading>
-      {notes &&
-        <FormBlock>
-          <label>Notes</label>
-          {notes.map(note => {
+    <div>
+      <h3>Annotation</h3>
+      {selectedLyrics.length > 0 &&
+        <div>
+          <h6 style={{ margin: "1rem 0" }}>Selected Lyrics</h6>
+          {selectedLyrics.map(lyric => {
             return (
-              <StyledNote style={{ margin: "1rem 0" }} key={note.id}>
-                <div className="image">
-                  <img src={note.account.image} alt={note.account.nameFirst + ' ' + note.account.nameLast} />
-                </div>
-                <div className="note">
-                  <span className="text">{note.note}</span>
-                  <span className="author">{note.account.nameFirst} {note.account.nameLast} at {dateFormat(note.updatedAt)}</span>
-                </div>
-              </StyledNote>
+              <em
+                key={lyric.id}
+                style={{ display: "block", marginBottom: ".5rem" }}
+              >
+                {lyric.lyric}
+              </em>
             )
           })}
-          <label>Reply</label>
-          <textarea
-            style={{ minHeight: "50px" }}
-            value={note}
-            onChange={(e) => setNote(e.target.value)}
-            onKeyPress={handleKeyPress}>
-          </textarea>
-          <Button onClick={addNote}>Reply</Button>
-          <label style={{ display: "inline-block", marginLeft: "1rem" }}>
-            <Checkbox
-              alt="Add note on enter"
-              style={{ cursor: "pointer" }}
-              checked={noteOnEnter}
-              onChange={(e) => { setNoteOnEnter(e.target.checked) }}
-            />
-            <em style={{ marginLeft: "1rem", fontSize: "1.2rem", fontStyle: "italic" }}>pressing enter adds note</em>
-          </label>
-        </FormBlock>
+        </div>
       }
-      <FormBlock>
-        <label>Annotation</label>
+      <MediumSpace>
         <Editor
-          initialValue={annotation.annotation}
+          initialValue={content}
           apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
           init={{
             height: 300,
@@ -149,26 +111,33 @@ export const AnnotationForm = ({ lessonLyric, saveAnnotation, cancel }) => {
           }}
           onEditorChange={handleEditorChange}
         />
-      </FormBlock>
-      <ButtonBlock>
-        <LinkButton onClick={handleCancel}>Cancel</LinkButton>
+      </MediumSpace>
+      <ButtonBlock style={{ marginTop: "1rem" }}>
+        <LinkButton onClick={handleCancel}>cancel</LinkButton>
         <div>
-          {!submitting &&
+          {!isSubmit &&
             <Button
-              className="secondary"
               style={{ marginRight: "1rem" }}
-              onClick={handleSaveAnnotation}>
-              Save Annotation
-            </Button>
+              secondary
+              onClick={handleSaveAnnotation}>Save</Button>
           }
           <ConfirmButton
-            handleClick={(submitting) => setSubmitting(submitting)}
-            handleConfirm={handleSubmitAnnotation}>
-            Submit Annotation
-          </ConfirmButton>
+            onClick={(checked) => setIsSubmit(checked)}
+            onConfirm={handleSubmitAnnotation}>Submit</ConfirmButton>
         </div>
       </ButtonBlock>
-    </Form>
+      {
+        message &&
+        <Message
+          toast
+          style={{ marginTop: "1rem" }}
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
+    </div >
   )
 }
 

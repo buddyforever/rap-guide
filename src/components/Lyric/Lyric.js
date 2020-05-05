@@ -7,7 +7,7 @@ import { faStar } from '@fortawesome/free-solid-svg-icons'
 const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
 
   let isAssigned = lyric.annotations
-  let isAnnotated = lyric.anotations && lyric.annotations.length
+  let isAnnotated = lyric.annotations && lyric.annotations.length > 0
   let isSubmitted = false
   let isExample = false
   let hasNote = lyric.notes && lyric.notes.length ? true : false
@@ -26,7 +26,7 @@ const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
   if (isExample) classes.push("example");
   if (selected) classes.push("selected");
   if (hasNote) classes.push("noted");
-  if (isSelectable || isAssigned || isAnnotated || isSubmitted || isExample) classes.push("selectable");
+  if (isSelectable || isAssigned || isAnnotated || isSubmitted) classes.push("selectable");
 
   return (
     <StyledLyric className={classes.length ? classes.join(" ") : ""} {...rest}>
@@ -54,7 +54,7 @@ const StyledLyric = styled.div`
   }
 
   &.selectable {
-    cursor: pointer;
+    cursor: pointer!important;
   }
 
   &.assigned {
@@ -66,12 +66,9 @@ const StyledLyric = styled.div`
   }
 
   &.noted {
-    background-color: #CBD5E0;
+    background-color: #E2E8F0;
 
-    &:hover,
-    &.hovering {
-      background-color: #FEFCBF;
-    }
+    &:hover
   }
 
   &.selected {
@@ -87,7 +84,11 @@ const StyledLyric = styled.div`
   }
 
   &.annotated {
-    background-color: red;
+    box-shadow: inset 0 -6px rgba(221, 51, 51, 0.5);
+
+    &:hover {
+      background-color: rgba(221, 51, 51, 0.5);
+    }
   }
 
   &.submitted {
@@ -100,6 +101,14 @@ const StyledLyric = styled.div`
     span {
       color: #90CDF4;
     }
+  }
+
+  &.hovering {
+    background-color: #FEFCBF!important;
+  }
+
+  &.annotated.hovering:not(.note) {
+    background-color: rgba(221, 51, 51, 0.5)!important;
   }
 
 `

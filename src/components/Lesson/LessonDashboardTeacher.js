@@ -17,8 +17,8 @@ import ReviewAnnotation from '../Annotation/ReviewAnnotation'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_LESSON_BY_ID } from '../../queries/lessons'
 import { REVIEW_ANNOTATION } from '../../queries/annotations'
+import { UPDATE_LESSON_STATUS } from '../../queries/lessons'
 
 const variants = {
   open: { x: "-50vw" },
@@ -33,6 +33,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
 
   /* Queries */
   const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
+  const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
 
   /* State */
   const [message, setMessage] = useState(false);
@@ -44,6 +45,21 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   const students = lesson.accounts.filter(account => account.type === 'student');
 
   /* Functions */
+  function updateLessonStatus(e) {
+    updateLessonStatusMutation({
+      variables: {
+        id: lesson.id,
+        lessonStatus: e.target.value
+      }
+    }).then(response => {
+      setMessage({
+        type: "success",
+        title: "Status Updated",
+        text: `Lesson status has been changed to <strong>${response.data.updateLesson.lessonStatus}</strong>`
+      })
+    })
+  }
+
   function openAnnotationReview(annotation) {
     setSelectedAnnotation(annotation);
     setIsAnnotationOpen(true);
@@ -108,6 +124,15 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
         <Split>
           <div>
             <h2>{lesson.lessonTitle}</h2>
+            <FormBlock space="1rem">
+              <select
+                value={lesson.lessonStatus}
+                onChange={updateLessonStatus}>
+                <option value="Ready">Ready</option>
+                <option value="In Session">In Session</option>
+                <option value="Complete">Complete</option>
+              </select>
+            </FormBlock>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
             <CopyToClipboard

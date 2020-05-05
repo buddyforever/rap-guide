@@ -10,7 +10,7 @@ import { UserContext } from '../../context/UserContext'
 import { Message } from '../ui/Message'
 
 import { useMutation } from '@apollo/react-hooks'
-import { CREATE_NOTE, DELETE_NOTE } from '../../queries/note'
+import { CREATE_NOTE, DELETE_NOTE, UPDATE_NOTE } from '../../queries/note'
 
 export const NoteForm = ({
   refetch,
@@ -34,6 +34,7 @@ export const NoteForm = ({
 
   /* Queries */
   const [createNoteMutation] = useMutation(CREATE_NOTE)
+  const [updateNoteMutation] = useMutation(UPDATE_NOTE)
   const [deleteNoteMutation] = useMutation(DELETE_NOTE)
 
   function cancel() {
@@ -71,7 +72,21 @@ export const NoteForm = ({
         refetch()
       })
     } else {
-      alert("UPDATE");
+      updateNoteMutation({
+        variables: {
+          id: note.id,
+          note: content,
+          isExample
+        }
+      }).then(response => {
+        setSelectedNote(response.data.updateNote)
+        setMessage({
+          type: "success",
+          title: "Note Saved!",
+          text: "Your note has been successfully saved."
+        })
+        refetch()
+      })
     }
   }
 
@@ -176,6 +191,7 @@ export const NoteForm = ({
       {
         message &&
         <Message
+          toast
           style={{ marginTop: "1rem" }}
           dismiss={() => setMessage(null)}
           type={message.type}

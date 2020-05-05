@@ -1,4 +1,5 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
+import { useStateWithName } from '../Hooks/useStateWithName'
 
 import { UserContext } from '../../context/UserContext'
 import NoteForm from '../Lesson/NoteForm'
@@ -8,7 +9,6 @@ import Loader from '../Loader'
 import styled from 'styled-components'
 
 import { useMutation } from '@apollo/react-hooks'
-import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
 import { ASSIGN_LYRIC, UNASSIGN_LYRIC } from '../../queries/lyric'
 
 const LessonLyricsForm = ({ lesson, refetch }) => {
@@ -21,54 +21,55 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
 
   /* State */
   const [lyrics, setLyrics] = useState(null);
-  const [annotation, setAnnotation] = useState(null);
   const [top, setTop] = useState(120);
   const [offset, setOffset] = useState(120);
-  const [selectedLyrics, setSelectedLyrics] = useState([]);
-  const [assignedLyrics, setAssignedLyrics] = useState([]);
-  const [selectedNote, setSelectedNote] = useState(null);
+  const [selectedLyrics, setSelectedLyrics] = useStateWithName([], "SelectedLyrics");
+  const [assignedLyrics, setAssignedLyrics] = useStateWithName([], "AssignedLyrics");
+  const [selectedNote, setSelectedNote] = useStateWithName(null, "SelectedNote");
 
   /* Queries */
-  const [createAnnotation] = useMutation(CREATE_ANNOTATION)
-  const [updateAnnotation] = useMutation(UPDATE_ANNOTATION)
   const [assignLyricMutation] = useMutation(ASSIGN_LYRIC);
   const [unAssignLyricMutation] = useMutation(UNASSIGN_LYRIC);
 
-  function handleAddAnnotation({ annotation, isSubmitted, lessonLyricId }) {
-    if (!annotation.id) {
-      createAnnotation({
-        variables: {
-          isSubmitted: isSubmitted,
-          account: user.id,
-          lessonLyric: lessonLyricId,
-          annotation: annotation.annotation
-        }
-      }).then((createAnnotation) => {
-        refetch()
-      })
-    } else {
-      updateAnnotation({
-        variables: {
-          id: annotation.id,
-          isSubmitted: isSubmitted,
-          annotation: annotation.annotation
-        }
-      }).then((updateAnnotation) => {
-        refetch()
-      })
-    }
-  }
+  /*   function handleAddAnnotation({ annotation, isSubmitted, lessonLyricId }) {
+      if (!annotation.id) {
+        createAnnotation({
+          variables: {
+            isSubmitted: isSubmitted,
+            account: user.id,
+            lessonLyric: lessonLyricId,
+            annotation: annotation.annotation
+          }
+        }).then((createAnnotation) => {
+          refetch()
+        })
+      } else {
+        updateAnnotation({
+          variables: {
+            id: annotation.id,
+            isSubmitted: isSubmitted,
+            annotation: annotation.annotation
+          }
+        }).then((updateAnnotation) => {
+          refetch()
+        })
+      }
+    } */
 
   /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
   any lyrics that are associated with the specific annotation */
-  async function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
+  function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
     // Select or deselect the lyric
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
       selectLyric(lyric)
     } else {
-      deSelectLyric(lyric);
+      // Deselect all if there is a note
+      if (selectedNote) {
+        deSelectAllLyrics();
+      } else {
+        deSelectLyric(lyric);
+      }
     }
-    await setAnnotation(lyric.lyric); // Display Annotation or Annotation Form
     let contentHeight = ref.current.getBoundingClientRect().height;
     setTop(arrowTop);
 
@@ -130,20 +131,21 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
   function deSelectAllLyrics() {
     setSelectedNote(null);
     setSelectedLyrics([]);
+    return
   }
 
   function selectLyric(lyric) {
+    if (lyric.notes && lyric.notes.length) {
+      setSelectedNote(lyric.notes[0])
+      setSelectedLyrics(lyric.notes[0].lyrics)
+      return
+    }
     if (selectedNote
       && selectedNote.lyrics
       && !selectedNote.lyrics.find(selectedLyric => selectedLyric.id === lyric.id)
     ) {
-      deSelectAllLyrics()
+      setSelectedNote(null)
       setSelectedLyrics([lyric])
-      return
-    }
-    if (lyric.notes && lyric.notes.length) {
-      deSelectAllLyrics()
-      setSelectedNote(lyric.notes[0])
       return
     }
     selectedLyrics.push(lyric);
@@ -214,7 +216,6 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
               selectedLyrics={selectedLyrics}
               setSelectedLyrics={setSelectedLyrics}
               lesson={lesson} />
-            {/*<div dangerouslySetInnerHTML={{ __html: annotation ? annotation : "<p></p>" }} />*/}
           </div>
         </StyledMovingColumn>
       </StyledColumns>
