@@ -8,6 +8,7 @@ import AnnotateLyrics from '../Lyric/AnnotateLyrics'
 import Loader from '../Loader'
 import styled from 'styled-components'
 import AnnotationForm from '../Annotation/AnnotationForm'
+import { Message } from '../ui/Message'
 
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
@@ -25,6 +26,8 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   const [annotation, setAnnotation] = useState(null);
   const [note, setNote] = useState(null);
   const [item, setItem] = useState(null);
+  const [isSaving, setIsSaving] = useState(false);
+  const [message, setMessage] = useState(null);
   const [hidden, setHidden] = useState(true);
   const [top, setTop] = useState(120);
   const [offset, setOffset] = useState(120);
@@ -35,27 +38,46 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
   const [updateAnnotation] = useMutation(UPDATE_ANNOTATION)
 
-  function handleAddAnnotation({ annotation, isSubmitted, lessonLyricId }) {
-    if (!annotation.id) {
+  function handleSaveAnnotation(annotationToSave, isSubmitted) {
+    setIsSaving(true)
+    if (!annotationToSave.id) {
       createAnnotation({
         variables: {
           isSubmitted: isSubmitted,
           account: user.id,
-          lessonLyric: lessonLyricId,
-          annotation: annotation.annotation
+          lesson: annotationToSave.lesson.id,
+          lyrics: annotationToSave.lyrics,
+          annotation: annotationToSave.annotation
         }
-      }).then((createAnnotation) => {
+      }).then((response) => {
         refetch()
+        combineLyrics();
+        setMessage({
+          type: "success",
+          title: "Annotation Saved!",
+          text: "Your annotation has been saved"
+        })
+        setAnnotation(response.data.createAnnotation)
+        setIsSaving(false)
       })
     } else {
       updateAnnotation({
         variables: {
-          id: annotation.id,
+          id: annotationToSave.id,
           isSubmitted: isSubmitted,
-          annotation: annotation.annotation
+          annotation: annotationToSave.annotation,
+          lyrics: annotationToSave.lyrics
         }
-      }).then((updateAnnotation) => {
+      }).then((response) => {
         refetch()
+        combineLyrics();
+        setMessage({
+          type: "success",
+          title: "Annotation Submitted!",
+          text: `Your annotation has been ${isSubmitted ? "submitted" : "saved"}`
+        })
+        setAnnotation(response.data.updateAnnotation)
+        setIsSaving(false)
       })
     }
   }
@@ -66,12 +88,21 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
     setNote(null);
     // Select or deselect the lyric
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
-      setSelectedLyrics(prevState => [
-        lyric,
-        ...selectedLyrics
-      ])
+      if (lyric.annotations && lyric.annotations.length > 0) {
+        setSelectedLyrics(lyric.annotations[0].lyrics);
+        setAnnotation(lyric.annotations[0])
+      } else {
+        setSelectedLyrics(prevState => [
+          lyric,
+          ...selectedLyrics
+        ])
+      }
     } else {
-      setSelectedLyrics(prevState => prevState.filter(selectedLyric => selectedLyric.id !== lyric.id))
+      if (lyric.annotations && lyric.annotations.length > 0) {
+        setSelectedLyrics([]);
+      } else {
+        setSelectedLyrics(prevState => prevState.filter(selectedLyric => selectedLyric.id !== lyric.id))
+      }
       return false; // We are only deselecting so no need to move the display
     }
     let contentHeight = ref.current.getBoundingClientRect().height;
@@ -107,7 +138,6 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
       setOffset(newTop > 0 ? newTop : 0)
     }
 
-    console.log(item)
     if (item.hasOwnProperty("annotation")) {
       setAnnotation(item);
       setNote(null);
@@ -195,34 +225,48 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
           className={hidden ? "hidden" : ""}>
           <div className="arrow"></div>
           <div className="content" ref={ref}>
-            {note &&
+            {note && !annotation &&
               <div>
                 <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
-                {sortLyrics(note.lyrics).map(lyric => (
-                  <em
-                    key={lyric.id}
-                    style={{ display: "block", marginBottom: ".5rem" }}
-                  >
-                    {lyric.lyric}
-                  </em>
-                ))}
-                <hr />
+                <div className="lyrics">
+                  {sortLyrics(note.lyrics).map(lyric => (
+                    <em
+                      key={lyric.id}
+                      style={{ display: "block", marginBottom: ".5rem" }}
+                    >
+                      {lyric.lyric}
+                    </em>
+                  ))}
+                </div>
+                <h6 style={{ margin: "1rem 0" }}>Teacher Note</h6>
                 <div dangerouslySetInnerHTML={{ __html: note.note }} />
               </div>
             }
-            {annotation &&
+            {annotation && (!selectedLyrics || selectedLyrics.length === 0) &&
               <div>
-                <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
-                {sortLyrics(annotation.lyrics).map(lyric => (
-                  <em
-                    key={lyric.id}
-                    style={{ display: "block", marginBottom: ".5rem" }}
-                  >
-                    {lyric.lyric}
-                  </em>
-                ))}
-                <hr />
+                {annotation.isSubmitted &&
+                  <div>
+                    <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
+                    <div className="lyrics">
+                      {sortLyrics(annotation.lyrics).map(lyric => (
+                        <em
+                          key={lyric.id}
+                          style={{ display: "block", marginBottom: ".5rem" }}
+                        >
+                          {lyric.lyric}
+                        </em>
+                      ))}
+                    </div>
+                  </div>
+                }
+                <h6 style={{ margin: "1rem 0" }}>Annotation</h6>
                 <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+                {annotation.isSubmitted &&
+                  <span className="primary">* SUBMITTED</span>
+                }
+                {!annotation.isSubmitted &&
+                  <span className="primary">* click to edit</span>
+                }
               </div>
             }
             {item &&
@@ -231,15 +275,27 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
             {selectedLyrics && selectedLyrics.length > 0 &&
               <AnnotationForm
                 lesson={lesson}
+                annotation={annotation}
                 selectedLyrics={selectedLyrics}
+                isSaving={isSaving}
                 setSelectedLyrics={setSelectedLyrics}
-                saveAnnotation={() => { alert("saved dashboard") }}
+                saveAnnotation={handleSaveAnnotation}
                 cancel={handleHide}
               />
             }
           </div>
         </StyledMovingColumn>
       </StyledColumns>
+      {
+        message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
     </StyledContent>
   )
 }
@@ -279,5 +335,11 @@ const StyledMovingColumn = styled.div`
     z-index: 5;
     min-height: 7rem;
     top: ${props => props.contentTop}px;
+
+    .lyrics {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid black;
+    }
   }
 `

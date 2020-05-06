@@ -228,42 +228,35 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
             submittedAnnotations = account.annotations.filter(annotation => annotation.isSubmitted)
             approvedAnnotations = account.annotations.filter(annotation => annotation.isApproved)
           }
-          return (<Student key={account.id}>
-            <div>
-              <div className="image">
-                <img src={account.image} alt={account.nameFirst + ' ' + account.nameLast} />
+          return (
+            <Student key={account.id}>
+              <div>
+                <div className="image">
+                  <img src={account.image} alt={account.nameFirst + ' ' + account.nameLast} />
+                </div>
               </div>
-            </div>
-            <div>{account.nameFirst} {account.nameLast}</div>
-            <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
-            <div>
-              {!hasAnnotations && "No Annotations"}
-              {savedAnnotations.map(annotation => (
-                <div key={annotation.id}>
-                  <LinkButton
-                    onClick={() => openAnnotationReview(annotation)}>
-                    Saved {dateFormat(annotation.updatedAt)}
-                  </LinkButton>
-                </div>
-              ))}
-              {submittedAnnotations.map(annotation => (
-                <div key={annotation.id}>
-                  <LinkButton
-                    onClick={() => openAnnotationReview(annotation)}>
-                    Submitted {dateFormat(annotation.updatedAt)}
-                  </LinkButton>
-                </div>
-              ))}
-              {approvedAnnotations.map(annotation => (
-                <div key={annotation.id}>
-                  <LinkButton
-                    onClick={() => openAnnotationReview(annotation)}>
-                    Approved {dateFormat(annotation.updatedAt)}
-                  </LinkButton>
-                </div>
-              ))}
-            </div>
-          </Student>
+              <div>{account.nameFirst} {account.nameLast}</div>
+              <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
+              <div>
+                {!hasAnnotations || (hasAnnotations === savedAnnotations.length) && "No Annotations"}
+                {submittedAnnotations.map(annotation => (
+                  <div key={annotation.id}>
+                    <LinkButton
+                      onClick={() => openAnnotationReview(annotation)}>
+                      Submitted {dateFormat(annotation.updatedAt)}
+                    </LinkButton>
+                  </div>
+                ))}
+                {approvedAnnotations.map(annotation => (
+                  <div key={annotation.id}>
+                    <LinkButton
+                      onClick={() => openAnnotationReview(annotation)}>
+                      Approved {dateFormat(annotation.updatedAt)}
+                    </LinkButton>
+                  </div>
+                ))}
+              </div>
+            </Student>
           )
         })}
       </LargeSpace>
@@ -296,6 +289,7 @@ const Student = styled.div`
   background-color: #EEE;
   border-radius: 3px;
   text-align: center;
+  margin-bottom: 1rem;
 
   .image {
     border-radius: 50%;

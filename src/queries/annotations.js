@@ -34,8 +34,9 @@ export const CREATE_ANNOTATION = gql`
   mutation createAnnotation(
     $isSubmitted: Boolean!,
     $account: ID!,
+    $lesson: ID!,
     $annotation: String!,
-    $lessonLyric: ID!
+    $lyrics: [LyricWhereUniqueInput!],
   ){
     createAnnotation(data: {
       status:PUBLISHED
@@ -44,11 +45,27 @@ export const CREATE_ANNOTATION = gql`
       account: {
         connect: { id: $account }
       }
-      lessonLyric: {
-        connect: { id: $lessonLyric }
+      lesson: {
+        connect: { id: $lesson }
       }
+      lyrics: { connect: $lyrics }
     }){
       id
+      annotation
+      updatedAt
+      isSubmitted
+      isApproved
+      account {
+        id
+        nameFirst
+        nameLast
+        email
+        image
+      }
+      lyrics {
+        id
+        lyric
+      }
     }
   }
 `
@@ -58,6 +75,7 @@ export const UPDATE_ANNOTATION = gql`
     $id: ID,
     $isSubmitted: Boolean!,
     $annotation: String!,
+    $lyrics: [LyricWhereUniqueInput!],
   ){
     updateAnnotation(
       where: { id: $id },
@@ -65,8 +83,24 @@ export const UPDATE_ANNOTATION = gql`
       status:PUBLISHED
       isSubmitted: $isSubmitted
       annotation: $annotation
+            lyrics: { connect: $lyrics }
     }){
       id
+      annotation
+      updatedAt
+      isSubmitted
+      isApproved
+      account {
+        id
+        nameFirst
+        nameLast
+        email
+        image
+      }
+      lyrics {
+        id
+        lyric
+      }
     }
   }
 `

@@ -27,7 +27,6 @@ const client = new ApolloClient({
 });
 
 function App() {
-
   const [user, setUser] = useState(auth.isAuthenticated() ? getLocalStorage("profile") : null);
   const [theme, setTheme] = useState(defaultTheme)
 

@@ -85,6 +85,7 @@ const StyledMessage = styled(motion.div)`
   position: relative;
   overflow: hidden;
   margin-bottom: 1rem;
+  z-index: 5000;
 
   .message-content {
     padding: 2rem;

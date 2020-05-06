@@ -17,32 +17,32 @@ const containerVariants = {
 
 const dotVariants = {
   start: {
-    y: "0%"
+    scale: 0
   },
   end: {
-    y: "100%"
+    scale: 1
   }
 }
 
 const dotTransition = {
-  duration: 0.4,
+  duration: 0.5,
   yoyo: Infinity,
   ease: 'easeInOut'
 }
 
-export const DotWave = ({ ...rest }) => {
+const DotCircle = ({ ...rest }) => {
   return (
-    <DotWaveContainer initial="start" animate="end" variants={containerVariants}>
+    <DotContainer initial="start" animate="end" variants={containerVariants}>
       <Dot variants={dotVariants} transition={dotTransition} {...rest} />
       <Dot variants={dotVariants} transition={dotTransition} {...rest} />
       <Dot variants={dotVariants} transition={dotTransition} {...rest} />
-    </DotWaveContainer>
+    </DotContainer>
   )
 }
 
-export default DotWave
+export default DotCircle
 
-const DotWaveContainer = styled(motion.div)`
+const DotContainer = styled(motion.div)`
 
 `
 

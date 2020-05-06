@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { ButtonBlock } from '../../styles/FormStyles'
@@ -10,6 +10,7 @@ import { UserContext } from '../../context/UserContext'
 import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
 import { Message } from '../ui/Message'
+import Loader from '../ui/Loader'
 
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_COMMENT } from '../../queries/comments'
@@ -20,6 +21,7 @@ export const AnnotationForm = ({
   setSelectedLyrics,
   annotation,
   saveAnnotation,
+  isSaving,
   cancel
 }) => {
 
@@ -35,11 +37,25 @@ export const AnnotationForm = ({
   const [message, setMessage] = useState(null)
 
   function handleSaveAnnotation() {
-    alert("saved")
+    saveAnnotation({
+      id: annotation ? annotation.id : null,
+      annotation: content,
+      lyrics: selectedLyrics.map(lyric => { return { id: lyric.id } }),
+      lesson: {
+        id: lesson.id
+      }
+    }, false)
   }
 
   function handleSubmitAnnotation() {
-    alert("submitted")
+    saveAnnotation({
+      id: annotation ? annotation.id : null,
+      annotation: content,
+      lyrics: selectedLyrics.map(lyric => { return { id: lyric.id } }),
+      lesson: {
+        id: lesson.id
+      }
+    }, true)
   }
 
   /*   function addNote(e) {
@@ -76,6 +92,12 @@ export const AnnotationForm = ({
     setContent(content);
   }
 
+  useEffect(() => {
+    if (annotation) {
+      setContent(annotation.annotation);
+    }
+  }, [annotation]);
+
   return (
     <div>
       <h3>Annotation</h3>
@@ -96,7 +118,7 @@ export const AnnotationForm = ({
       }
       <MediumSpace>
         <Editor
-          initialValue={content}
+          value={content}
           apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
           init={{
             height: 300,
@@ -114,17 +136,20 @@ export const AnnotationForm = ({
       </MediumSpace>
       <ButtonBlock style={{ marginTop: "1rem" }}>
         <LinkButton onClick={handleCancel}>cancel</LinkButton>
-        <div>
-          {!isSubmit &&
-            <Button
-              style={{ marginRight: "1rem" }}
-              secondary
-              onClick={handleSaveAnnotation}>Save</Button>
-          }
-          <ConfirmButton
-            onClick={(checked) => setIsSubmit(checked)}
-            onConfirm={handleSubmitAnnotation}>Submit</ConfirmButton>
-        </div>
+        {!isSaving &&
+          <div>
+            {!isSubmit &&
+              <Button
+                style={{ marginRight: "1rem" }}
+                secondary
+                onClick={handleSaveAnnotation}>Save</Button>
+            }
+            <ConfirmButton
+              onClick={(checked) => setIsSubmit(checked)}
+              onConfirm={handleSubmitAnnotation}>Submit</ConfirmButton>
+          </div>
+        }
+        {isSaving && <div><Loader /></div>}
       </ButtonBlock>
       {
         message &&

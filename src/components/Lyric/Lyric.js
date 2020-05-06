@@ -66,7 +66,7 @@ const StyledLyric = styled.div`
   }
 
   &.noted {
-    background-color: #E2E8F0;
+    background-color: #CBD5E0;
 
     &:hover
   }
@@ -88,11 +88,8 @@ const StyledLyric = styled.div`
 
     &:hover {
       background-color: rgba(221, 51, 51, 0.5);
+      color: black;
     }
-  }
-
-  &.submitted {
-    background-color: yellow;
   }
 
   &.example {
@@ -107,8 +104,17 @@ const StyledLyric = styled.div`
     background-color: #FEFCBF!important;
   }
 
-  &.annotated.hovering:not(.note) {
-    background-color: rgba(221, 51, 51, 0.5)!important;
+  &.annotated.hovering:not(.note),
+  &.annotated.selected {
+    background-color: rgba(221, 51, 51, 0.5);
+    color: black;
   }
 
+  &.submitted,
+  &.submitted:hover,
+  &.submitted.hovering {
+    background-color: #742A2A!important;
+    color: white!important;
+    cursor: not-allowed!important;
+  }
 `

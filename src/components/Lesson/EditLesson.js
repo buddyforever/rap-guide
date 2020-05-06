@@ -22,7 +22,6 @@ const EditLesson = () => {
 
   /* Paramaters */
   let { id, page } = useParams();
-  console.log(page);
 
   /* State */
   const [currentPage, setCurrentPage] = useState(page ? parseInt(page) : 1);
@@ -42,6 +41,7 @@ const EditLesson = () => {
         ...lesson
       }
     }).then(response => {
+      refetch();
       setCurrentPage(2);
     });
   }

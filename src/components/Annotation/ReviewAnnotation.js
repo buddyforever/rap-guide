@@ -52,22 +52,30 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
         <Cite>submitted by {annotation.account.nameFirst} {annotation.account.nameLast} on {dateFormat(annotation.updatedAt)}</Cite>
       </Heading>
       <SmallSpace>
-        <strong>{annotation.lessonLyric.lyric.lyric}</strong>
+        {annotation.lyrics.map(lyric => {
+          return (
+            <strong
+              key={lyric.id}
+              style={{ display: "block", marginBottom: ".5rem" }}
+            >
+              {lyric.lyric}
+            </strong>
+          )
+        })}
       </SmallSpace>
       <MediumSpace dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
-      {annotation.notes.length > 0 &&
+      {annotation.comments.length > 0 &&
         <FormBlock>
-          <label>Notes</label>
-          {annotation.notes.map(note => {
-            console.log(note)
+          <label>Comments</label>
+          {annotation.comments.map(comment => {
             return (
-              <StyledNote style={{ margin: "1rem 0" }} key={note.id}>
+              <StyledNote style={{ margin: "1rem 0" }} key={comment.id}>
                 <div className="image">
-                  <img src={note.account.image} alt={note.account.nameFirst + ' ' + note.account.nameLast} />
+                  <img src={comment.account.image} alt={comment.account.nameFirst + ' ' + comment.account.nameLast} />
                 </div>
                 <div className="note">
-                  <span className="text">{note.note}</span>
-                  <span className="author">{note.account.nameFirst} {note.account.nameLast} at {dateFormat(note.updatedAt)}</span>
+                  <span className="text">{comment.comment}</span>
+                  <span className="author">{comment.account.nameFirst} {comment.account.nameLast} at {dateFormat(comment.updatedAt)}</span>
                 </div>
               </StyledNote>
             )

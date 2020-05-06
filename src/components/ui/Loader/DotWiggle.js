@@ -3,46 +3,38 @@ import { motion } from 'framer-motion'
 import styled from 'styled-components'
 
 const containerVariants = {
-  start: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  },
-  end: {
-    transition: {
-      staggerChildren: 0.1
-    }
-  }
+  start: {},
+  end: {}
 }
 
 const dotVariants = {
   start: {
-    y: "0%"
+    x: 0
   },
   end: {
-    y: "100%"
+    x: 10
   }
 }
 
 const dotTransition = {
-  duration: 0.4,
+  duration: 0.5,
   yoyo: Infinity,
-  ease: 'easeInOut'
+  ease: 'linear'
 }
 
-export const DotWave = ({ ...rest }) => {
+const DotWiggle = ({ ...rest }) => {
   return (
-    <DotWaveContainer initial="start" animate="end" variants={containerVariants}>
+    <DotContainer initial="start" animate="end" variants={containerVariants}>
       <Dot variants={dotVariants} transition={dotTransition} {...rest} />
       <Dot variants={dotVariants} transition={dotTransition} {...rest} />
       <Dot variants={dotVariants} transition={dotTransition} {...rest} />
-    </DotWaveContainer>
+    </DotContainer>
   )
 }
 
-export default DotWave
+export default DotWiggle
 
-const DotWaveContainer = styled(motion.div)`
+const DotContainer = styled(motion.div)`
 
 `
 

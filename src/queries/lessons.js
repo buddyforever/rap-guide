@@ -98,6 +98,28 @@ export const GET_LESSON_BY_ID = gql`
           isSubmitted
           isApproved
           updatedAt
+          account {
+            id
+            nameFirst
+            nameLast
+            email
+          }
+          lyrics {
+            id
+            lyric
+            order
+          }
+          comments {
+            comment
+            updatedAt
+            account {
+              id
+              nameFirst
+              nameLast
+              image
+              email
+            }
+          }
         }
       }
       lyrics {

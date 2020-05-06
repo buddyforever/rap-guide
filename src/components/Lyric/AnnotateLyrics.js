@@ -37,7 +37,7 @@ const AnnotateLyrics = ({
   }
 
   function handleMouseOut() {
-    hide();
+    //hide();
   }
 
   let currentBar = 1;
@@ -77,7 +77,6 @@ const AnnotateLyrics = ({
                     related.forEach(node => {
                       node.classList.add("hovering");
                       if (!e.target.classList.contains("annotated")) {
-                        console.log(!e.target.classList.contains("annotated"));
                         node.classList.add("note")
                       }
                     })
@@ -97,9 +96,9 @@ const AnnotateLyrics = ({
                   document.querySelectorAll(".hovering").forEach(node => {
                     node.classList.remove("hovering")
                   });
-                  if (!selectedLyrics.length) {
+                  /* if (!selectedLyrics.length) {
                     hide();
-                  }
+                  } */
                 }}
                 onClick={(e) => {
                   if (lyric.isExample) return;
