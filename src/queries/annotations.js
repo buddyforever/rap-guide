@@ -1,33 +1,22 @@
 import gql from 'graphql-tag'
 
-export const REVIEW_ANNOTATION = gql`
+export const REVIEW_ANNOTATION_WITH_COMMENT = gql`
   mutation reviewAnnotation(
-    $id: ID!,
-    $isSubmitted: Boolean!,
-    $isApproved: Boolean!,
-    $comment: String,
-    $teacherAccountId: ID
-  ) {
-    updateAnnotation(
-      where: { id: $id },
-      data: {
-      	isSubmitted: $isSubmitted
-      	isApproved:$isApproved
-        comments: {
-          create: {
-            status: PUBLISHED
-            comment: $comment
-            account: {
-              connect: {
-                id: $teacherAccountId
-              }
-            }
-          }
-        }
-    }){
-      id
+      $id: ID!,
+      $isSubmitted: Boolean!,
+      $isApproved: Boolean!,
+      $comments: [CommentCreateWithoutAnnotationInput!]
+    ) {
+      updateAnnotation(
+        where: { id: $id },
+        data: {
+          isSubmitted: $isSubmitted
+          isApproved:$isApproved
+          comments: { create: $comments }
+      }){
+        id
+      }
     }
-  }
 `
 
 export const CREATE_ANNOTATION = gql`
@@ -69,7 +58,6 @@ export const CREATE_ANNOTATION = gql`
     }
   }
 `
-
 export const UPDATE_ANNOTATION = gql`
   mutation updateAnnotation(
     $id: ID,

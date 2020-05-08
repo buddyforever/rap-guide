@@ -17,7 +17,7 @@ import ReviewAnnotation from '../Annotation/ReviewAnnotation'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { REVIEW_ANNOTATION } from '../../queries/annotations'
+import { REVIEW_ANNOTATION_WITH_COMMENT } from '../../queries/annotations'
 import { UPDATE_LESSON_STATUS } from '../../queries/lessons'
 
 const variants = {
@@ -32,7 +32,7 @@ const domain = window.location.port ?
 const LessonDashboardTeacher = ({ lesson, refetch }) => {
 
   /* Queries */
-  const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
+  const [reviewAnnotationWithComment] = useMutation(REVIEW_ANNOTATION_WITH_COMMENT);
   const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
 
   /* State */
@@ -71,32 +71,40 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   }
 
   function handleApproveAnnotation(annotation) {
-    reviewAnnotation({
+    reviewAnnotationWithComment({
       variables: {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
-        note: annotation.note.note,
-        teacherAccountId: annotation.note.account.id
+        comments: annotation.comments
       }
     }).then(() => {
       refetch();
       closeModal();
+      setMessage({
+        type: "success",
+        title: "Annotation Approved",
+        text: `You have approved an annotation by <strong>${annotation.account.nameFirst} ${annotation.account.nameLast}</strong>`
+      })
     });
   }
 
   function handleRejectAnnotation(annotation) {
-    reviewAnnotation({
+    reviewAnnotationWithComment({
       variables: {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
-        note: annotation.note.note,
-        teacherAccountId: annotation.note.account.id
+        comments: annotation.comments
       }
     }).then(() => {
       refetch();
       closeModal();
+      setMessage({
+        type: "success",
+        title: "Annotation Rejected",
+        text: `You have requested more information for an annotation by <strong>${annotation.account.nameFirst} ${annotation.account.nameLast}</strong>`
+      })
     });;
   }
 
@@ -238,23 +246,30 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               <div>{account.nameFirst} {account.nameLast}</div>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
               <div>
-                {!hasAnnotations || (hasAnnotations === savedAnnotations.length) && "No Annotations"}
-                {submittedAnnotations.map(annotation => (
-                  <div key={annotation.id}>
-                    <LinkButton
-                      onClick={() => openAnnotationReview(annotation)}>
-                      Submitted {dateFormat(annotation.updatedAt)}
-                    </LinkButton>
-                  </div>
-                ))}
-                {approvedAnnotations.map(annotation => (
-                  <div key={annotation.id}>
-                    <LinkButton
-                      onClick={() => openAnnotationReview(annotation)}>
-                      Approved {dateFormat(annotation.updatedAt)}
-                    </LinkButton>
-                  </div>
-                ))}
+                { // No Annotations
+                  !submittedAnnotations.length &&
+                  !approvedAnnotations.length && "No Submitted Annotations"
+                }
+                { // Submitted Annotations
+                  submittedAnnotations.map(annotation => (
+                    <div key={annotation.id}>
+                      <LinkButton
+                        onClick={() => openAnnotationReview(annotation)}>
+                        Submitted {dateFormat(annotation.updatedAt)}
+                      </LinkButton>
+                    </div>
+                  ))
+                }
+                { // Approved Annotations
+                  approvedAnnotations.map(annotation => (
+                    <div key={annotation.id}>
+                      <LinkButton
+                        onClick={() => openAnnotationReview(annotation)}>
+                        Approved {dateFormat(annotation.updatedAt)}
+                      </LinkButton>
+                    </div>
+                  ))
+                }
               </div>
             </Student>
           )

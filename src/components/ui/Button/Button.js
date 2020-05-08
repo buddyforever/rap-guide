@@ -141,7 +141,7 @@ const StyledButton = styled.button`
       border-color: ${props => props.theme.colors.secondaryDark};
     }
   }
-`
+`;
 
 /* Default Props */
 StyledButton.defaultProps = {

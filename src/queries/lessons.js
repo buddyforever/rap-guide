@@ -110,6 +110,7 @@ export const GET_LESSON_BY_ID = gql`
             order
           }
           comments {
+            id
             comment
             updatedAt
             account {
@@ -151,6 +152,18 @@ export const GET_LESSON_BY_ID = gql`
           lyrics {
             id
             lyric
+          }
+          comments {
+            id
+            comment
+            updatedAt
+            account {
+              id
+              nameFirst
+              nameLast
+              image
+              email
+            }
           }
         }
       }

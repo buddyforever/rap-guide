@@ -194,3 +194,32 @@ export const StyledColumns = styled.div`
   grid-template-columns: 1fr 1fr;
   column-gap: 5rem;
 `;
+
+export const StyledComment = styled.div`
+  display: flex;
+
+  .image {
+    border-radius: 50%;
+    overflow: hidden;
+    height: 4rem;
+    width: 4rem;
+    margin-right: 1rem;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  .comment {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .author {
+    font-style: italic;
+    font-size: 1.4rem;
+    color: #333;
+  }
+`

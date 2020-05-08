@@ -1,47 +1,71 @@
 import React, { useState, useContext } from 'react'
-import { Heading, MediumSpace, Cite, SmallSpace } from '../../styles/PageStyles'
+import { Heading, MediumSpace, Cite, SmallSpace, StyledComment } from '../../styles/PageStyles'
 import { Form, ButtonBlock, FormBlock } from '../../styles/FormStyles'
 import { UserContext } from '../../context/UserContext'
 import { dateFormat } from '../../utilities/DateFormat'
-import styled from 'styled-components'
 import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
 
 
-const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnnotation }) => {
+const ReviewAnnotation = ({
+  annotation,
+  closeModal,
+  rejectAnnotation,
+  approveAnnotation
+}) => {
 
   /* Context */
   const { user } = useContext(UserContext);
 
   /* State */
-  const [note, setNote] = useState("");
+  const [comment, setComment] = useState("");
 
   /* Functions */
   function handleRejectAnnotation(e) {
     e.preventDefault();
+
+    let comments = [];
+    if (comment.length > 0) {
+      comments = [{
+        comment,
+        status: "PUBLISHED",
+        isPublic: false,
+        account: {
+          connect: {
+            id: user.id
+          }
+        }
+      }]
+    }
+
     rejectAnnotation({
       ...annotation,
       isSubmitted: false,
-      note: {
-        note,
-        account: {
-          id: user.id
-        }
-      }
+      comments
     })
   }
 
   function handleApproveAnnotation(e) {
     e.preventDefault();
+
+    let comments = [];
+    if (comment.length > 0) {
+      comments = [{
+        comment,
+        status: "PUBLISHED",
+        isPublic: false,
+        account: {
+          connect: {
+            id: user.id
+          }
+        }
+      }]
+    }
+
     approveAnnotation({
       ...annotation,
       isApproved: true,
-      note: {
-        note,
-        account: {
-          id: user.id
-        }
-      }
+      comments
     })
   }
 
@@ -69,24 +93,28 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
           <label>Comments</label>
           {annotation.comments.map(comment => {
             return (
-              <StyledNote style={{ margin: "1rem 0" }} key={comment.id}>
+              <StyledComment
+                style={{ margin: "1rem 0" }}
+                key={comment.id}>
                 <div className="image">
                   <img src={comment.account.image} alt={comment.account.nameFirst + ' ' + comment.account.nameLast} />
                 </div>
-                <div className="note">
-                  <span className="text">{comment.comment}</span>
+                <div className="comment">
+                  <span
+                    className="text"
+                    dangerouslySetInnerHTML={{ __html: comment.comment }} />
                   <span className="author">{comment.account.nameFirst} {comment.account.nameLast} at {dateFormat(comment.updatedAt)}</span>
                 </div>
-              </StyledNote>
+              </StyledComment>
             )
           })}
         </FormBlock>
       }
       <FormBlock>
-        <label>Teacher Notes</label>
+        <label>Teacher Comment</label>
         <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}></textarea>
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}></textarea>
       </FormBlock>
       <ButtonBlock>
         <div>
@@ -111,31 +139,3 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
 
 export default ReviewAnnotation
 
-const StyledNote = styled.div`
-  display: flex;
-
-  .image {
-    border-radius: 50%;
-    overflow: hidden;
-    height: 4rem;
-    width: 4rem;
-    margin-right: 1rem;
-
-    img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-    }
-  }
-
-  .note {
-    display: flex;
-    flex-direction: column;
-  }
-
-  .author {
-    font-style: italic;
-    font-size: 1.4rem;
-    color: #333;
-  }
-`
