@@ -62,6 +62,7 @@ export const NoteForm = ({
           lesson: lesson.id
         }
       }).then(response => {
+        console.log(response);
         setSelectedNote(response.data.createNote)
         setEditMode(true)
         setMessage({
@@ -118,6 +119,8 @@ export const NoteForm = ({
     setIsExample(note.isExample)
   }, [note])
 
+  let prevOrder = null;
+
   return (
     <div>
       <h3>{editMode ? "Edit" : "Add"} {isExample ? "Example Annotation" : "Note"}</h3>
@@ -125,11 +128,17 @@ export const NoteForm = ({
         <div>
           <h6 style={{ margin: "1rem 0" }}>Selected Lyrics</h6>
           {selectedLyrics.map(lyric => {
+            let brokenLyrics = false;
+            if (prevOrder !== null && lyric.order !== prevOrder + 1) {
+              brokenLyrics = true;
+            }
+            prevOrder = lyric.order;
             return (
               <em
                 key={lyric.id}
                 style={{ display: "block", marginBottom: ".5rem" }}
               >
+                {brokenLyrics && <div>...</div>}
                 {lyric.lyric}
               </em>
             )

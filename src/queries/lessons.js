@@ -242,6 +242,7 @@ export const CREATE_LESSON = gql`
       status: PUBLISHED
       lessonTitle: $lessonTitle
       lessonDescription: $lessonDescription
+      lessonStatus: "Draft"
       maxStudents: $maxStudents
       guide: { connect: $guide }
       accounts: { connect: $accounts }

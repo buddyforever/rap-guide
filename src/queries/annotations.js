@@ -16,6 +16,7 @@ export const GET_ANNOTATIONS_BY_ACCOUNT = gql`
       id
       annotation
       isSubmitted
+      isApproved
       isRequestRevisions
       lyrics {
         lyric

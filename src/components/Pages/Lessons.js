@@ -41,7 +41,7 @@ export const Lessons = () => {
     let dateUpdated = annotation.updatedAt;
 
     // Submitted
-    if (annotation.isSubmitted) {
+    if (annotation.isSubmitted && !annotation.isApproved) {
       return (
         <p key={annotation.id}>
           You <strong>submitted</strong> an annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
@@ -49,7 +49,7 @@ export const Lessons = () => {
       )
     }
     // Saved
-    if (!annotation.isSubmitted && !annotation.isRequestRevisions) {
+    if (!annotation.isSubmitted && !annotation.isRequestRevisions && !annotation.isApproved) {
       return (
         <p key={annotation.id}>
           You <strong>saved</strong> an annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
@@ -58,10 +58,19 @@ export const Lessons = () => {
     }
 
     // Revisions Requested
-    if (annotation.isRequestRevisions) {
+    if (annotation.isRequestRevisions && !annotation.isApproved) {
       return (
         <p key={annotation.id}>
           Your teacher requested <strong>revisions</strong> to your annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
+        </p>
+      )
+    }
+
+    // Revisions Requested
+    if (annotation.isApproved) {
+      return (
+        <p key={annotation.id}>
+          Your teacher has <strong>APPROVED</strong> your annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
         </p>
       )
     }

@@ -152,23 +152,25 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
             </FormBlock>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
-            <CopyToClipboard
-              text={lessonSignupUrl}
-              onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
-              <div>
-                <input
-                  type="hidden"
-                  readOnly
-                  value={lessonSignupUrl}
-                />
-                <Button
-                  title="Click to copy the signup url to your clipboard"
-                  style={{ marginRight: "1rem" }}
-                  onClick={(e) => e.preventDefault()}>
-                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Link
+            {lesson.lessonStatus !== "Draft" &&
+              <CopyToClipboard
+                text={lessonSignupUrl}
+                onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
+                <div>
+                  <input
+                    type="hidden"
+                    readOnly
+                    value={lessonSignupUrl}
+                  />
+                  <Button
+                    title="Click to copy the signup url to your clipboard"
+                    style={{ marginRight: "1rem" }}
+                    onClick={(e) => e.preventDefault()}>
+                    <FontAwesomeIcon icon={faCopy} /> Copy Signup Link
                     </Button>
-              </div>
-            </CopyToClipboard>
+                </div>
+              </CopyToClipboard>
+            }
             <Link to={"/lesson/edit/" + lesson.id}>
               <Button>Edit Lesson</Button>
             </Link>
@@ -214,26 +216,30 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
         </Heading>
         {!students.length && (<div>
           <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
-          <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
-          <FormBlock style={{ margin: "5rem 0" }}>
-            <CopyToClipboard
-              text={lessonSignupUrl}
-              onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
-              <div style={{ display: "flex" }}>
-                <input
-                  type="text"
-                  readOnly
-                  value={lessonSignupUrl}
-                />
-                <Button
-                  title="Click to copy the signup url to your clipboard"
-                  style={{ marginLeft: "1rem", width: "200px" }}
-                  onClick={(e) => e.preventDefault()}>
-                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+          {lesson.lessonStatus !== "Draft" &&
+            <div>
+              <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
+              <FormBlock style={{ margin: "5rem 0" }}>
+                <CopyToClipboard
+                  text={lessonSignupUrl}
+                  onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
+                  <div style={{ display: "flex" }}>
+                    <input
+                      type="text"
+                      readOnly
+                      value={lessonSignupUrl}
+                    />
+                    <Button
+                      title="Click to copy the signup url to your clipboard"
+                      style={{ marginLeft: "1rem", width: "200px" }}
+                      onClick={(e) => e.preventDefault()}>
+                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
                 </Button>
-              </div>
-            </CopyToClipboard>
-          </FormBlock>
+                  </div>
+                </CopyToClipboard>
+              </FormBlock>
+            </div>
+          }
         </div>)}
         {students.map(account => {
           let hasAnnotations = account.annotations.length;
