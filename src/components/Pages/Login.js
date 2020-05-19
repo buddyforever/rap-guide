@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
-import auth from '../../auth/auth'
 import { Redirect } from 'react-router-dom'
+import styled from 'styled-components'
+
+import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
+import { FormBlock } from '../../styles/FormStyles'
+import { Button } from '../ui/Button/'
+import auth from '../../auth/auth'
 import Message from '../Layout/Message'
 import FacebookLogin from 'react-facebook-login'
 import GoogleLogin from 'react-google-login'
+import { UserContext } from '../../context/UserContext'
+
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import gql from 'graphql-tag'
-import { UserContext } from '../../context/UserContext'
 
 const Login = ({ lesson }) => {
 
@@ -112,7 +117,7 @@ const Login = ({ lesson }) => {
   }
 
   return (
-    <StyledContent>
+    <StyledContent style={{ maxWidth: "600px", margin: "0 auto" }}>
       <Heading>
         <h1>Login</h1>
       </Heading>
@@ -122,25 +127,64 @@ const Login = ({ lesson }) => {
           <p>Please login with Google or Facebook to enroll yourself in <strong>{lesson.title}</strong>.</p>
         </MediumSpace>
       )}
-      {/*<FacebookLogin
-        appId="665758824197396"
-        fields="name,email,picture"
-        callback={responseFacebook}
-      />
-      <br />
-      <br />*/}
-      <GoogleLogin
-        clientId="898142775962-ib0uaie5botfugao80pjjn9nae1387fl.apps.googleusercontent.com"
-        buttonText="LOGIN WITH GOOGLE"
-        onSuccess={responseGoogle}
-        onFailure={(response) => console.log(response)}
-      />
+      <MediumSpace>
+        <h2>Login With</h2>
+      </MediumSpace>
+      <StyledLoginProvider className="google">
+        <GoogleLogin
+          clientId="898142775962-ib0uaie5botfugao80pjjn9nae1387fl.apps.googleusercontent.com"
+          buttonText="LOGIN WITH GOOGLE"
+          onSuccess={responseGoogle}
+          onFailure={(response) => console.log(response)}
+        />
+      </StyledLoginProvider>
+      <StyledLoginProvider className="facebook">
+        <FacebookLogin
+          appId="665758824197396"
+          fields="name,email,picture"
+          callback={responseFacebook}
+        />
+      </StyledLoginProvider>
+      <MediumSpace>
+        <hr style={{ margin: "50px 0" }} />
+        <h2>Or By Email</h2>
+        <FormBlock>
+          <label>email</label>
+          <input type="text" placeholder="email" />
+        </FormBlock>
+        <FormBlock>
+          <label>password</label>
+          <input type="password" placeholder="password" />
+        </FormBlock>
+        <Button>Login</Button>
+      </MediumSpace>
       {redirect && <Redirect to={redirect} />}
     </StyledContent>
   )
 }
 
 export default Login;
+
+const StyledLoginProvider = styled.div`
+  margin: 2.5rem 0;
+
+  button {
+    width: 300px;
+  }
+
+  &.facebook {
+    button {
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 2px 2px 0px, rgba(0, 0, 0, 0.24) 0px 0px 1px 0px;
+    }
+  }
+
+  &.google {
+    button {
+      height: 60px;
+      border: 1px solid #666666;
+    }
+  }
+`
 
 const GET_ACCOUNT = gql`
   query getAccount($accountId: String!) {

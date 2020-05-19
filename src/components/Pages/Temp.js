@@ -6,9 +6,13 @@ import gql from 'graphql-tag'
 
 export const Temp = () => {
 
+  const [newOrder, setNewOrder] = useState("");
+  const [newLyric, setNewLyric] = useState("");
+  const [newBar, setNewBar] = useState("");
+
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
     variables: {
-      id: "ck92muqx9193w0b84he8cdlnu"
+      id: "ckae7da5ew6so0b84ryx2fk5l"
     }
   })
 
@@ -16,6 +20,26 @@ export const Temp = () => {
   const [updateLyricText] = useMutation(UPDATE_LYRIC);
   const [updateLyricOrder] = useMutation(UPDATE_LYRIC_ORDER);
   const [removeLyricById] = useMutation(REMOVE_LYRIC);
+  const [createLyric] = useMutation(CREATE_LYRIC);
+
+  function handleCreateLyric(e) {
+    e.preventDefault();
+
+    let variables = {
+      guideId: data.guide.id,
+      order: parseInt(newOrder),
+      lyric: newLyric,
+      bar: parseInt(newBar)
+    }
+
+    createLyric({
+      variables
+    }).then(() => {
+      setNewOrder(parseInt(newOrder) + 1);
+      setNewLyric("");
+      refetch();
+    })
+  }
 
   function updateOrder(id, order) {
     updateLyricOrder({
@@ -69,6 +93,16 @@ export const Temp = () => {
   return (
     <StyledContent style={{ paddingTop: "15rem", width: "100%" }}>
       <div style={{ position: "fixed", marginTop: "-5rem", right: "3rem" }}><button onClick={() => refetch()} style={{ padding: "1rem" }}>REFETCH</button></div>
+      <div>
+        <p style={{ display: "flex", flex: "1 1 auto" }}>
+          <input style={{ width: "50px" }} placeholder="Order" value={newOrder} onChange={e => setNewOrder(e.target.value)} />
+          <input style={{ width: "100%" }} placeholder="Lyric" value={newLyric} onChange={e => setNewLyric(e.target.value)} />
+          <input style={{ width: "50px" }} placeholder="bar" value={newBar} onChange={e => setNewBar(e.target.value)} />
+        </p>
+        <p>
+          <button onClick={handleCreateLyric}>Add Lyric</button>
+        </p>
+      </div>
       {data.guide.lyrics.map(lyric => {
         nextBar = (currentBar !== lyric.bar);
         currentBar = lyric.bar;
@@ -97,6 +131,34 @@ export const Temp = () => {
 
 export default Temp;
 
+const CREATE_LYRIC = gql`
+  mutation createLyric(
+    $guideId: ID!,
+    $order: Int!,
+    $lyric: String!,
+    $bar: Int!
+  ){
+    createLyric(data: {
+			status:PUBLISHED
+      guide: {
+        connect: {
+          id: $guideId
+        }
+      }
+      order: $order
+      lyric: $lyric
+      bar: $bar
+    }){
+      id
+      lyric
+      guide {
+        id
+      }
+      order
+      bar
+    }
+  }
+`
 
 const UPDATE_LYRIC_BAR = gql`
   mutation updateLyric(

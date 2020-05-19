@@ -17,8 +17,13 @@ import ReviewAnnotation from '../Annotation/ReviewAnnotation'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
+<<<<<<< HEAD
 import { REVIEW_ANNOTATION_WITH_COMMENT } from '../../queries/annotations'
 import { UPDATE_LESSON_STATUS } from '../../queries/lessons'
+=======
+import { REVIEW_ANNOTATION } from '../../queries/annotations'
+import { UPDATE_LESSON_STATUS, GET_LESSON_STUDENTS } from '../../queries/lessons'
+>>>>>>> authentication
 
 const variants = {
   open: { x: "-50vw" },
@@ -32,7 +37,16 @@ const domain = window.location.port ?
 const LessonDashboardTeacher = ({ lesson, refetch }) => {
 
   /* Queries */
+<<<<<<< HEAD
   const [reviewAnnotationWithComment] = useMutation(REVIEW_ANNOTATION_WITH_COMMENT);
+=======
+  const { data, loading, refetch: refetchStudents } = useQuery(GET_LESSON_STUDENTS, {
+    variables: {
+      id: lesson.id
+    }
+  })
+  const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
+>>>>>>> authentication
   const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
 
   /* State */
@@ -40,9 +54,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
   const [selectedAnnotation, setSelectedAnnotation] = useState(null);
   const [lessonSignupUrl, setLessonSignupUrl] = useState(domain + "/lesson/signup/" + lesson.id);
-
-  /* Non State Variables */
-  const students = lesson.accounts.filter(account => account.type === 'student');
+  const [students, setStudents] = useState([]);
 
   /* Functions */
   function updateLessonStatus(e) {
@@ -76,10 +88,17 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
+<<<<<<< HEAD
         comments: annotation.comments
+=======
+        isRequestRevisions: false,
+        comment: annotation.comment.comment,
+        teacherAccountId: annotation.comment.account.id
+>>>>>>> authentication
       }
     }).then(() => {
       refetch();
+      refetchStudents();
       closeModal();
       setMessage({
         type: "success",
@@ -90,24 +109,48 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   }
 
   function handleRejectAnnotation(annotation) {
+<<<<<<< HEAD
     reviewAnnotationWithComment({
+=======
+    let comment = annotation.comment.comment;
+    reviewAnnotation({
+>>>>>>> authentication
       variables: {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
+<<<<<<< HEAD
         comments: annotation.comments
+=======
+        isRequestRevisions: true,
+        comment: comment,
+        teacherAccountId: annotation.comment.account.id
+>>>>>>> authentication
       }
     }).then(() => {
       refetch();
+      refetchStudents();
       closeModal();
+<<<<<<< HEAD
       setMessage({
         type: "success",
         title: "Annotation Rejected",
         text: `You have requested more information for an annotation by <strong>${annotation.account.nameFirst} ${annotation.account.nameLast}</strong>`
       })
     });;
+=======
+    });
+>>>>>>> authentication
   }
 
+  useEffect(() => {
+    if (data) {
+      setStudents(data.accounts);
+      console.log(data);
+    }
+  }, [data])
+
+  if (loading) return <Loader />
   return (
     <StyledContent className="dashboard">
       <Heading>
@@ -136,30 +179,33 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               <select
                 value={lesson.lessonStatus}
                 onChange={updateLessonStatus}>
-                <option value="Ready">Ready</option>
+                <option value="Draft">Draft</option>
                 <option value="In Session">In Session</option>
-                <option value="Complete">Complete</option>
+                <option value="Closed">Closed</option>
+                <option value="Closed *">Closed (* allow late submissions)</option>
               </select>
             </FormBlock>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
-            <CopyToClipboard
-              text={lessonSignupUrl}
-              onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
-              <div>
-                <input
-                  type="hidden"
-                  readOnly
-                  value={lessonSignupUrl}
-                />
-                <Button
-                  title="Click to copy the signup url to your clipboard"
-                  style={{ marginRight: "1rem" }}
-                  onClick={(e) => e.preventDefault()}>
-                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Link
+            {lesson.lessonStatus !== "Draft" &&
+              <CopyToClipboard
+                text={lessonSignupUrl}
+                onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
+                <div>
+                  <input
+                    type="hidden"
+                    readOnly
+                    value={lessonSignupUrl}
+                  />
+                  <Button
+                    title="Click to copy the signup url to your clipboard"
+                    style={{ marginRight: "1rem" }}
+                    onClick={(e) => e.preventDefault()}>
+                    <FontAwesomeIcon icon={faCopy} /> Copy Signup Link
                     </Button>
-              </div>
-            </CopyToClipboard>
+                </div>
+              </CopyToClipboard>
+            }
             <Link to={"/lesson/edit/" + lesson.id}>
               <Button>Edit Lesson</Button>
             </Link>
@@ -205,34 +251,38 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
         </Heading>
         {!students.length && (<div>
           <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
-          <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
-          <FormBlock style={{ margin: "5rem 0" }}>
-            <CopyToClipboard
-              text={lessonSignupUrl}
-              onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
-              <div style={{ display: "flex" }}>
-                <input
-                  type="text"
-                  readOnly
-                  value={lessonSignupUrl}
-                />
-                <Button
-                  title="Click to copy the signup url to your clipboard"
-                  style={{ marginLeft: "1rem", width: "200px" }}
-                  onClick={(e) => e.preventDefault()}>
-                  <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
-                    </Button>
-              </div>
-            </CopyToClipboard>
-          </FormBlock>
+          {lesson.lessonStatus !== "Draft" &&
+            <div>
+              <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
+              <FormBlock style={{ margin: "5rem 0" }}>
+                <CopyToClipboard
+                  text={lessonSignupUrl}
+                  onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
+                  <div style={{ display: "flex" }}>
+                    <input
+                      type="text"
+                      readOnly
+                      value={lessonSignupUrl}
+                    />
+                    <Button
+                      title="Click to copy the signup url to your clipboard"
+                      style={{ marginLeft: "1rem", width: "200px" }}
+                      onClick={(e) => e.preventDefault()}>
+                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+                </Button>
+                  </div>
+                </CopyToClipboard>
+              </FormBlock>
+            </div>
+          }
         </div>)}
         {students.map(account => {
           let hasAnnotations = account.annotations.length;
           let submittedAnnotations = [];
           let approvedAnnotations = [];
-          let savedAnnotations = [];
+          let reviewedAnnotations = [];
           if (hasAnnotations) {
-            savedAnnotations = account.annotations.filter(annotation => !annotation.isSubmitted)
+            reviewedAnnotations = account.annotations.filter(annotation => annotation.isRequestRevisions && !annotation.isSubmitted)
             submittedAnnotations = account.annotations.filter(annotation => annotation.isSubmitted)
             approvedAnnotations = account.annotations.filter(annotation => annotation.isApproved)
           }
@@ -246,6 +296,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               <div>{account.nameFirst} {account.nameLast}</div>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
               <div>
+<<<<<<< HEAD
                 { // No Annotations
                   !submittedAnnotations.length &&
                   !approvedAnnotations.length && "No Submitted Annotations"
@@ -270,6 +321,39 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
                     </div>
                   ))
                 }
+=======
+                {(
+                  !hasAnnotations ||
+                  !submittedAnnotations &&
+                  !approvedAnnotations &&
+                  !reviewedAnnotations) && "Not Submitted"}
+                {submittedAnnotations.map(annotation => (
+                  <div key={annotation.id}>
+                    <LinkButton
+                      onClick={() => openAnnotationReview(annotation)}>
+                      Submitted {dateFormat(annotation.updatedAt)}
+                    </LinkButton>
+                  </div>
+                ))}
+                {approvedAnnotations.map(annotation => (
+                  <div key={annotation.id}>
+                    <LinkButton
+                      onClick={() => openAnnotationReview(annotation)}>
+                      Approved {dateFormat(annotation.updatedAt)}
+                    </LinkButton>
+                  </div>
+                ))}
+                {reviewedAnnotations.map(annotation => {
+                  return (
+                    <div key={annotation.id}>
+                      <LinkButton
+                        onClick={() => openAnnotationReview(annotation)}>
+                        Reviewed {dateFormat(annotation.updatedAt)}
+                      </LinkButton>
+                    </div>
+                  )
+                })}
+>>>>>>> authentication
               </div>
             </Student>
           )

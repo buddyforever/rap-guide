@@ -7,6 +7,7 @@ import { Heading, MediumSpace, LargeSpace, StyledContent, HtmlContent, StyledCol
 import Lyrics from '../Lyric/Lyrics'
 import Loader from '../Loader'
 import styled from 'styled-components'
+import { LinkButton } from '../ui/LinkButton'
 
 import { useMutation } from '@apollo/react-hooks'
 import { ASSIGN_LYRIC, UNASSIGN_LYRIC } from '../../queries/lyric'
@@ -30,31 +31,6 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
   /* Queries */
   const [assignLyricMutation] = useMutation(ASSIGN_LYRIC);
   const [unAssignLyricMutation] = useMutation(UNASSIGN_LYRIC);
-
-  /*   function handleAddAnnotation({ annotation, isSubmitted, lessonLyricId }) {
-      if (!annotation.id) {
-        createAnnotation({
-          variables: {
-            isSubmitted: isSubmitted,
-            account: user.id,
-            lessonLyric: lessonLyricId,
-            annotation: annotation.annotation
-          }
-        }).then((createAnnotation) => {
-          refetch()
-        })
-      } else {
-        updateAnnotation({
-          variables: {
-            id: annotation.id,
-            isSubmitted: isSubmitted,
-            annotation: annotation.annotation
-          }
-        }).then((updateAnnotation) => {
-          refetch()
-        })
-      }
-    } */
 
   /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
   any lyrics that are associated with the specific annotation */
@@ -165,6 +141,16 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
     setSelectedLyrics(sortedLyrics);
   }
 
+  function assignAllLyrics() {
+    lesson.guide.lyrics.map(lyric => assignLyric(lyric))
+    refetch()
+  }
+
+  function assignNoLyrics() {
+    lesson.guide.lyrics.map(lyric => unAssignLyric(lyric));
+    refetch();
+  }
+
   function combineLyrics() {
     /* Combine Guide Lyrics with Lesson Lyrics */
     var combinedLyrics = lesson.guide.lyrics.map(l1 => {
@@ -193,6 +179,11 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
       <LargeSpace>
         <p>Select lyrics to make them annotatable for this lesson. You can add notes to the lyrics that will be displayed to the students. You can also create an example annotation to further illustrate your expectations.</p>
       </LargeSpace>
+
+      <MediumSpace>
+        <LinkButton onClick={assignAllLyrics}>Assign All</LinkButton>
+        <LinkButton onClick={assignNoLyrics}>Assign None</LinkButton>
+      </MediumSpace>
 
       <StyledColumns>
         <Lyrics

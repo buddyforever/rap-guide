@@ -116,5 +116,6 @@ const StyledLyric = styled.div`
     background-color: #742A2A!important;
     color: white!important;
     cursor: not-allowed!important;
+    box-shadow: none!important;
   }
 `

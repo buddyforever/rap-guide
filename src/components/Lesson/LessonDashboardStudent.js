@@ -9,6 +9,7 @@ import Loader from '../Loader'
 import styled from 'styled-components'
 import AnnotationForm from '../Annotation/AnnotationForm'
 import { Message } from '../ui/Message'
+import { Comment } from '../Comment/Comment'
 
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
@@ -33,6 +34,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   const [offset, setOffset] = useState(120);
   const [selectedLyrics, setSelectedLyrics] = useStateWithName([], "SelectedLyrics");
   const [assignedLyrics, setAssignedLyrics] = useStateWithName([], "AssignedLyrics");
+  const [groupedLyrics, setGroupedLyrics] = useState(false);
 
   /* Queries */
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
@@ -51,7 +53,6 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
         }
       }).then((response) => {
         refetch()
-        combineLyrics();
         setMessage({
           type: "success",
           title: "Annotation Saved!",
@@ -70,7 +71,6 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
         }
       }).then((response) => {
         refetch()
-        combineLyrics();
         setMessage({
           type: "success",
           title: "Annotation Submitted!",
@@ -78,6 +78,8 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
         })
         setAnnotation(response.data.updateAnnotation)
         setIsSaving(false)
+        setHidden(true);
+        setSelectedLyrics([])
       })
     }
   }
@@ -85,22 +87,38 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
   any lyrics that are associated with the specific annotation */
   async function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
-    setNote(null);
-    // Select or deselect the lyric
+    setNote(null)
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
-      if (lyric.annotations && lyric.annotations.length > 0) {
+      if (lyric.annotations && lyric.annotations.length > 0) { // Has annotation
         setSelectedLyrics(lyric.annotations[0].lyrics);
-        setAnnotation(lyric.annotations[0])
-      } else {
-        setSelectedLyrics(prevState => [
-          lyric,
-          ...selectedLyrics
-        ])
+        setAnnotation(lyric.annotations[0]);
+        setGroupedLyrics(true);
+      } else if (lyric.notes && lyric.notes.length > 0) { // Has Notes (grouped)
+        setSelectedLyrics(lyric.notes[0].lyrics);
+        setAnnotation(lyric.annotations[0]);
+        setGroupedLyrics(true);
+      } else { // Add selected lyric
+        if (!groupedLyrics) {
+          setSelectedLyrics(prevState => [
+            lyric,
+            ...selectedLyrics
+          ])
+          setGroupedLyrics(false);
+        } else {
+          setSelectedLyrics([lyric]);
+          setGroupedLyrics(false);
+        }
+        setAnnotation(null);
       }
     } else {
-      if (lyric.annotations && lyric.annotations.length > 0) {
+      setGroupedLyrics(false);
+      if (
+        (lyric.annotations && lyric.annotations.length > 0) ||
+        (lyric.notes && lyric.notes.length > 0)
+      ) {
         setSelectedLyrics([]);
       } else {
+        setAnnotation(null);
         setSelectedLyrics(prevState => prevState.filter(selectedLyric => selectedLyric.id !== lyric.id))
       }
       return false; // We are only deselecting so no need to move the display
@@ -108,7 +126,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
     let contentHeight = ref.current.getBoundingClientRect().height;
     setTop(arrowTop);
 
-    /*  If there annotation is shorter then the
+    /*  If the annotation is shorter then the
         available space then center it */
     if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
       let diff = (arrowTop - (contentHeight / 2))
@@ -126,7 +144,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
     let contentHeight = ref.current.getBoundingClientRect().height;
     setTop(arrowTop);
 
-    /*  If there annotation is shorter then the
+    /*  If the annotation is shorter then the
         available space then center it */
     if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
       let diff = (arrowTop - (contentHeight / 2))
@@ -187,11 +205,12 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
 
   useEffect(() => {
     if (selectedLyrics.length) setHidden(false);
+    setSelectedLyrics(sortLyrics(selectedLyrics));
   }, [selectedLyrics])
 
   useEffect(() => {
     combineLyrics();
-  }, [])
+  }, [lesson])
 
   if (!lyrics) return <Loader />
   return (
@@ -227,7 +246,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
           <div className="content" ref={ref}>
             {note && !annotation &&
               <div>
-                <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
+                <h3 style={{ margin: "1rem 0" }}>Lyrics</h3>
                 <div className="lyrics">
                   {sortLyrics(note.lyrics).map(lyric => (
                     <em
@@ -259,13 +278,24 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
                     </div>
                   </div>
                 }
-                <h6 style={{ margin: "1rem 0" }}>Annotation</h6>
+                <h3 style={{ margin: "1rem 0" }}>Annotation</h3>
                 <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
                 {annotation.isSubmitted &&
-                  <span className="primary">* SUBMITTED</span>
+                  <span className="primary">* SUBMITTED FOR REVIEW</span>
                 }
-                {!annotation.isSubmitted &&
+                {!annotation.isSubmitted && !annotation.isApproved &&
                   <span className="primary">* click to edit</span>
+                }
+                {annotation.isApproved &&
+                  <span className="primary">* ANNOTATION APPROVED!</span>
+                }
+                {annotation.comments && annotation.comments.length > 0 &&
+                  <MediumSpace>
+                    <h3>Comments</h3>
+                    {annotation.comments.map(comment => (
+                      <Comment key={comment.id} {...comment} />
+                    ))}
+                  </MediumSpace>
                 }
               </div>
             }

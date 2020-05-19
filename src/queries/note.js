@@ -22,8 +22,10 @@ export const CREATE_NOTE = gql`
       id
       note
       isExample
-      lyrics {
+      lyrics(orderBy: order_ASC) {
         id
+        lyric
+        order
       }
     }
   }

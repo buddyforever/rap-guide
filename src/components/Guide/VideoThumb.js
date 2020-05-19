@@ -24,14 +24,16 @@ export const VideoThumb = ({ guide, lesson, link }) => {
 
   function getLessonClass() {
     switch (lesson.lessonStatus) {
-      case "Ready":
-        return "ready"
+      case "Draft":
+        return "draft"
       case "In Session":
         return "active"
-      case "Complete":
-        return "complete"
+      case "Closed":
+        return "closed"
+      case "Closed *":
+        return "closed"
       default:
-        return "ready"
+        return "draft"
     }
   }
 
@@ -132,7 +134,7 @@ const StyledVideoThumb = styled(motion.div)`
       font-size: 1.2rem;
       padding: .5rem 1rem;
 
-      &.ready {
+      &.draft {
         background-color: #F6E05E;
         color: #744210;
       }
@@ -142,7 +144,7 @@ const StyledVideoThumb = styled(motion.div)`
         color: #22543D;
       }
 
-      &.complete {
+      &.closed {
         background-color: #DD3333;
         color: #FFFFFF;
       }

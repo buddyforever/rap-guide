@@ -1,11 +1,20 @@
 import React, { useState, useContext } from 'react'
+<<<<<<< HEAD
 import { Heading, MediumSpace, Cite, SmallSpace, StyledComment } from '../../styles/PageStyles'
+=======
+import styled from 'styled-components'
+
+import { Heading, MediumSpace, Cite, SmallSpace } from '../../styles/PageStyles'
+>>>>>>> authentication
 import { Form, ButtonBlock, FormBlock } from '../../styles/FormStyles'
-import { UserContext } from '../../context/UserContext'
 import { dateFormat } from '../../utilities/DateFormat'
+<<<<<<< HEAD
+=======
+import { UserContext } from '../../context/UserContext'
+>>>>>>> authentication
 import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
-
+import { Comment } from '../Comment/Comment'
 
 const ReviewAnnotation = ({
   annotation,
@@ -41,7 +50,16 @@ const ReviewAnnotation = ({
     rejectAnnotation({
       ...annotation,
       isSubmitted: false,
+<<<<<<< HEAD
       comments
+=======
+      comment: {
+        comment,
+        account: {
+          id: user.id
+        }
+      }
+>>>>>>> authentication
     })
   }
 
@@ -65,34 +83,56 @@ const ReviewAnnotation = ({
     approveAnnotation({
       ...annotation,
       isApproved: true,
+<<<<<<< HEAD
       comments
+=======
+      comment: {
+        comment,
+        account: {
+          id: user.id
+        }
+      }
+>>>>>>> authentication
     })
   }
 
+  let prevOrder = null;
+  console.log(annotation)
   return (
     <Form>
       <Heading>
         <h1>Annotation Review</h1>
-        <Cite>submitted by {annotation.account.nameFirst} {annotation.account.nameLast} on {dateFormat(annotation.updatedAt)}</Cite>
+        <Cite>Annotation submitted by <strong>{annotation.account.nameFirst} {annotation.account.nameLast}</strong> on <strong>{dateFormat(annotation.updatedAt)}</strong></Cite>
       </Heading>
-      <SmallSpace>
+      <MediumSpace>
+        <h3>Lyrics</h3>
         {annotation.lyrics.map(lyric => {
+          let brokenLyrics = false;
+          if (prevOrder !== null && lyric.order !== prevOrder + 1) {
+            brokenLyrics = true;
+          }
+          prevOrder = lyric.order;
           return (
-            <strong
+            <em
               key={lyric.id}
               style={{ display: "block", marginBottom: ".5rem" }}
             >
+              {brokenLyrics && <div>...</div>}
               {lyric.lyric}
-            </strong>
+            </em>
           )
         })}
-      </SmallSpace>
-      <MediumSpace dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+      </MediumSpace>
+      <MediumSpace>
+        <h3>Annotation</h3>
+        <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+      </MediumSpace>
       {annotation.comments.length > 0 &&
         <FormBlock>
-          <label>Comments</label>
+          <h3>Notes</h3>
           {annotation.comments.map(comment => {
             return (
+<<<<<<< HEAD
               <StyledComment
                 style={{ margin: "1rem 0" }}
                 key={comment.id}>
@@ -106,12 +146,19 @@ const ReviewAnnotation = ({
                   <span className="author">{comment.account.nameFirst} {comment.account.nameLast} at {dateFormat(comment.updatedAt)}</span>
                 </div>
               </StyledComment>
+=======
+              <Comment key={comment.id} {...comment} />
+>>>>>>> authentication
             )
           })}
         </FormBlock>
       }
       <FormBlock>
+<<<<<<< HEAD
         <label>Teacher Comment</label>
+=======
+        <h3>Add Notes</h3>
+>>>>>>> authentication
         <textarea
           value={comment}
           onChange={(e) => setComment(e.target.value)}></textarea>
