@@ -110,21 +110,6 @@ export const GET_LESSON_BY_ID = gql`
             lyric
             order
           }
-<<<<<<< HEAD
-          comments {
-            id
-            comment
-            updatedAt
-            account {
-              id
-              nameFirst
-              nameLast
-              image
-              email
-            }
-          }
-=======
->>>>>>> authentication
         }
       }
       lyrics {
@@ -160,18 +145,6 @@ export const GET_LESSON_BY_ID = gql`
             order
           }
           comments {
-            comment
-            updatedAt
-            account {
-              id
-              nameFirst
-              nameLast
-              image
-              email
-            }
-          }
-          comments {
-            id
             comment
             updatedAt
             account {

@@ -2,7 +2,7 @@ import React, { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 
 import { ButtonBlock } from '../../styles/FormStyles'
-import { Heading, MediumSpace, StyledComment } from '../../styles/PageStyles'
+import { Heading, MediumSpace } from '../../styles/PageStyles'
 import { Editor } from '@tinymce/tinymce-react';
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { dateFormat } from '../../utilities/DateFormat'
@@ -70,18 +70,14 @@ export const AnnotationForm = ({
       setContent(annotation.annotation);
     }
   }, [annotation]);
-<<<<<<< HEAD
-  console.log(annotation)
-=======
 
   let prevOrder = null;
 
->>>>>>> authentication
   return (
     <div>
       <h3>Annotation</h3>
       {selectedLyrics.length > 0 &&
-        <MediumSpace>
+        <div>
           <h6 style={{ margin: "1rem 0" }}>Selected Lyrics</h6>
           {selectedLyrics.map(lyric => {
             let brokenLyrics = false;
@@ -99,29 +95,7 @@ export const AnnotationForm = ({
               </em>
             )
           })}
-        </MediumSpace>
-      }
-      {annotation.comments && annotation.comments.length &&
-        <MediumSpace>
-          <h6 style={{ margin: "1rem 0" }}>Teacher's Comments</h6>
-          {annotation.comments.map(comment => {
-            return (
-              <StyledComment
-                style={{ margin: "1rem 0" }}
-                key={comment.id}>
-                <div className="image">
-                  <img src={comment.account.image} alt={comment.account.nameFirst + ' ' + comment.account.nameLast} />
-                </div>
-                <div className="comment">
-                  <span
-                    className="text"
-                    dangerouslySetInnerHTML={{ __html: comment.comment }} />
-                  <span className="author">{comment.account.nameFirst} {comment.account.nameLast} at {dateFormat(comment.updatedAt)}</span>
-                </div>
-              </StyledComment>
-            )
-          })}
-        </MediumSpace>
+        </div>
       }
       {annotation && annotation.comments && annotation.comments.length > 0 &&
         <MediumSpace>

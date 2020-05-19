@@ -17,13 +17,8 @@ import ReviewAnnotation from '../Annotation/ReviewAnnotation'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-<<<<<<< HEAD
-import { REVIEW_ANNOTATION_WITH_COMMENT } from '../../queries/annotations'
-import { UPDATE_LESSON_STATUS } from '../../queries/lessons'
-=======
 import { REVIEW_ANNOTATION } from '../../queries/annotations'
 import { UPDATE_LESSON_STATUS, GET_LESSON_STUDENTS } from '../../queries/lessons'
->>>>>>> authentication
 
 const variants = {
   open: { x: "-50vw" },
@@ -37,16 +32,12 @@ const domain = window.location.port ?
 const LessonDashboardTeacher = ({ lesson, refetch }) => {
 
   /* Queries */
-<<<<<<< HEAD
-  const [reviewAnnotationWithComment] = useMutation(REVIEW_ANNOTATION_WITH_COMMENT);
-=======
   const { data, loading, refetch: refetchStudents } = useQuery(GET_LESSON_STUDENTS, {
     variables: {
       id: lesson.id
     }
   })
   const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
->>>>>>> authentication
   const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
 
   /* State */
@@ -83,64 +74,38 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   }
 
   function handleApproveAnnotation(annotation) {
-    reviewAnnotationWithComment({
+    reviewAnnotation({
       variables: {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
-<<<<<<< HEAD
-        comments: annotation.comments
-=======
         isRequestRevisions: false,
         comment: annotation.comment.comment,
         teacherAccountId: annotation.comment.account.id
->>>>>>> authentication
       }
     }).then(() => {
       refetch();
       refetchStudents();
       closeModal();
-      setMessage({
-        type: "success",
-        title: "Annotation Approved",
-        text: `You have approved an annotation by <strong>${annotation.account.nameFirst} ${annotation.account.nameLast}</strong>`
-      })
     });
   }
 
   function handleRejectAnnotation(annotation) {
-<<<<<<< HEAD
-    reviewAnnotationWithComment({
-=======
     let comment = annotation.comment.comment;
     reviewAnnotation({
->>>>>>> authentication
       variables: {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
-<<<<<<< HEAD
-        comments: annotation.comments
-=======
         isRequestRevisions: true,
         comment: comment,
         teacherAccountId: annotation.comment.account.id
->>>>>>> authentication
       }
     }).then(() => {
       refetch();
       refetchStudents();
       closeModal();
-<<<<<<< HEAD
-      setMessage({
-        type: "success",
-        title: "Annotation Rejected",
-        text: `You have requested more information for an annotation by <strong>${annotation.account.nameFirst} ${annotation.account.nameLast}</strong>`
-      })
-    });;
-=======
     });
->>>>>>> authentication
   }
 
   useEffect(() => {
@@ -296,32 +261,6 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               <div>{account.nameFirst} {account.nameLast}</div>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
               <div>
-<<<<<<< HEAD
-                { // No Annotations
-                  !submittedAnnotations.length &&
-                  !approvedAnnotations.length && "No Submitted Annotations"
-                }
-                { // Submitted Annotations
-                  submittedAnnotations.map(annotation => (
-                    <div key={annotation.id}>
-                      <LinkButton
-                        onClick={() => openAnnotationReview(annotation)}>
-                        Submitted {dateFormat(annotation.updatedAt)}
-                      </LinkButton>
-                    </div>
-                  ))
-                }
-                { // Approved Annotations
-                  approvedAnnotations.map(annotation => (
-                    <div key={annotation.id}>
-                      <LinkButton
-                        onClick={() => openAnnotationReview(annotation)}>
-                        Approved {dateFormat(annotation.updatedAt)}
-                      </LinkButton>
-                    </div>
-                  ))
-                }
-=======
                 {(
                   !hasAnnotations ||
                   !submittedAnnotations &&
@@ -353,7 +292,6 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
                     </div>
                   )
                 })}
->>>>>>> authentication
               </div>
             </Student>
           )
