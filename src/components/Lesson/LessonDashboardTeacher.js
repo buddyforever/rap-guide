@@ -18,7 +18,7 @@ import { faBackward } from '@fortawesome/free-solid-svg-icons'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { REVIEW_ANNOTATION } from '../../queries/annotations'
-import { UPDATE_LESSON_STATUS } from '../../queries/lessons'
+import { UPDATE_LESSON_STATUS, GET_LESSON_STUDENTS } from '../../queries/lessons'
 
 const variants = {
   open: { x: "-50vw" },
@@ -32,6 +32,11 @@ const domain = window.location.port ?
 const LessonDashboardTeacher = ({ lesson, refetch }) => {
 
   /* Queries */
+  const { data, loading, refetch: refetchStudents } = useQuery(GET_LESSON_STUDENTS, {
+    variables: {
+      id: lesson.id
+    }
+  })
   const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
   const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
 
@@ -40,9 +45,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
   const [selectedAnnotation, setSelectedAnnotation] = useState(null);
   const [lessonSignupUrl, setLessonSignupUrl] = useState(domain + "/lesson/signup/" + lesson.id);
-
-  /* Non State Variables */
-  const students = lesson.accounts.filter(account => account.type === 'student');
+  const [students, setStudents] = useState([]);
 
   /* Functions */
   function updateLessonStatus(e) {
@@ -76,30 +79,43 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
-        note: annotation.note.note,
-        teacherAccountId: annotation.note.account.id
+        isRequestRevisions: false,
+        comment: annotation.comment.comment,
+        teacherAccountId: annotation.comment.account.id
       }
     }).then(() => {
       refetch();
+      refetchStudents();
       closeModal();
     });
   }
 
   function handleRejectAnnotation(annotation) {
+    let comment = annotation.comment.comment;
     reviewAnnotation({
       variables: {
         id: annotation.id,
         isApproved: annotation.isApproved ? annotation.isApproved : false,
         isSubmitted: annotation.isSubmitted,
-        note: annotation.note.note,
-        teacherAccountId: annotation.note.account.id
+        isRequestRevisions: true,
+        comment: comment,
+        teacherAccountId: annotation.comment.account.id
       }
     }).then(() => {
       refetch();
+      refetchStudents();
       closeModal();
-    });;
+    });
   }
 
+  useEffect(() => {
+    if (data) {
+      setStudents(data.accounts);
+      console.log(data);
+    }
+  }, [data])
+
+  if (loading) return <Loader />
   return (
     <StyledContent className="dashboard">
       <Heading>
@@ -128,9 +144,10 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               <select
                 value={lesson.lessonStatus}
                 onChange={updateLessonStatus}>
-                <option value="Ready">Ready</option>
+                <option value="Draft">Draft</option>
                 <option value="In Session">In Session</option>
-                <option value="Complete">Complete</option>
+                <option value="Closed">Closed</option>
+                <option value="Closed *">Closed (* allow late submissions)</option>
               </select>
             </FormBlock>
           </div>
@@ -213,7 +230,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
                   style={{ marginLeft: "1rem", width: "200px" }}
                   onClick={(e) => e.preventDefault()}>
                   <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
-                    </Button>
+                </Button>
               </div>
             </CopyToClipboard>
           </FormBlock>
@@ -222,9 +239,9 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
           let hasAnnotations = account.annotations.length;
           let submittedAnnotations = [];
           let approvedAnnotations = [];
-          let savedAnnotations = [];
+          let reviewedAnnotations = [];
           if (hasAnnotations) {
-            savedAnnotations = account.annotations.filter(annotation => !annotation.isSubmitted)
+            reviewedAnnotations = account.annotations.filter(annotation => annotation.isRequestRevisions && !annotation.isSubmitted)
             submittedAnnotations = account.annotations.filter(annotation => annotation.isSubmitted)
             approvedAnnotations = account.annotations.filter(annotation => annotation.isApproved)
           }
@@ -238,7 +255,11 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               <div>{account.nameFirst} {account.nameLast}</div>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
               <div>
-                {!hasAnnotations || (hasAnnotations === savedAnnotations.length) && "No Annotations"}
+                {(
+                  !hasAnnotations ||
+                  !submittedAnnotations &&
+                  !approvedAnnotations &&
+                  !reviewedAnnotations) && "Not Submitted"}
                 {submittedAnnotations.map(annotation => (
                   <div key={annotation.id}>
                     <LinkButton
@@ -255,6 +276,16 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
                     </LinkButton>
                   </div>
                 ))}
+                {reviewedAnnotations.map(annotation => {
+                  return (
+                    <div key={annotation.id}>
+                      <LinkButton
+                        onClick={() => openAnnotationReview(annotation)}>
+                        Reviewed {dateFormat(annotation.updatedAt)}
+                      </LinkButton>
+                    </div>
+                  )
+                })}
               </div>
             </Student>
           )

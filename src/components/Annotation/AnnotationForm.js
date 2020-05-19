@@ -11,6 +11,7 @@ import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
 import { Message } from '../ui/Message'
 import Loader from '../ui/Loader'
+import Comment from '../Comment/Comment'
 
 import { useMutation } from '@apollo/react-hooks'
 import { CREATE_COMMENT } from '../../queries/comments'
@@ -27,9 +28,6 @@ export const AnnotationForm = ({
 
   /* Context */
   const { user } = useContext(UserContext)
-
-  /* Queries */
-  const [createNote] = useMutation(CREATE_COMMENT)
 
   /* State */
   const [content, setContent] = useState(annotation ? annotation.annotation : "<p></p>");
@@ -58,31 +56,6 @@ export const AnnotationForm = ({
     }, true)
   }
 
-  /*   function addNote(e) {
-      e.preventDefault()
-      createNote({
-        variables: {
-          note: note,
-          annotationId: annotation.id,
-          account: user.id
-        }
-      }).then(data => {
-        setNotes(prevState => {
-          return [
-            ...prevState,
-            data.data.createNote
-          ]
-        })
-        setNote("");
-      })
-    }
-
-    function handleKeyPress(e) {
-      if (noteOnEnter && e.key === 'Enter') {
-        addNote(e);
-      }
-    } */
-
   function handleCancel() {
     setSelectedLyrics([]);
     cancel();
@@ -98,6 +71,8 @@ export const AnnotationForm = ({
     }
   }, [annotation]);
 
+  let prevOrder = null;
+
   return (
     <div>
       <h3>Annotation</h3>
@@ -105,16 +80,30 @@ export const AnnotationForm = ({
         <div>
           <h6 style={{ margin: "1rem 0" }}>Selected Lyrics</h6>
           {selectedLyrics.map(lyric => {
+            let brokenLyrics = false;
+            if (prevOrder !== null && lyric.order !== prevOrder + 1) {
+              brokenLyrics = true;
+            }
+            prevOrder = lyric.order;
             return (
               <em
                 key={lyric.id}
                 style={{ display: "block", marginBottom: ".5rem" }}
               >
+                {brokenLyrics && <div>...</div>}
                 {lyric.lyric}
               </em>
             )
           })}
         </div>
+      }
+      {annotation && annotation.comments && annotation.comments.length > 0 &&
+        <MediumSpace>
+          <h3>Teacher Comments</h3>
+          {annotation.comments.map(comment => (
+            <Comment key={comment.id} {...comment} />
+          ))}
+        </MediumSpace>
       }
       <MediumSpace>
         <Editor
@@ -146,7 +135,7 @@ export const AnnotationForm = ({
             }
             <ConfirmButton
               onClick={(checked) => setIsSubmit(checked)}
-              onConfirm={handleSubmitAnnotation}>Submit</ConfirmButton>
+              onConfirm={handleSubmitAnnotation}>Submit for Review</ConfirmButton>
           </div>
         }
         {isSaving && <div><Loader /></div>}
@@ -162,7 +151,7 @@ export const AnnotationForm = ({
           {message.text}
         </Message>
       }
-    </div >
+    </div>
   )
 }
 

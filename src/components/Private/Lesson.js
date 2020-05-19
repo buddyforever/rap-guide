@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom"
 
 import LessonDashboardTeacher from '../Lesson/LessonDashboardTeacher'
 import LessonDashboardStudent from '../Lesson/LessonDashboardStudent'
-import { StyledContent } from '../../styles/PageStyles'
 import { UserContext } from '../../context/UserContext'
 import Loader from '../Loader'
 

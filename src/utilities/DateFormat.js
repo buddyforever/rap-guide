@@ -7,10 +7,11 @@ export const dateFormat = (dateAsString, type = 'short') => {
     hours -= 12
     ampm = "PM"
   }
+  let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
 
   switch (type) {
     case 'short':
-      return date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear() + " " + hours + ":" + date.getMinutes() + " " + ampm;
+      return date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear() + " at " + hours + ":" + minutes + " " + ampm;
     default:
       return date;
   }

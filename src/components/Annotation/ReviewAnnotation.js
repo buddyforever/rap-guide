@@ -1,12 +1,13 @@
 import React, { useState, useContext } from 'react'
+import styled from 'styled-components'
+
 import { Heading, MediumSpace, Cite, SmallSpace } from '../../styles/PageStyles'
 import { Form, ButtonBlock, FormBlock } from '../../styles/FormStyles'
-import { UserContext } from '../../context/UserContext'
 import { dateFormat } from '../../utilities/DateFormat'
-import styled from 'styled-components'
+import { UserContext } from '../../context/UserContext'
 import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
-
+import { Comment } from '../Comment/Comment'
 
 const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnnotation }) => {
 
@@ -14,7 +15,7 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
   const { user } = useContext(UserContext);
 
   /* State */
-  const [note, setNote] = useState("");
+  const [comment, setComment] = useState("");
 
   /* Functions */
   function handleRejectAnnotation(e) {
@@ -22,8 +23,8 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
     rejectAnnotation({
       ...annotation,
       isSubmitted: false,
-      note: {
-        note,
+      comment: {
+        comment,
         account: {
           id: user.id
         }
@@ -36,8 +37,8 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
     approveAnnotation({
       ...annotation,
       isApproved: true,
-      note: {
-        note,
+      comment: {
+        comment,
         account: {
           id: user.id
         }
@@ -45,48 +46,52 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
     })
   }
 
+  let prevOrder = null;
+  console.log(annotation)
   return (
     <Form>
       <Heading>
         <h1>Annotation Review</h1>
-        <Cite>submitted by {annotation.account.nameFirst} {annotation.account.nameLast} on {dateFormat(annotation.updatedAt)}</Cite>
+        <Cite>Annotation submitted by <strong>{annotation.account.nameFirst} {annotation.account.nameLast}</strong> on <strong>{dateFormat(annotation.updatedAt)}</strong></Cite>
       </Heading>
-      <SmallSpace>
+      <MediumSpace>
+        <h3>Lyrics</h3>
         {annotation.lyrics.map(lyric => {
+          let brokenLyrics = false;
+          if (prevOrder !== null && lyric.order !== prevOrder + 1) {
+            brokenLyrics = true;
+          }
+          prevOrder = lyric.order;
           return (
-            <strong
+            <em
               key={lyric.id}
               style={{ display: "block", marginBottom: ".5rem" }}
             >
+              {brokenLyrics && <div>...</div>}
               {lyric.lyric}
-            </strong>
+            </em>
           )
         })}
-      </SmallSpace>
-      <MediumSpace dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+      </MediumSpace>
+      <MediumSpace>
+        <h3>Annotation</h3>
+        <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+      </MediumSpace>
       {annotation.comments.length > 0 &&
         <FormBlock>
-          <label>Comments</label>
+          <h3>Notes</h3>
           {annotation.comments.map(comment => {
             return (
-              <StyledNote style={{ margin: "1rem 0" }} key={comment.id}>
-                <div className="image">
-                  <img src={comment.account.image} alt={comment.account.nameFirst + ' ' + comment.account.nameLast} />
-                </div>
-                <div className="note">
-                  <span className="text">{comment.comment}</span>
-                  <span className="author">{comment.account.nameFirst} {comment.account.nameLast} at {dateFormat(comment.updatedAt)}</span>
-                </div>
-              </StyledNote>
+              <Comment key={comment.id} {...comment} />
             )
           })}
         </FormBlock>
       }
       <FormBlock>
-        <label>Teacher Notes</label>
+        <h3>Add Notes</h3>
         <textarea
-          value={note}
-          onChange={(e) => setNote(e.target.value)}></textarea>
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}></textarea>
       </FormBlock>
       <ButtonBlock>
         <div>

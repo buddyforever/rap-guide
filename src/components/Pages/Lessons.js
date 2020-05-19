@@ -1,20 +1,24 @@
-import React, { useContext } from 'react'
-import styled from 'styled-components'
+import React, { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 
 import { UserContext } from '../../context/UserContext'
-import { StyledContent, Heading } from '../../styles/PageStyles'
+import { StyledContent, Heading, LargeSpace } from '../../styles/PageStyles'
 import { ThreeGrid } from '../../styles/PageStyles'
 import Loader from '../Loader'
 import VideoThumb from '../Guide/VideoThumb'
+import { dateFormat } from '../../utilities/DateFormat'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
+import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
 
 export const Lessons = () => {
 
   /* Context */
   const { user } = useContext(UserContext);
+
+  /* State */
+  const [recentAnnotations, setRecentAnnotations] = useState([]);
 
   /* Queries */
   const { loading, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
@@ -23,7 +27,55 @@ export const Lessons = () => {
     }
   });
 
-  if (loading) return <Loader />
+  const { loading: loadingHistory, data: dataHistory } = useQuery(GET_ANNOTATIONS_BY_ACCOUNT, {
+    variables: {
+      id: user ? user.id : null
+    }
+  });
+
+  /* Functions */
+  function displayAnnotationActivity(annotation) {
+
+    let lessonTitle = annotation.lesson.lessonTitle;
+    let lessonLink = `/lesson/${annotation.lesson.id}`
+    let dateUpdated = annotation.updatedAt;
+
+    // Submitted
+    if (annotation.isSubmitted) {
+      return (
+        <p key={annotation.id}>
+          You <strong>submitted</strong> an annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
+        </p>
+      )
+    }
+    // Saved
+    if (!annotation.isSubmitted && !annotation.isRequestRevisions) {
+      return (
+        <p key={annotation.id}>
+          You <strong>saved</strong> an annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
+        </p>
+      )
+    }
+
+    // Revisions Requested
+    if (annotation.isRequestRevisions) {
+      return (
+        <p key={annotation.id}>
+          Your teacher requested <strong>revisions</strong> to your annotation for <Link to={lessonLink}><strong>{lessonTitle}</strong></Link> on <em>{dateFormat(dateUpdated)}</em>
+        </p>
+      )
+    }
+
+  }
+
+  /* Effects */
+  useEffect(() => {
+    if (dataHistory && dataHistory.annotations) {
+      setRecentAnnotations(dataHistory.annotations);
+    }
+  }, [dataHistory])
+
+  if (loading || loadingHistory) return <Loader />
   if (!data) {
     return (
       <StyledContent>
@@ -41,6 +93,14 @@ export const Lessons = () => {
         <h1>Lessons</h1>
       </Heading>
       {data.lessons.length === 0 && <p>There are no lessons available.</p>}
+      {(user.type === "student" && recentAnnotations.length > 0) &&
+        <LargeSpace>
+          <h3>Recent Activity</h3>
+          {recentAnnotations.map(annotation => {
+            return displayAnnotationActivity(annotation);
+          })}
+        </LargeSpace>
+      }
       <ThreeGrid>
         {data.lessons.map(lesson => {
           return (
@@ -57,66 +117,4 @@ export const Lessons = () => {
 }
 
 export default Lessons;
-
-const StyledVideoThumb = styled.div`
-  .video_thumbnail {
-    overflow: hidden;
-
-    img {
-      width: 100%;
-      height: 200px;
-      height: 15rem;
-      object-fit: cover;
-      transition: all .5s ease;
-    }
-  }
-
-  .video_link {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  .video_link:hover {
-
-    img {
-      transform: scale(1.1);
-    }
-
-  }
-
-  h4 {
-    margin: 1rem 0;
-    font-size: 1.8rem;
-    transition: all .3s ease;
-    font-weight: 400;
-    text-align: center;
-  }
-
-  .video_details {
-    text-align: center;
-    a, a:link {
-      text-decoration: none;
-      color: inherit;
-      box-shadow: inset 0 -4px rgba(221, 51, 51, 0.3);
-      transition: all .3s ease;
-      padding: 0 .2rem;
-      white-space: nowrap;
-      margin: 0 .2rem;
-    }
-
-    a:hover {
-      background-color: rgba(221, 51, 51, 0.6);
-      color: white;
-      box-shadow: inset 0 -4px rgba(221, 51, 51, 0);
-    }
-
-    p {
-      line-height: 2.4rem;
-    }
-
-    p span {
-      font-size: 2rem;
-    }
-  }
-`;
 

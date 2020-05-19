@@ -97,6 +97,7 @@ export const GET_LESSON_BY_ID = gql`
           annotation
           isSubmitted
           isApproved
+          isRequestRevisions
           updatedAt
           account {
             id
@@ -108,17 +109,6 @@ export const GET_LESSON_BY_ID = gql`
             id
             lyric
             order
-          }
-          comments {
-            comment
-            updatedAt
-            account {
-              id
-              nameFirst
-              nameLast
-              image
-              email
-            }
           }
         }
       }
@@ -141,6 +131,7 @@ export const GET_LESSON_BY_ID = gql`
           updatedAt
           isSubmitted
           isApproved
+          isRequestRevisions
           account {
             id
             nameFirst
@@ -151,6 +142,18 @@ export const GET_LESSON_BY_ID = gql`
           lyrics {
             id
             lyric
+            order
+          }
+          comments {
+            comment
+            updatedAt
+            account {
+              id
+              nameFirst
+              nameLast
+              image
+              email
+            }
           }
         }
       }
@@ -172,6 +175,55 @@ export const GET_LESSON_BY_ID = gql`
           lyric
           order
           bar
+        }
+      }
+    }
+  }
+`
+
+export const GET_LESSON_STUDENTS = gql`
+  query getAccounts($id: ID!) {
+    accounts(where: {
+      type_not: "educator"
+      lessons_some: {
+      	id: $id
+      }
+    }) {
+ 			id
+      nameFirst
+      nameLast
+      email
+      image
+      annotations{
+        id
+        annotation
+        isSubmitted
+        isApproved
+        isRequestRevisions
+        updatedAt
+        comments {
+          id
+          updatedAt
+          comment
+          account {
+            id
+            nameFirst
+            nameLast
+            email
+            image
+          }
+        }
+        account {
+          id
+          nameFirst
+          nameLast
+          email
+          image
+        }
+        lyrics(orderBy: order_ASC) {
+          id
+          lyric
+          order
         }
       }
     }
