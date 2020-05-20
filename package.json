@@ -17,6 +17,7 @@
     "apollo-client": "^2.6.8",
     "apollo-client-preset": "^1.0.8",
     "concurrently": "^5.2.0",
+    "cors": "^2.8.5",
     "draft-js": "^0.11.5",
     "express": "^4.17.1",
     "framer-motion": "^1.10.3",

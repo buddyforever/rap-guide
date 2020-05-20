@@ -34,6 +34,18 @@ function App() {
   const [user, setUser] = useState(auth.isAuthenticated() ? getLocalStorage("profile") : null);
   const [theme, setTheme] = useState(defaultTheme)
 
+  async function getInfo() {
+    let response = await fetch('http://localhost:8080/api', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    let data = await response.json()
+    return data;
+  }
+  getInfo().then(data => console.log(data));
+
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>
