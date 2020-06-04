@@ -1,12 +1,32 @@
-import * as React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { Redirect, Route } from 'react-router';
+import { useAuth0 } from "../react-auth0-spa";
+
+import { UserContext } from '../context/UserContext'
 
 export const PrivateRoute = (props) => {
+
+  /* Authentication */
+  const { loading, user: profile, isAuthenticated, loginWithRedirect } = useAuth0();
+
+  /* Context */
+  const { user, setUser } = useContext(UserContext);
+
+  useEffect(() => {
+    // Load Profile
+    if (isAuthenticated && !user) {
+      setUser(profile);
+    }
+  }, [profile]);
+
+
+  if (loading || !profile || !user) return null;
+
   let redirectPath = '';
-  if (!props.isAuthenticated) {
-    redirectPath = props.authenticationPath;
+  if (!isAuthenticated) {
+    loginWithRedirect();
   }
-  if (props.isAuthenticated && !props.isAllowed) {
+  if (isAuthenticated && !props.isAllowed) {
     redirectPath = props.restrictedPath;
   }
   redirectPath = null;

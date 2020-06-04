@@ -1,18 +1,21 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import Navigation from './Navigation'
-import auth from '../../auth/auth'
 import { getLocalStorage } from '../../utilities/LocalStorage'
 import Logo from './Logo'
 import SocialIcons from '../SocialIcons'
 import { UserContext } from '../../context/UserContext'
+import { useAuth0 } from "../../react-auth0-spa";
+
+import { useQuery } from '@apollo/react-hooks'
+import { GET_ACCOUNT_BY_EMAIL } from '../../queries/accounts'
 
 export const Header = () => {
 
-  const { user } = useContext(UserContext)
+  const { loading, isAuthenticated, user: profile } = useAuth0();
 
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
@@ -20,6 +23,29 @@ export const Header = () => {
     setMenuIsOpen(!menuIsOpen);
   }
 
+  const { refetch } = useQuery(GET_ACCOUNT_BY_EMAIL, { variables: { email: "" } });
+  const { user, setUser } = useContext(UserContext);
+
+  async function getUserDetails(email) {
+    const { data: { account } } = await refetch({ email: email });
+
+    setUser(prevState => {
+      return {
+        ...profile,
+        id: account.id,
+        type: account.type
+      }
+    })
+  }
+
+  useEffect(() => {
+    if (!profile) return
+    if (!user) {
+      getUserDetails(profile.email);
+    }
+  }, [profile])
+
+  if (loading) return null;
   return (
     <>
       <StyledHeader>
@@ -34,9 +60,9 @@ export const Header = () => {
               <div className="profile">
                 <Link to="/profile">
                   <span className="profile__image">
-                    <img src={user.image} alt="Profile Image" />
+                    <img src={user.picture} alt="Profile Image" />
                   </span>
-                  <span>{user.nameFirst} {user.nameLast}<br />
+                  <span>{user.name}<br />
                     {user.type !== 'public' &&
                       <em>{user.type}</em>
                     }

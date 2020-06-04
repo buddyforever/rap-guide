@@ -7,12 +7,16 @@ import { ThreeGrid } from '../../styles/PageStyles'
 import Loader from '../Loader'
 import VideoThumb from '../Guide/VideoThumb'
 import { dateFormat } from '../../utilities/DateFormat'
+import { useAuth0 } from "../../react-auth0-spa";
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
 import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
 
 export const Lessons = () => {
+
+  /* Authentication */
+  const { loading, isAuthenticated } = useAuth0();
 
   /* Context */
   const { user } = useContext(UserContext);
@@ -21,7 +25,7 @@ export const Lessons = () => {
   const [recentAnnotations, setRecentAnnotations] = useState([]);
 
   /* Queries */
-  const { loading, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
+  const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
     variables: {
       id: user ? user.id : null
     }
@@ -84,8 +88,8 @@ export const Lessons = () => {
     }
   }, [dataHistory])
 
-  if (loading || loadingHistory) return <Loader />
-  if (!data) {
+  if (loading || loadingLessons || loadingHistory || !data) return <Loader />
+  if (!isAuthenticated) {
     return (
       <StyledContent>
         <Heading>

@@ -6,10 +6,6 @@ export const GET_ACCOUNT_BY_EMAIL = gql`
       email: $email
     }){
       id
-      accountId
-      email
-      nameFirst
-      nameLast
       type
     }
   }

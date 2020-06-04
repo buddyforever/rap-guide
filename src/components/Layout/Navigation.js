@@ -1,16 +1,15 @@
-import React from 'react'
+import React, { UseContext, useEffect } from 'react'
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
-import auth from '../../auth/auth'
 import { motion } from 'framer-motion'
+
+import { useAuth0 } from "../../react-auth0-spa";
 
 export const Navigation = ({ isOpen, toggleMenu }) => {
 
-  const handleLogout = () => {
-    auth.logout();
-    window.location = "/";
-  }
+  const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
+  //if (isAuthenticated && !user) return null;
   return (
     <StyledNavigation animate className={isOpen ? 'open' : ''}>
       <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Explore</NavLink>
@@ -19,14 +18,14 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
       <NavLink to="/about" activeClassName="active" onClick={toggleMenu}>About</NavLink>
       <NavLink to="/contact" activeClassName="active" onClick={toggleMenu}>Contact</NavLink>
       {
-        !auth.isAuthenticated() &&
-        <NavLink to="/login" activeClassName="active" onClick={toggleMenu}>Login / Signup</NavLink>
+        !isAuthenticated &&
+        <button onClick={loginWithRedirect}>Login</button>
       }
       {
-        auth.isAuthenticated() &&
+        isAuthenticated &&
         <>
           <NavLink to="/profile" activeClassName="active" onClick={toggleMenu}>Profile</NavLink>
-          <button onClick={handleLogout}>Logout</button>
+          <button onClick={logout}>Logout</button>
         </>
       }
     </StyledNavigation>
