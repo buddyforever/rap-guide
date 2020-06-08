@@ -31,3 +31,19 @@ export const UPDATE_ACCOUNT = gql`
     }
   }
 `
+
+export const CREATE_ACCOUNT = gql`
+  mutation createAccount(
+    $email: String!,
+    $type: String!) {
+    createAccount(data: {
+      status: PUBLISHED
+      email: $email
+      type: $type
+    }) {
+      id
+      email
+      type
+    }
+  }
+`

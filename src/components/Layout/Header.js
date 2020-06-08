@@ -10,37 +10,62 @@ import SocialIcons from '../SocialIcons'
 import { UserContext } from '../../context/UserContext'
 import { useAuth0 } from "../../react-auth0-spa";
 
-import { useQuery } from '@apollo/react-hooks'
-import { GET_ACCOUNT_BY_EMAIL } from '../../queries/accounts'
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { GET_ACCOUNT_BY_EMAIL, CREATE_ACCOUNT } from '../../queries/accounts'
 
 export const Header = () => {
 
+  /* Auth */
   const { loading, isAuthenticated, user: profile } = useAuth0();
 
+  /* State */
   const [menuIsOpen, setMenuIsOpen] = useState(false);
 
+  /* Queries */
+  const { refetch } = useQuery(GET_ACCOUNT_BY_EMAIL, { variables: { email: "" } });
+  const [createAccount] = useMutation(CREATE_ACCOUNT);
+
+  /* Context */
+  const { user, setUser } = useContext(UserContext);
+
+  /* Functions */
   const toggleMenu = () => {
     setMenuIsOpen(!menuIsOpen);
   }
 
-  const { refetch } = useQuery(GET_ACCOUNT_BY_EMAIL, { variables: { email: "" } });
-  const { user, setUser } = useContext(UserContext);
-
   async function getUserDetails(email) {
     const { data: { account } } = await refetch({ email: email });
 
-    setUser(prevState => {
-      return {
-        ...profile,
-        id: account.id,
-        type: account.type
-      }
-    })
+    if (account) {
+      setUser(prevState => {
+        return {
+          ...profile,
+          id: account.id,
+          type: account.type
+        }
+      })
+    } else {
+      // Create public account
+      await createAccount({
+        variables: {
+          email: profile.email,
+          type: "public"
+        }
+      }).then(({ data: { createAccount } }) => {
+        setUser(prevState => {
+          return {
+            ...profile,
+            id: createAccount.id,
+            type: createAccount.type
+          }
+        })
+      });
+    }
   }
 
   useEffect(() => {
     if (!profile) return
-    if (!user) {
+    if (isAuthenticated && !user) {
       getUserDetails(profile.email);
     }
   }, [profile])
@@ -56,7 +81,7 @@ export const Header = () => {
             </Link>
           </div>
           <div className="header-right">
-            {user && (
+            {user && isAuthenticated && (
               <div className="profile">
                 <Link to="/profile">
                   <span className="profile__image">

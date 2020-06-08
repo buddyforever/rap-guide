@@ -1,13 +1,16 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { UserContext } from '../../context/UserContext'
-import { StyledContent, Heading, LargeSpace } from '../../styles/PageStyles'
-import { ThreeGrid } from '../../styles/PageStyles'
+import { StyledContent, Heading, LargeSpace, ThreeGrid, MediumSpace } from '../../styles/PageStyles'
 import Loader from '../Loader'
 import VideoThumb from '../Guide/VideoThumb'
 import { dateFormat } from '../../utilities/DateFormat'
 import { useAuth0 } from "../../react-auth0-spa";
+import { LinkButton } from '../ui/LinkButton'
+import { Button } from '../ui/Button'
+import { FormBlock } from '../../styles/FormStyles'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
@@ -16,13 +19,14 @@ import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
 export const Lessons = () => {
 
   /* Authentication */
-  const { loading, isAuthenticated } = useAuth0();
+  const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
 
   /* Context */
   const { user } = useContext(UserContext);
 
   /* State */
   const [recentAnnotations, setRecentAnnotations] = useState([]);
+  const [accessCode, setAccessCode] = useState("");
 
   /* Queries */
   const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
@@ -38,6 +42,10 @@ export const Lessons = () => {
   });
 
   /* Functions */
+  function confirmAccessCode() {
+    console.log(accessCode);
+  }
+
   function displayAnnotationActivity(annotation) {
 
     let lessonTitle = annotation.lesson.lessonTitle;
@@ -88,18 +96,19 @@ export const Lessons = () => {
     }
   }, [dataHistory])
 
-  if (loading || loadingLessons || loadingHistory || !data) return <Loader />
+  if (loading || loadingLessons || loadingHistory) return <Loader />
   if (!isAuthenticated) {
     return (
       <StyledContent>
         <Heading>
           <h1>Lessons</h1>
-          <p>Currently only students and teachers are able to view lessons. Please <Link to="/login">Login</Link> to access this content.</p>
+          <p>Currently only students and teachers are able to view lessons. Please <LinkButton onClick={loginWithRedirect}>Login</LinkButton> to access this content.</p>
         </Heading>
       </StyledContent>
     )
   }
 
+  if (!data) return null
   return (
     <StyledContent>
       <Heading>
@@ -125,7 +134,25 @@ export const Lessons = () => {
           )
         })}
       </ThreeGrid>
-    </StyledContent >
+      <MediumSpace>
+        <h2>Access Code</h2>
+        <FormBlock>
+          <p>If you have received an access code, enter it here:</p>
+          <div style={{ display: "flex" }}>
+            <input
+              type="text"
+              value={accessCode}
+              onChange={(e) => setAccessCode(e.target.value)}
+              placeholder="enter access code..." />
+            <Button
+              secondary
+              style={{ marginLeft: "1rem", width: "150px", height: "auto" }}
+              onClick={(e) => { e.preventDefault(); confirmAccessCode(e.target.value) }}
+              iconLeft={faPlus}>SUBMIT</Button>
+          </div>
+        </FormBlock>
+      </MediumSpace>
+    </StyledContent>
   )
 }
 
