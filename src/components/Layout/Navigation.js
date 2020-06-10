@@ -19,7 +19,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
       <NavLink to="/contact" activeClassName="active" onClick={toggleMenu}>Contact</NavLink>
       {
         !isAuthenticated &&
-        <button onClick={loginWithRedirect}>Login</button>
+        <button onClick={loginWithRedirect}>Login/Signup</button>
       }
       {
         isAuthenticated &&
