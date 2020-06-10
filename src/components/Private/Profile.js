@@ -6,7 +6,7 @@ import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
 import Message from '../Layout/Message'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from '../../queries/accounts'
+import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT_TYPE } from '../../queries/accounts'
 import Loader from '../Loader'
 
 export const Profile = () => {
@@ -20,7 +20,7 @@ export const Profile = () => {
       email: user.email
     }
   });
-  const [updateAccount] = useMutation(UPDATE_ACCOUNT);
+  const [updateAccount] = useMutation(UPDATE_ACCOUNT_TYPE);
 
   /* State */
   const [accountId, setAccountId] = useState("");

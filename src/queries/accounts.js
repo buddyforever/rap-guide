@@ -11,22 +11,15 @@ export const GET_ACCOUNT_BY_EMAIL = gql`
   }
 `
 
-export const UPDATE_ACCOUNT = gql`
-  mutation updateAccount($email: String!,$nameFirst: String!,$nameLast: String!,$type: String!,$accountId: String!) {
+export const UPDATE_ACCOUNT_TYPE = gql`
+  mutation updateAccount($email: String!,$type: String!) {
     updateAccount(
-      where: { accountId: $accountId }
+      where: { email: $email }
       data: {
       status: PUBLISHED
-      email: $email
-      nameFirst: $nameFirst
-      nameLast: $nameLast
       type: $type
     }) {
       id
-      accountId
-      nameFirst
-      nameLast
-      email
       type
     }
   }

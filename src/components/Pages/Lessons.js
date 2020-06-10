@@ -11,9 +11,12 @@ import { useAuth0 } from "../../react-auth0-spa";
 import { LinkButton } from '../ui/LinkButton'
 import { Button } from '../ui/Button'
 import { FormBlock } from '../../styles/FormStyles'
+import { Message } from '../ui/Message'
 
-import { useQuery } from '@apollo/react-hooks'
+import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT } from '../../queries/lessons'
+import { GET_CODE } from '../../queries/codes'
+import { UPDATE_ACCOUNT_TYPE } from '../../queries/accounts'
 import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
 
 export const Lessons = () => {
@@ -22,11 +25,14 @@ export const Lessons = () => {
   const { loading, isAuthenticated, loginWithRedirect } = useAuth0();
 
   /* Context */
-  const { user } = useContext(UserContext);
+  const { user, setUser } = useContext(UserContext);
 
   /* State */
   const [recentAnnotations, setRecentAnnotations] = useState([]);
   const [accessCode, setAccessCode] = useState("");
+
+  /* Helpers */
+  const [message, setMessage] = useState(null);
 
   /* Queries */
   const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
@@ -34,6 +40,12 @@ export const Lessons = () => {
       id: user ? user.id : null
     }
   });
+  const { refetch: refetchCode } = useQuery(GET_CODE, {
+    variables: {
+      code: null
+    }
+  });
+  const [updateAccountType] = useMutation(UPDATE_ACCOUNT_TYPE)
 
   const { loading: loadingHistory, data: dataHistory } = useQuery(GET_ANNOTATIONS_BY_ACCOUNT, {
     variables: {
@@ -42,8 +54,44 @@ export const Lessons = () => {
   });
 
   /* Functions */
+  /* TODO - eventually it would be good to move this into a resolver */
   function confirmAccessCode() {
-    console.log(accessCode);
+    refetchCode({
+      code: accessCode
+    }).then(response => {
+      if (response.data.code) {
+        switch (response.data.code.action.action) {
+          case "UPDATE_TYPE":
+            updateAccountType({
+              variables: {
+                email: user.email,
+                type: response.data.code.action.type
+              }
+            }).then(response => {
+              setUser(prevState => ({
+                ...user,
+                type: 'educator'
+              }))
+              setMessage({
+                title: "Account Upgraded",
+                type: "success",
+                text: "You now have educator access."
+              })
+            })
+            break;
+          default:
+            alert("NONE")
+            break;
+        }
+
+      } else {
+        setMessage({
+          title: "Invalid Code",
+          type: "error",
+          text: "You have entered an invalid access code."
+        })
+      }
+    })
   }
 
   function displayAnnotationActivity(annotation) {
@@ -152,6 +200,16 @@ export const Lessons = () => {
           </div>
         </FormBlock>
       </MediumSpace>
+      {
+        message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
     </StyledContent>
   )
 }

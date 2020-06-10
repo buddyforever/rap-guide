@@ -26,7 +26,6 @@ export const Lesson = () => {
   });
 
   if (loading) return <Loader />
-  console.log(user);
   return (
     <>
       {user && user.type === 'educator' ?
