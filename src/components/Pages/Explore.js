@@ -40,7 +40,7 @@ export const Home = () => {
 
   if (loading) return <Loader />
   return (
-    <StyledContent>
+    <StyledContent style={{ paddingBottom: "5rem" }}>
       <Heading>
         <h1>Explore</h1>
         <Search>

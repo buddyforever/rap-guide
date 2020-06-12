@@ -19,7 +19,8 @@ export const StyledContent = styled.div`
     max-width: 60ch;
   }
 
-  a {
+  p a,
+  button.showNextLink {
     color: #DD3333;
     text-decoration: none;
     position: relative;

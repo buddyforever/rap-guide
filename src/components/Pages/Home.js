@@ -100,7 +100,7 @@ export const Home = () => {
           </StyledColumns>
         </StyledContent>
       </FullSection>
-      <FullSection>
+      <FullSection style={{ paddingBottom: "5rem" }}>
         <StyledContent>
           <Heading>
             <h1>Explore</h1>
