@@ -6,5 +6,16 @@ import PageNotFound from './PageNotFound'
 import Request from './Request'
 import Explore from './Explore'
 import Temp from './Temp'
+import Home from './Home'
 
-export { About, Contact, Lessons, Login, PageNotFound, Request, Explore, Temp }
+export {
+  About,
+  Contact,
+  Lessons,
+  Login,
+  PageNotFound,
+  Request,
+  Explore,
+  Temp,
+  Home
+}

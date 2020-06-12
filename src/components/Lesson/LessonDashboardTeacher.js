@@ -44,7 +44,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   const [message, setMessage] = useState(false);
   const [isAnnotationOpen, setIsAnnotationOpen] = useState(false);
   const [selectedAnnotation, setSelectedAnnotation] = useState(null);
-  const [lessonSignupUrl, setLessonSignupUrl] = useState(domain + "/lesson/signup/" + lesson.id);
+  const [lessonSignupUrl, setLessonSignupUrl] = useState("E" + lesson.id);
   const [students, setStudents] = useState([]);
 
   /* Functions */
@@ -152,7 +152,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
             </FormBlock>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
-            {lesson.lessonStatus !== "Draft" &&
+            {lesson.lessonStatus === "In Session" &&
               <CopyToClipboard
                 text={lessonSignupUrl}
                 onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
@@ -163,10 +163,10 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
                     value={lessonSignupUrl}
                   />
                   <Button
-                    title="Click to copy the signup url to your clipboard"
+                    title="Click to copy the access code to your clipboard"
                     style={{ marginRight: "1rem" }}
                     onClick={(e) => e.preventDefault()}>
-                    <FontAwesomeIcon icon={faCopy} /> Copy Signup Link
+                    <FontAwesomeIcon icon={faCopy} /> Copy Access Code
                     </Button>
                 </div>
               </CopyToClipboard>
@@ -216,13 +216,13 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
         </Heading>
         {!students.length && (<div>
           <p style={{ fontWeight: "bold" }}>There are currently no students enrolled in this lesson.</p>
-          {lesson.lessonStatus !== "Draft" &&
+          {lesson.lessonStatus === "In Session" &&
             <div>
               <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
               <FormBlock style={{ margin: "5rem 0" }}>
                 <CopyToClipboard
                   text={lessonSignupUrl}
-                  onCopy={() => setMessage({ text: `The following link has been copied to your clipboard. ${lessonSignupUrl}` })}>
+                  onCopy={() => setMessage({ text: `The following code has been copied to your clipboard <strong>${lessonSignupUrl}</strong>. Send this code to your students to use to access this lesson.` })}>
                   <div style={{ display: "flex" }}>
                     <input
                       type="text"
@@ -230,10 +230,10 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
                       value={lessonSignupUrl}
                     />
                     <Button
-                      title="Click to copy the signup url to your clipboard"
+                      title="Click to copy the access code to your clipboard"
                       style={{ marginLeft: "1rem", width: "200px" }}
                       onClick={(e) => e.preventDefault()}>
-                      <FontAwesomeIcon icon={faCopy} /> Copy Signup Url
+                      <FontAwesomeIcon icon={faCopy} /> Copy Access Code
                 </Button>
                   </div>
                 </CopyToClipboard>

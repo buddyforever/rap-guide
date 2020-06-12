@@ -2,11 +2,11 @@ import React, { useContext, useState, useEffect, useRef } from 'react'
 import { UserContext } from '../../context/UserContext'
 
 import { useStateWithName } from '../Hooks/useStateWithName'
-import { Heading, MediumSpace, StyledContent, HtmlContent, StyledColumns } from '../../styles/PageStyles'
+import { StyledMovingColumn, Heading, MediumSpace, StyledContent, HtmlContent, StyledColumns } from '../../styles/PageStyles'
 import Video from '../Guide/Video'
 import AnnotateLyrics from '../Lyric/AnnotateLyrics'
+import LessonLyrics from '../Lyric/LessonLyrics'
 import Loader from '../Loader'
-import styled from 'styled-components'
 import AnnotationForm from '../Annotation/AnnotationForm'
 import { Message } from '../ui/Message'
 import { Comment } from '../Comment/Comment'
@@ -219,9 +219,16 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
         <h1 style={{ textAlign: "center" }}>{lesson.lessonTitle}</h1>
       </Heading>
 
-      <HtmlContent>
-        <MediumSpace dangerouslySetInnerHTML={{ __html: lesson.lessonDescription }} />
-      </HtmlContent>
+      {["In Session", "Closed *"].includes(lesson.lessonStatus) &&
+        <HtmlContent>
+          <MediumSpace dangerouslySetInnerHTML={{ __html: lesson.lessonDescription }} />
+        </HtmlContent>
+      }
+      {!["In Session", "Closed *"].includes(lesson.lessonStatus) &&
+        <HtmlContent>
+          <MediumSpace><p style={{ fontSize: "20px", textAlign: "center" }}>This lesson is now closed. Thank you for your participation. Annotation voting is now open so check out your fellow students work below and show your support by clicking like beside your favorite annotations!</p></MediumSpace>
+        </HtmlContent>
+      }
 
       <Heading>
         <h1>{lesson.guide.videoTitle}</h1>
@@ -229,93 +236,98 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
 
       <Video guide={lesson.guide} />
 
-      <StyledColumns>
-        <AnnotateLyrics
-          lyrics={lyrics}
-          assignedLyrics={assignedLyrics}
-          selectedLyrics={selectedLyrics}
-          refetch={refetch}
-          onClick={handleLyricClick}
-          showNote={handleShowNote}
-          hide={handleHide} />
-        <StyledMovingColumn
-          arrowTop={top}
-          contentTop={offset}
-          className={hidden ? "hidden" : ""}>
-          <div className="arrow"></div>
-          <div className="content" ref={ref}>
-            {note && !annotation &&
-              <div>
-                <h3 style={{ margin: "1rem 0" }}>Lyrics</h3>
-                <div className="lyrics">
-                  {sortLyrics(note.lyrics).map(lyric => (
-                    <em
-                      key={lyric.id}
-                      style={{ display: "block", marginBottom: ".5rem" }}
-                    >
-                      {lyric.lyric}
-                    </em>
-                  ))}
-                </div>
-                <h6 style={{ margin: "1rem 0" }}>Teacher Note</h6>
-                <div dangerouslySetInnerHTML={{ __html: note.note }} />
-              </div>
-            }
-            {annotation && (!selectedLyrics || selectedLyrics.length === 0) &&
-              <div>
-                {annotation.isSubmitted &&
-                  <div>
-                    <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
-                    <div className="lyrics">
-                      {sortLyrics(annotation.lyrics).map(lyric => (
-                        <em
-                          key={lyric.id}
-                          style={{ display: "block", marginBottom: ".5rem" }}
-                        >
-                          {lyric.lyric}
-                        </em>
-                      ))}
-                    </div>
-                  </div>
-                }
-                <h3 style={{ margin: "1rem 0" }}>Annotation</h3>
-                <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
-                {annotation.isSubmitted &&
-                  <span className="primary">* SUBMITTED FOR REVIEW</span>
-                }
-                {!annotation.isSubmitted && !annotation.isApproved &&
-                  <span className="primary">* click to edit</span>
-                }
-                {annotation.isApproved &&
-                  <span className="primary">* ANNOTATION APPROVED!</span>
-                }
-                {annotation.comments && annotation.comments.length > 0 &&
-                  <MediumSpace>
-                    <h3>Comments</h3>
-                    {annotation.comments.map(comment => (
-                      <Comment key={comment.id} {...comment} />
+      {["In Session", "Closed *"].includes(lesson.lessonStatus) &&
+        <StyledColumns>
+          <AnnotateLyrics
+            lyrics={lyrics}
+            assignedLyrics={assignedLyrics}
+            selectedLyrics={selectedLyrics}
+            refetch={refetch}
+            onClick={handleLyricClick}
+            showNote={handleShowNote}
+            hide={handleHide} />
+          <StyledMovingColumn
+            arrowTop={top}
+            contentTop={offset}
+            className={hidden ? "hidden" : ""}>
+            <div className="arrow"></div>
+            <div className="content" ref={ref}>
+              {note && !annotation &&
+                <div>
+                  <h3 style={{ margin: "1rem 0" }}>Lyrics</h3>
+                  <div className="lyrics">
+                    {sortLyrics(note.lyrics).map(lyric => (
+                      <em
+                        key={lyric.id}
+                        style={{ display: "block", marginBottom: ".5rem" }}
+                      >
+                        {lyric.lyric}
+                      </em>
                     ))}
-                  </MediumSpace>
-                }
-              </div>
-            }
-            {item &&
-              <div dangerouslySetInnerHTML={{ __html: item }} />
-            }
-            {selectedLyrics && selectedLyrics.length > 0 &&
-              <AnnotationForm
-                lesson={lesson}
-                annotation={annotation}
-                selectedLyrics={selectedLyrics}
-                isSaving={isSaving}
-                setSelectedLyrics={setSelectedLyrics}
-                saveAnnotation={handleSaveAnnotation}
-                cancel={handleHide}
-              />
-            }
-          </div>
-        </StyledMovingColumn>
-      </StyledColumns>
+                  </div>
+                  <h6 style={{ margin: "1rem 0" }}>Teacher Note</h6>
+                  <div dangerouslySetInnerHTML={{ __html: note.note }} />
+                </div>
+              }
+              {annotation && (!selectedLyrics || selectedLyrics.length === 0) &&
+                <div>
+                  {annotation.isSubmitted &&
+                    <div>
+                      <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
+                      <div className="lyrics">
+                        {sortLyrics(annotation.lyrics).map(lyric => (
+                          <em
+                            key={lyric.id}
+                            style={{ display: "block", marginBottom: ".5rem" }}
+                          >
+                            {lyric.lyric}
+                          </em>
+                        ))}
+                      </div>
+                    </div>
+                  }
+                  <h3 style={{ margin: "1rem 0" }}>Annotation</h3>
+                  <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
+                  {annotation.isSubmitted &&
+                    <span className="primary">* SUBMITTED FOR REVIEW</span>
+                  }
+                  {!annotation.isSubmitted && !annotation.isApproved &&
+                    <span className="primary">* click to edit</span>
+                  }
+                  {annotation.isApproved &&
+                    <span className="primary">* ANNOTATION APPROVED!</span>
+                  }
+                  {annotation.comments && annotation.comments.length > 0 &&
+                    <MediumSpace>
+                      <h3>Comments</h3>
+                      {annotation.comments.map(comment => (
+                        <Comment key={comment.id} {...comment} />
+                      ))}
+                    </MediumSpace>
+                  }
+                </div>
+              }
+              {item &&
+                <div dangerouslySetInnerHTML={{ __html: item }} />
+              }
+              {selectedLyrics && selectedLyrics.length > 0 &&
+                <AnnotationForm
+                  lesson={lesson}
+                  annotation={annotation}
+                  selectedLyrics={selectedLyrics}
+                  isSaving={isSaving}
+                  setSelectedLyrics={setSelectedLyrics}
+                  saveAnnotation={handleSaveAnnotation}
+                  cancel={handleHide}
+                />
+              }
+            </div>
+          </StyledMovingColumn>
+        </StyledColumns>
+      }
+      {!["In Session", "Closed *"].includes(lesson.lessonStatus) &&
+        <LessonLyrics guideID={lesson.guide.id} lessonID={lesson.id} />
+      }
       {
         message &&
         <Message
@@ -332,44 +344,3 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
 
 export default LessonDashboardStudent
 
-const StyledMovingColumn = styled.div`
-  position: relative;
-  opacity: 1;
-
-  &.hidden {
-    opacity: 0;
-    pointer-events: none;
-  }
-
-  .arrow {
-    position: absolute;
-    display: block;
-    width: 2rem;
-    height: 2rem;
-    border-left: 3px solid #DD3333;
-    border-top: 3px solid #DD3333;
-    background-color: #FFFFFF;
-    transform: rotate(-45deg);
-    transition: all .3s ease;
-    left: -0.9rem;
-    z-index: 10;
-
-    top: ${props => props.arrowTop}px;
-  }
-
-  .content {
-    position: absolute;
-    padding-left: 2rem;
-    border-left: 3px solid #DD3333;
-    transition: all .3s ease;
-    z-index: 5;
-    min-height: 7rem;
-    top: ${props => props.contentTop}px;
-
-    .lyrics {
-      margin-bottom: 2rem;
-      padding-bottom: 2rem;
-      border-bottom: 1px solid black;
-    }
-  }
-`

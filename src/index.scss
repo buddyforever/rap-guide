@@ -45,3 +45,14 @@ main h1 {
 .primary-bg {
   background-color: #DD3333;
 }
+
+.showNextLink {
+  color: #DD3333;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.showNextLink:hover {
+  text-decoration: underline;
+}

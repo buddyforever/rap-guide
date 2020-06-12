@@ -4,9 +4,7 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import Navigation from './Navigation'
-import { getLocalStorage } from '../../utilities/LocalStorage'
 import Logo from './Logo'
-import SocialIcons from '../SocialIcons'
 import { UserContext } from '../../context/UserContext'
 import { useAuth0 } from "../../react-auth0-spa";
 
@@ -115,12 +113,11 @@ export const Header = () => {
 export default Header;
 
 const StyledHeader = styled.header`
-  position: fixed;
+  position: sticky;
+  top: 0;
   width: 100vw;
-  height: 10rem;
   background-color: #0A0405;
   color: white;
-  margin-bottom: 5rem;
   z-index: 1000;
   overflow: hidden;
 

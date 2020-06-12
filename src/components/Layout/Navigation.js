@@ -12,7 +12,8 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
   //if (isAuthenticated && !user) return null;
   return (
     <StyledNavigation animate className={isOpen ? 'open' : ''}>
-      <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Explore</NavLink>
+      <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Home</NavLink>
+      <NavLink exact to="/explore" activeClassName="active" onClick={toggleMenu}>Explore</NavLink>
       <NavLink to="/lessons" activeClassName="active" onClick={toggleMenu}>Lessons</NavLink>
       <NavLink to="/request" activeClassName="active" onClick={toggleMenu}>Request</NavLink>
       <NavLink to="/about" activeClassName="active" onClick={toggleMenu}>About</NavLink>

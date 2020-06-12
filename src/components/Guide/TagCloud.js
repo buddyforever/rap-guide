@@ -47,7 +47,6 @@ const TagCloud = ({ selectTag, tags }) => {
 export default TagCloud;
 
 const StyledTagCloud = styled.div`
-  margin: 5rem 0;
   text-align: center;
 `
 

@@ -2,17 +2,43 @@ import styled from 'styled-components'
 import { motion } from 'framer-motion'
 
 export const StyledMainContent = styled.main`
-  max-width: 110rem;
-  margin: 0 auto;
-  padding-top: 12rem;
+
 `;
 
 export const StyledContent = styled.div`
+  max-width: 1100px;
   min-height: 50vh;
   padding: 0 50px;
+  margin: 0 auto;
 
   p {
     margin: 1rem 0;
+    font-size: 18px;
+    line-height: 24px;
+    letter-spacing: 1px;
+    max-width: 60ch;
+  }
+
+  a {
+    color: #DD3333;
+    text-decoration: none;
+    position: relative;
+
+    &::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 100%;
+      height: 4px;
+      background-color: rgba(221,51,51,0.4);
+      transition: all .3s ease;
+    }
+
+    &:hover::after {
+      bottom: -4px;
+      height: 6px;
+    }
   }
 `
 
@@ -59,7 +85,7 @@ export const SmallSpace = styled.div`
 `
 
 export const Heading = styled.header`
-  margin: 5rem 0;
+  padding: 5rem 0;
 
   h1 {
     text-transform: uppercase;
@@ -194,3 +220,59 @@ export const StyledColumns = styled.div`
   grid-template-columns: 1fr 1fr;
   column-gap: 5rem;
 `;
+
+export const StyledMovingColumn = styled.div`
+  position: relative;
+  opacity: 1;
+
+  &.hidden {
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  .arrow {
+    position: absolute;
+    display: block;
+    width: 2rem;
+    height: 2rem;
+    border-left: 3px solid #DD3333;
+    border-top: 3px solid #DD3333;
+    background-color: #FFFFFF;
+    transform: rotate(-45deg);
+    transition: all .3s ease;
+    left: -0.9rem;
+    z-index: 10;
+
+    top: ${props => props.arrowTop}px;
+  }
+
+  .content {
+    position: absolute;
+    padding-left: 2rem;
+    border-left: 3px solid #DD3333;
+    transition: all .3s ease;
+    z-index: 5;
+    min-height: 7rem;
+    top: ${props => props.contentTop}px;
+
+    .lyrics {
+      margin-bottom: 2rem;
+      padding-bottom: 2rem;
+      border-bottom: 1px solid black;
+    }
+  }
+`
+
+export const FullSection = styled.section`
+  min-height: 80vh;
+  position: relative;
+
+  background-color: ${props => props.bgColor || 'white'};
+  color: ${props => props.color || 'black'};
+
+  &.centered {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+`

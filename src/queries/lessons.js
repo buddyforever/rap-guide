@@ -287,3 +287,23 @@ export const UPDATE_LESSON_STATUS = gql`
     }
   }
 `
+
+export const ENROLL_STUDENT = gql`
+  mutation updateAccount(
+    $email:String!,
+    $lesson: [LessonWhereUniqueInput!]
+  ){
+    updateAccount(
+      where: { email: $email }
+      data: {
+        type: "student"
+        lessons: { connect: $lesson }
+      }){
+      id
+      lessons {
+        id
+        lessonTitle
+      }
+    }
+  }
+`;

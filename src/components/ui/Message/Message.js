@@ -46,6 +46,9 @@ const Message = ({
     if (isOpen && autoDismiss) {
       setTimeout(handleClose, autoDismiss)
     }
+    return () => {
+      // TODO - There is a memory leak here, need to figure out what to for cleanup.
+    }
   }, [isOpen])
 
   return (

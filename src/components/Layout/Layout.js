@@ -11,7 +11,6 @@ export const Layout = ({ children }) => {
   const location = useLocation();
   //const { message, setMessage, Message } = useMessage()
 
-
   return (
     <>
       <Header />

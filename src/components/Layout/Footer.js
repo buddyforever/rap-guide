@@ -46,7 +46,6 @@ const StyledFooter = styled.footer`
   background-color: #333;
   color: white;
   padding: 5rem 0;
-  margin-top: 5rem;
 
   .content-container {
     max-width: 100rem;

@@ -47,7 +47,7 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
   }
 
   let prevOrder = null;
-  console.log(annotation)
+
   return (
     <Form>
       <Heading>
