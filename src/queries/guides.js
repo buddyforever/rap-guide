@@ -39,3 +39,20 @@ export const GET_GUIDE_BY_ID = gql`
     }
   }
 `
+
+export const CREATE_GUIDE = gql`
+  mutation addGuide(
+    $videoTitle:String!,
+    $videoUrl:String!,
+    $videoID:String!){
+      createGuide(data: {
+        status: PUBLISHED
+        videoTitle:$videoTitle
+        videoUrl:$videoUrl
+        videoId:$videoID
+        videoThumb: "images/default.png"
+      }){
+        id
+    }
+  }
+`

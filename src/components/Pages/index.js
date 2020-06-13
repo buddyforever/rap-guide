@@ -6,6 +6,7 @@ import PageNotFound from './PageNotFound'
 import Request from './Request'
 import Explore from './Explore'
 import Temp from './Temp'
+import AddGuide from './AddGuide'
 import Home from './Home'
 
 export {
@@ -17,5 +18,6 @@ export {
   Request,
   Explore,
   Temp,
-  Home
+  Home,
+  AddGuide
 }
