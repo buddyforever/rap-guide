@@ -17,30 +17,30 @@ export const Request = () => {
             <FormBlock style={{ display: "flex", justifyContent: "space-between" }}>
               <div style={{ width: "45%" }}>
                 <label>First Name</label>
-                <input type="text" placeholder="First Name" />
+                <input name="firstName" type="text" placeholder="First Name" />
               </div>
               <div style={{ width: "45%" }}>
                 <label>Last Name</label>
-                <input type="text" placeholder="Last Name" />
+                <input name="lastName" type="text" placeholder="Last Name" />
               </div>
             </FormBlock>
             <FormBlock>
               <label>Email</label>
-              <input type="email" placeholder="email" />
+              <input name="email" type="email" placeholder="email" />
             </FormBlock>
             <FormBlock>
               <label>Subject</label>
-              <input type="text" placeholder="subject" />
+              <input name="subject" type="text" placeholder="subject" />
             </FormBlock>
             <FormBlock>
               <label>Message</label>
-              <textarea placeholder="message" />
+              <textarea name="message" placeholder="message" />
             </FormBlock>
             <ButtonBlock>
               <div></div>
               <Button type="submit" iconLeft={faReply}>Send</Button>
             </ButtonBlock>
-            <input type="hidden" name="form-name" value="contact" />
+            <input type="hidden" name="form-name" defaultValue="contact" />
           </Form>
         </StyledContent>
       </FullSection>
@@ -53,56 +53,56 @@ export const Request = () => {
           <MediumSpace>
             <div id="mc_embed_signup">
               <form action="https://bababrinkman.us2.list-manage.com/subscribe/post?u=3d9cb01bced5d5c9b35389bf5&amp;id=e807499bb2"
-                method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" class="validate" target="_blank"
-                novalidate>
+                method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate" target="_blank"
+                noValidate>
                 <div id="mc_embed_signup_scroll">
                   <h2>Subscribe</h2>
-                  <div class="indicates-required"><span class="asterisk">*</span> indicates required</div>
-                  <div class="mc-field-group">
-                    <label for="mce-EMAIL">Email Address <span class="asterisk">*</span>
+                  <div className="indicates-required"><span className="asterisk">*</span> indicates required</div>
+                  <div className="mc-field-group">
+                    <label htmlFor="mce-EMAIL">Email Address <span className="asterisk">*</span>
                     </label>
-                    <input type="email" value="" name="EMAIL" class="required email" id="mce-EMAIL" />
+                    <input type="email" defaultValue="" name="EMAIL" className="required email" id="mce-EMAIL" />
                   </div>
-                  <div class="mc-field-group">
-                    <label for="mce-FNAME">First Name </label>
-                    <input type="text" value="" name="FNAME" class="" id="mce-FNAME" />
+                  <div className="mc-field-group">
+                    <label htmlFor="mce-FNAME">First Name </label>
+                    <input type="text" defaultValue="" name="FNAME" className="" id="mce-FNAME" />
                   </div>
-                  <div class="mc-field-group">
-                    <label for="mce-LNAME">Last Name </label>
-                    <input type="text" value="" name="LNAME" class="" id="mce-LNAME" />
+                  <div className="mc-field-group">
+                    <label htmlFor="mce-LNAME">Last Name </label>
+                    <input type="text" defaultValue="" name="LNAME" className="" id="mce-LNAME" />
                   </div>
-                  <div class="mc-field-group">
-                    <label for="mce-MMERGE5">Twitter Handle </label>
-                    <input type="text" value="" name="MMERGE5" class="" id="mce-MMERGE5" />
+                  <div className="mc-field-group">
+                    <label htmlFor="mce-MMERGE5">Twitter Handle </label>
+                    <input type="text" defaultValue="" name="MMERGE5" className="" id="mce-MMERGE5" />
                   </div>
-                  <div class="mc-field-group">
-                    <label for="mce-MMERGE6">Interests </label>
-                    <select name="MMERGE6" class="" id="mce-MMERGE6">
-                      <option value=""></option>
-                      <option value="Education">Education</option>
-                      <option value="Science">Science</option>
-                      <option value="Literature">Literature</option>
-                      <option value="Arts">Arts</option>
-                      <option value="Evolution">Evolution</option>
-                      <option value="Climate Change">Climate Change</option>
-                      <option value="Religion">Religion</option>
-                      <option value="Neuroscience">Neuroscience</option>
-                      <option value="Medicine">Medicine</option>
-                      <option value="Environmentalism">Environmentalism</option>
-                      <option value="Psychology">Psychology</option>
-                      <option value="Technology">Technology</option>
-                      <option value="Critical Thinking">Critical Thinking</option>
-                      <option value="Hip Hop">Hip Hop</option>
+                  <div className="mc-field-group">
+                    <label htmlFor="mce-MMERGE6">Interests </label>
+                    <select name="MMERGE6" className="" id="mce-MMERGE6">
+                      <option defaultValue=""></option>
+                      <option defaultValue="Education">Education</option>
+                      <option defaultValue="Science">Science</option>
+                      <option defaultValue="Literature">Literature</option>
+                      <option defaultValue="Arts">Arts</option>
+                      <option defaultValue="Evolution">Evolution</option>
+                      <option defaultValue="Climate Change">Climate Change</option>
+                      <option defaultValue="Religion">Religion</option>
+                      <option defaultValue="Neuroscience">Neuroscience</option>
+                      <option defaultValue="Medicine">Medicine</option>
+                      <option defaultValue="Environmentalism">Environmentalism</option>
+                      <option defaultValue="Psychology">Psychology</option>
+                      <option defaultValue="Technology">Technology</option>
+                      <option defaultValue="Critical Thinking">Critical Thinking</option>
+                      <option defaultValue="Hip Hop">Hip Hop</option>
                     </select>
                   </div>
-                  <div id="mce-responses" class="clear">
-                    <div class="response" id="mce-error-response" style={{ display: 'none' }}></div>
-                    <div class="response" id="mce-success-response" style={{ display: 'none' }}></div>
+                  <div id="mce-responses" className="clear">
+                    <div className="response" id="mce-error-response" style={{ display: 'none' }}></div>
+                    <div className="response" id="mce-success-response" style={{ display: 'none' }}></div>
                   </div>
                   <div style={{ position: "absolute", left: "-5000px" }} aria-hidden="true"><input type="text"
-                    name="b_3d9cb01bced5d5c9b35389bf5_e807499bb2" tabindex="-1" value="" /></div>
-                  <div class="clear"><input type="submit" value="Subscribe" name="subscribe" id="mc-embedded-subscribe"
-                    class="button" /></div>
+                    name="b_3d9cb01bced5d5c9b35389bf5_e807499bb2" tabIndex="-1" defaultValue="" /></div>
+                  <div className="clear"><input type="submit" defaultValue="Subscribe" name="subscribe" id="mc-embedded-subscribe"
+                    className="button" /></div>
                 </div>
               </form>
             </div>
