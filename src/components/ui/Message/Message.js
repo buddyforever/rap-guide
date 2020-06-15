@@ -46,9 +46,6 @@ const Message = ({
     if (isOpen && autoDismiss) {
       setTimeout(handleClose, autoDismiss)
     }
-    return () => {
-      // TODO - There is a memory leak here, need to figure out what to for cleanup.
-    }
   }, [isOpen])
 
   return (
@@ -88,7 +85,6 @@ const StyledMessage = styled(motion.div)`
   position: relative;
   overflow: hidden;
   margin-bottom: 1rem;
-  z-index: 5000;
 
   .message-content {
     padding: 2rem;

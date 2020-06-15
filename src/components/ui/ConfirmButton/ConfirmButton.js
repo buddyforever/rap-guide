@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Button } from '../Button'
 import { motion } from 'framer-motion'
 
-const ConfirmButton = ({ children, onConfirm, onClick = null, style, ...rest }) => {
+const ConfirmButton = ({ children, onConfirm, onClick = null, ...rest }) => {
 
   /* Theme Context */
   const themeContext = useContext(ThemeContext);
@@ -25,7 +25,7 @@ const ConfirmButton = ({ children, onConfirm, onClick = null, style, ...rest }) 
   }
 
   return (
-    <StyledConfirmButton style={style} className="confirm-button">
+    <StyledConfirmButton className="confirm-button">
       {!confirm &&
         <motion.span
           initial={{ opacity: 0 }}

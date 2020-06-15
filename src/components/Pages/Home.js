@@ -53,15 +53,15 @@ export const Home = () => {
           </Heading>
           <StyledColumns>
             <MediumSpace style={{ fontSize: "18px" }}>
-              <p>A “Rap Guide” is a hip-hop song or music video about something beyond the subjective views and experiences of the artist <button className="showNextLink" onClick={showNextDiv}>read more...</button></p>
+              <p>A “Rap Guide” is a hip-hop song or music video about something beyond the subjective views and experiences of the artist. <button className="showNextLink" onClick={showNextDiv}>read more...</button></p>
               <div className="hidden">
-                <p>While a Rap Guide can be enjoyed by anyone, it also points towards a body of knowledge that can only be fully understood through further reading and study.</p>
+                <p>Rap Guides can be enjoyed by anyone, but they also points towards a body of knowledge that can only be fully understood through reading and study.</p>
 
-                <p>A Rap Guide is corroborated, citing information drawn from reliable sources, to the best of the artist’s scientific and historical knowledge. If the song is developed in consultation with an academic expert, it can also be called a “peer reviewed rap”.</p>
+                <p>Rap Guide are corroborated, citing information drawn from reliable sources, to the best of the artist’s knowledge. If a song is developed in consultation with an academic expert, it can also be called a “peer reviewed rap”.</p>
 
                 <p>These songs integrate the editorial perspective, creative vision, and stylistic and rhetorical choices of the artist, but they do not knowingly communicate falsehoods.</p>
 
-                <p>A Rap Guide makes</p>
+                <p>Rap Guides make difficult topics accessible and entertaining.</p>
               </div>
             </MediumSpace>
             <MediumSpace style={{ textAlign: "center" }}>
@@ -86,13 +86,13 @@ export const Home = () => {
               <img src="https://via.placeholder.com/400/400" />
             </MediumSpace>
             <MediumSpace style={{ fontSize: "18px" }}>
-              <p>You can use existing Rap Guides to develop lessons and class projects. <button className="showNextLink" onClick={showNextDiv}>read more...</button></p>
+              <p>You can use existing Rap Guides to develop lessons and class projects, or work with students to create their own. <button className="showNextLink" onClick={showNextDiv}>read more...</button></p>
               <div className="hidden">
-                <p>One of the most popular is to challenge students to research the meaning of lyrics and attach their own annotations with explanatory notes, graphs, images, and links to sources, your own Rap Wikipedia.</p>
+                One of the most popular lessons challenges students to research the meaning of lyrics and write their own annotations with explanatory notes, graphs, images, and links to sources, your own Rap Wikipedia.
 
-                <p>Lessons are developed and run in private class-only digital spaces, but you can also opt to share the results on the public site.</p>
+                Lessons are developed and run in private class-only digital spaces, but you can also opt to share the results on the public site.
 
-                <p>Lesson plans and resources to help students write, record, and film their own Rap Guide videos are in development and will be added to this site soon.</p>
+                Lesson plans and resources to help students write, record, and film their own Rap Guide videos are in development and will be added soon.
 
                 <Link to="/contact">Contact us</Link> to request an “Educator Account” and get started.
               </div>

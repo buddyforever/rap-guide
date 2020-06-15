@@ -136,7 +136,6 @@ const StyledButton = styled.button`
     border-color: ${props => props.theme.colors.secondary};
 
     &:hover {
-      color: ${props => props.theme.buttons.buttonTextColor};
       background-color: ${props => props.theme.colors.secondaryDark};
       border-color: ${props => props.theme.colors.secondaryDark};
     }

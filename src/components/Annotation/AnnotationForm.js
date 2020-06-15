@@ -10,7 +10,7 @@ import { UserContext } from '../../context/UserContext'
 import { Button } from '../ui/Button'
 import { LinkButton } from '../ui/LinkButton'
 import { Message } from '../ui/Message'
-import Loader from '../ui/Loader'
+import { DotWave as Loader } from '../ui'
 import Comment from '../Comment/Comment'
 
 import { useMutation } from '@apollo/react-hooks'

@@ -13,10 +13,10 @@ export const StyledContent = styled.div`
 
   p {
     margin: 1rem 0;
-    font-size: 18px;
-    line-height: 24px;
+    font-size: 20px;
+    line-height: 26px;
     letter-spacing: 1px;
-    max-width: 60ch;
+    max-width: 50ch;
   }
 
   p a,

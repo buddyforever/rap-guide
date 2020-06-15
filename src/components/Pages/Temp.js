@@ -19,7 +19,7 @@ export const Temp = () => {
 
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
     variables: {
-      id: "ckae7da5ew6so0b84ryx2fk5l"
+      id: "ckbdz8gy86efw0b14s458x8ku"
     }
   })
 
