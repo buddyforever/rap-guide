@@ -239,48 +239,64 @@ export const Lessons = () => {
 
   if (!data) return null
   return (
-    <StyledContent>
-      <Heading>
-        <h1>Lessons</h1>
-      </Heading>
-      {data.lessons.length === 0 && <p>There are no lessons available.</p>}
-      {(user.type === "student" && recentAnnotations.length > 0) &&
-        <LargeSpace>
-          <h3>Recent Activity</h3>
-          {recentAnnotations.map(annotation => {
-            return displayAnnotationActivity(annotation);
-          })}
-        </LargeSpace>
-      }
-      <ThreeGrid>
-        {data.lessons.map(lesson => {
-          return (
-            <VideoThumb
-              key={lesson.id}
-              link={`/lesson/${lesson.id}`}
-              lesson={lesson}
-              guide={lesson.guide} />
-          )
-        })}
-      </ThreeGrid>
-      <MediumSpace>
-        <h2>Access Code</h2>
-        <FormBlock>
-          <p>If you have received an access code, enter it here:</p>
-          <div style={{ display: "flex" }}>
-            <input
-              type="text"
-              value={accessCode}
-              onChange={(e) => setAccessCode(e.target.value)}
-              placeholder="enter access code..." />
-            <Button
-              secondary
-              style={{ marginLeft: "1rem", width: "150px", height: "auto" }}
-              onClick={(e) => { e.preventDefault(); confirmAccessCode(e.target.value) }}
-              iconLeft={faPlus}>SUBMIT</Button>
-          </div>
-        </FormBlock>
-      </MediumSpace>
+    <>
+      <FullSection space="0" style={{ paddingBottom: "10rem" }}>
+        <StyledContent>
+          <Heading>
+            <h1>Lessons</h1>
+          </Heading>
+          {data.lessons.length === 0 && <p>There are no lessons available.</p>}
+          {(user.type === "student" && recentAnnotations.length > 0) &&
+            <LargeSpace>
+              <h3>Recent Activity</h3>
+              {recentAnnotations.map(annotation => {
+                return displayAnnotationActivity(annotation);
+              })}
+            </LargeSpace>
+          }
+          <ThreeGrid>
+            {data.lessons.map(lesson => {
+              return (
+                <VideoThumb
+                  key={lesson.id}
+                  link={`/lesson/${lesson.id}`}
+                  lesson={lesson}
+                  guide={lesson.guide} />
+              )
+            })}
+          </ThreeGrid>
+        </StyledContent>
+      </FullSection>
+      <FullSection
+        minHeight="0"
+        bgColor="#DD3333"
+        color="white" >
+        <StyledContent>
+          <h2>Access Code</h2>
+          <FormBlock>
+            <p>If you have received an access code, enter it here:</p>
+            <div style={{ display: "flex" }}>
+              <input
+                type="text"
+                value={accessCode}
+                onChange={(e) => setAccessCode(e.target.value)}
+                placeholder="enter access code..." />
+              <Button
+                secondary
+                style={{
+                  marginLeft: "1rem",
+                  width: "150px",
+                  height: "auto",
+                  backgroundColor: "transparent",
+                  color: "white",
+                  border: "2px solid white"
+                }}
+                onClick={(e) => { e.preventDefault(); confirmAccessCode(e.target.value) }}
+                iconLeft={faPlus}>SUBMIT</Button>
+            </div>
+          </FormBlock>
+        </StyledContent>
+      </FullSection>
       {
         message &&
         <Message
@@ -291,7 +307,7 @@ export const Lessons = () => {
           {message.text}
         </Message>
       }
-    </StyledContent>
+    </>
   )
 }
 

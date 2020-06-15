@@ -46,13 +46,13 @@ export const Home = () => {
   if (loading) return <Loader />
   return (
     <>
-      <FullSection style={{ display: "flex", alignItems: "center" }}>
+      <FullSection space="5rem" style={{ display: "flex", alignItems: "center" }}>
         <StyledContent>
-          <Heading>
-            <h1>Informative Music Videos</h1>
-          </Heading>
           <StyledColumns>
             <MediumSpace style={{ fontSize: "18px" }}>
+              <Heading>
+                <h1>Informative Music Videos</h1>
+              </Heading>
               <p>A “Rap Guide” is a hip-hop song or music video about something beyond the subjective views and experiences of the artist. <button className="showNextLink" onClick={showNextDiv}>read more...</button></p>
               <div className="hidden">
                 <p>Rap Guides can be enjoyed by anyone, but they also points towards a body of knowledge that can only be fully understood through reading and study.</p>
@@ -65,7 +65,7 @@ export const Home = () => {
               </div>
             </MediumSpace>
             <MediumSpace style={{ textAlign: "center" }}>
-              <img src="https://via.placeholder.com/400/400" />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 209 233"><title>baba-rapguide-com</title><g id="Layer_1" data-name="Layer 1"><path d="M122.66,111.32C146.43,92.46,157,66,157.16,27H140.83c0,3-.1,5.89-.24,8.74H66.72C66.57,32.9,66.5,30,66.49,27H50.16c.12,36.22,9.27,61.63,29.61,80.18a155.23,155.23,0,0,1,17.4-11.07A72.29,72.29,0,0,1,81.31,81.29h44.81c-7,9-17.05,16.88-31.41,23.83-44.54,21.55-45.4,89.56-45.34,97.82H65.7q0-6.47.7-12.87H141c.42,4.27.64,8.57.64,12.87H158C158,195.36,157.25,137.43,122.66,111.32ZM69,54.29a103.19,103.19,0,0,1-1.8-11.44h72.83a100.86,100.86,0,0,1-1.78,11.44Zm7.45,19.89A65.05,65.05,0,0,1,70.9,61.4h65.55a64.9,64.9,0,0,1-5.63,12.78Zm23.89,50.94c1.13-.54,2.17-1.13,3.27-1.69,1.09.56,2.16,1.14,3.29,1.69a47.84,47.84,0,0,1,18.19,16H82.29A47.43,47.43,0,0,1,100.38,125.12ZM77.93,148.21h51.59a89.22,89.22,0,0,1,6.21,14.86h-64a89.15,89.15,0,0,1,6.19-14.86ZM140.14,183H67.25c.63-4.32,1.46-8.59,2.49-12.78h68C138.71,174.37,139.53,178.64,140.14,183Z" /></g></svg>
             </MediumSpace>
           </StyledColumns>
         </StyledContent>
@@ -73,34 +73,39 @@ export const Home = () => {
       <FullSection
         bgColor="black"
         color="white"
+        space="5rem"
         style={{
           display: "flex",
           alignItems: "center"
         }}>
         <StyledContent>
-          <Heading>
-            <h1>Teachers and Learners</h1>
-          </Heading>
           <StyledColumns>
             <MediumSpace style={{ textAlign: "center" }}>
-              <img src="https://via.placeholder.com/400/400" />
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 209 233"><title>baba-rapguide-com</title><g id="Layer_1" data-name="Layer 1"><path fill="#FFFFFF" d="M122.66,111.32C146.43,92.46,157,66,157.16,27H140.83c0,3-.1,5.89-.24,8.74H66.72C66.57,32.9,66.5,30,66.49,27H50.16c.12,36.22,9.27,61.63,29.61,80.18a155.23,155.23,0,0,1,17.4-11.07A72.29,72.29,0,0,1,81.31,81.29h44.81c-7,9-17.05,16.88-31.41,23.83-44.54,21.55-45.4,89.56-45.34,97.82H65.7q0-6.47.7-12.87H141c.42,4.27.64,8.57.64,12.87H158C158,195.36,157.25,137.43,122.66,111.32ZM69,54.29a103.19,103.19,0,0,1-1.8-11.44h72.83a100.86,100.86,0,0,1-1.78,11.44Zm7.45,19.89A65.05,65.05,0,0,1,70.9,61.4h65.55a64.9,64.9,0,0,1-5.63,12.78Zm23.89,50.94c1.13-.54,2.17-1.13,3.27-1.69,1.09.56,2.16,1.14,3.29,1.69a47.84,47.84,0,0,1,18.19,16H82.29A47.43,47.43,0,0,1,100.38,125.12ZM77.93,148.21h51.59a89.22,89.22,0,0,1,6.21,14.86h-64a89.15,89.15,0,0,1,6.19-14.86ZM140.14,183H67.25c.63-4.32,1.46-8.59,2.49-12.78h68C138.71,174.37,139.53,178.64,140.14,183Z" /></g></svg>
             </MediumSpace>
             <MediumSpace style={{ fontSize: "18px" }}>
+              <Heading>
+                <h1>Teachers and Learners</h1>
+              </Heading>
               <p>You can use existing Rap Guides to develop lessons and class projects, or work with students to create their own. <button className="showNextLink" onClick={showNextDiv}>read more...</button></p>
               <div className="hidden">
-                One of the most popular lessons challenges students to research the meaning of lyrics and write their own annotations with explanatory notes, graphs, images, and links to sources, your own Rap Wikipedia.
+                <p>One of the most popular lessons challenges students to research the meaning of lyrics and write their own annotations with explanatory notes, graphs, images, and links to sources, your own Rap Wikipedia.</p>
 
-                Lessons are developed and run in private class-only digital spaces, but you can also opt to share the results on the public site.
+                <p>Lessons are developed and run in private class-only digital spaces, but you can also opt to share the results on the public site.</p>
 
-                Lesson plans and resources to help students write, record, and film their own Rap Guide videos are in development and will be added soon.
+                <p>
+                  Lesson plans and resources to help students write, record, and film their own Rap Guide videos are in development and will be added soon.
+                </p>
 
-                <Link to="/contact">Contact us</Link> to request an “Educator Account” and get started.
+                <p>
+                  <Link to="/contact">Contact us</Link> to request an “Educator Account” and get started.
+                </p>
               </div>
             </MediumSpace>
           </StyledColumns>
         </StyledContent>
       </FullSection>
-      <FullSection style={{ paddingBottom: "5rem" }}>
+      <FullSection space="5rem" style={{ paddingBottom: "10rem" }}>
         <StyledContent>
           <Heading>
             <h1>Explore</h1>

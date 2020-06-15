@@ -3,7 +3,7 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
-import { StyledContent, Heading, ThreeGrid, MediumSpace, Centered } from '../../styles/PageStyles'
+import { StyledContent, Heading, ThreeGrid, FullSection } from '../../styles/PageStyles'
 import VideoThumb from '../Guide/VideoThumb'
 import TagCloud from '../Guide/TagCloud'
 import Loader from '../Loader'
@@ -40,30 +40,32 @@ export const Home = () => {
 
   if (loading) return <Loader />
   return (
-    <StyledContent style={{ paddingBottom: "5rem" }}>
-      <Heading>
-        <h1>Explore</h1>
-        <Search>
-          <input type="text" placeholder="What are you looking for?..." />
-          <button><FontAwesomeIcon icon={faSearch} /></button>
-        </Search>
-      </Heading>
+    <FullSection space="5rem">
+      <StyledContent style={{ paddingBottom: "5rem" }}>
+        <Heading>
+          <h1>Explore</h1>
+          <Search>
+            <input type="text" placeholder="What are you looking for?..." />
+            <button><FontAwesomeIcon icon={faSearch} /></button>
+          </Search>
+        </Heading>
 
-      <TagCloud selectTag={selectTag} tags={topics} />
+        <TagCloud selectTag={selectTag} tags={topics} />
 
-      <Heading>
-        <h1>Videos</h1>
-      </Heading>
+        <Heading>
+          <h1>Videos</h1>
+        </Heading>
 
-      <ThreeGrid>
-        {guides.guides.map(guide => {
-          return (<VideoThumb
-            key={guide.id}
-            guide={guide} />)
-        })}
-      </ThreeGrid>
+        <ThreeGrid>
+          {guides.guides.map(guide => {
+            return (<VideoThumb
+              key={guide.id}
+              guide={guide} />)
+          })}
+        </ThreeGrid>
 
-    </StyledContent>
+      </StyledContent>
+    </FullSection>
   )
 }
 

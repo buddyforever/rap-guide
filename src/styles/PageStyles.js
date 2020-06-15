@@ -7,7 +7,6 @@ export const StyledMainContent = styled.main`
 
 export const StyledContent = styled.div`
   max-width: 1100px;
-  min-height: 50vh;
   padding: 0 50px;
   margin: 0 auto;
 
@@ -265,9 +264,10 @@ export const StyledMovingColumn = styled.div`
 `
 
 export const FullSection = styled.section`
-  min-height: 80vh;
+  min-height: ${props => props.minHeight || "80vh"};
   position: relative;
 
+  padding: ${props => props.space || "5rem"} 0;
   background-color: ${props => props.bgColor || 'white'};
   color: ${props => props.color || 'black'};
 
