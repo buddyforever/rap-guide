@@ -1,5 +1,5 @@
 import React from 'react'
-import { faReply } from '@fortawesome/free-solid-svg-icons'
+import { faReply, faEnvelope } from '@fortawesome/free-solid-svg-icons'
 
 import { StyledContent, Heading, FullSection, MediumSpace } from '../../styles/PageStyles'
 import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
@@ -8,7 +8,7 @@ import { Button } from '../ui'
 export const Request = () => {
   return (
     <>
-      <FullSection style={{ display: "flex", alignItems: "center" }}>
+      <FullSection style={{ display: "flex", alignItems: "center", paddingBottom: "5rem" }}>
         <StyledContent>
           <Heading>
             <h2>Contact us with any questions or comments, or to request an educator account.</h2>
@@ -45,37 +45,38 @@ export const Request = () => {
         </StyledContent>
       </FullSection>
 
-      <FullSection style={{ display: "flex", alignItems: "center" }}>
+      <FullSection
+        bgColor="black"
+        color="white"
+        style={{ display: "flex", alignItems: "center", padding: "5rem 0" }}>
         <StyledContent>
           <Heading>
             <h2>Join our mailing list to hear about new features and content. You’re information will never be shared.</h2>
           </Heading>
           <MediumSpace>
             <div id="mc_embed_signup">
-              <form action="https://bababrinkman.us2.list-manage.com/subscribe/post?u=3d9cb01bced5d5c9b35389bf5&amp;id=e807499bb2"
+              <Form action="https://bababrinkman.us2.list-manage.com/subscribe/post?u=3d9cb01bced5d5c9b35389bf5&amp;id=e807499bb2"
                 method="post" id="mc-embedded-subscribe-form" name="mc-embedded-subscribe-form" className="validate" target="_blank"
                 noValidate>
                 <div id="mc_embed_signup_scroll">
-                  <h2>Subscribe</h2>
-                  <div className="indicates-required"><span className="asterisk">*</span> indicates required</div>
-                  <div className="mc-field-group">
+                  <FormBlock className="mc-field-group">
                     <label htmlFor="mce-EMAIL">Email Address <span className="asterisk">*</span>
                     </label>
-                    <input type="email" defaultValue="" name="EMAIL" className="required email" id="mce-EMAIL" />
-                  </div>
-                  <div className="mc-field-group">
+                    <input type="email" defaultValue="" name="EMAIL" className="required email" id="mce-EMAIL" required />
+                  </FormBlock>
+                  <FormBlock className="mc-field-group">
                     <label htmlFor="mce-FNAME">First Name </label>
                     <input type="text" defaultValue="" name="FNAME" className="" id="mce-FNAME" />
-                  </div>
-                  <div className="mc-field-group">
+                  </FormBlock>
+                  <FormBlock className="mc-field-group">
                     <label htmlFor="mce-LNAME">Last Name </label>
                     <input type="text" defaultValue="" name="LNAME" className="" id="mce-LNAME" />
-                  </div>
-                  <div className="mc-field-group">
+                  </FormBlock>
+                  <FormBlock className="mc-field-group">
                     <label htmlFor="mce-MMERGE5">Twitter Handle </label>
                     <input type="text" defaultValue="" name="MMERGE5" className="" id="mce-MMERGE5" />
-                  </div>
-                  <div className="mc-field-group">
+                  </FormBlock>
+                  <FormBlock className="mc-field-group">
                     <label htmlFor="mce-MMERGE6">Interests </label>
                     <select name="MMERGE6" className="" id="mce-MMERGE6">
                       <option defaultValue=""></option>
@@ -94,17 +95,20 @@ export const Request = () => {
                       <option defaultValue="Critical Thinking">Critical Thinking</option>
                       <option defaultValue="Hip Hop">Hip Hop</option>
                     </select>
-                  </div>
+                  </FormBlock>
                   <div id="mce-responses" className="clear">
                     <div className="response" id="mce-error-response" style={{ display: 'none' }}></div>
                     <div className="response" id="mce-success-response" style={{ display: 'none' }}></div>
                   </div>
                   <div style={{ position: "absolute", left: "-5000px" }} aria-hidden="true"><input type="text"
                     name="b_3d9cb01bced5d5c9b35389bf5_e807499bb2" tabIndex="-1" defaultValue="" /></div>
-                  <div className="clear"><input type="submit" defaultValue="Subscribe" name="subscribe" id="mc-embedded-subscribe"
-                    className="button" /></div>
+                  <ButtonBlock className="clear">
+                    <div></div>
+                    <Button iconLeft={faEnvelope} type="submit" defaultValue="Subscribe" name="subscribe" id="mc-embedded-subscribe"
+                      className="button">Sign Up</Button>
+                  </ButtonBlock>
                 </div>
-              </form>
+              </Form>
             </div>
           </MediumSpace>
         </StyledContent>
