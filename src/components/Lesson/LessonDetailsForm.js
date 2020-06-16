@@ -157,7 +157,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
           placeholder="20..." />
       </FormBlock>
 
-      <FormBlock>
+      <FormBlock style={{ display: "none" }}>
         <h3>Topics</h3>
         <p>Enter the topic(s) that this lesson plan aim's to cover.</p>
         <div style={{ display: "flex" }}>

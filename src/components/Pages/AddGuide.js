@@ -1,12 +1,16 @@
 import React, { useState } from 'react'
+import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { FormBlock, ButtonBlock } from '../../styles/FormStyles'
+import { Tag } from '../../styles/TagStyles'
 import { Message } from '../ui/Message'
 import { Button } from '../ui/Button'
+import { DotWave as Loader } from '../ui'
 
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { CREATE_GUIDE } from '../../queries/guides'
+import { GET_ALL_TOPICS } from '../../queries/topics'
 
 export const AddGuide = () => {
 
@@ -15,9 +19,12 @@ export const AddGuide = () => {
   const [videoUrl, setVideoUrl] = useState("")
   const [videoID, setVideoID] = useState("")
   const [message, setMessage] = useState(null)
+  const [topics, setTopics] = useState([])
+  const [topic, setTopic] = useState("")
 
   /* Queries */
   const [addGuide] = useMutation(CREATE_GUIDE)
+  const { loading, data, refetch } = useQuery(GET_ALL_TOPICS)
 
   function addVideo() {
     if (
@@ -50,9 +57,43 @@ export const AddGuide = () => {
       setVideoUrl("");
       setVideoID("");
     })
-
   }
 
+  /* TOPICS */
+  function addTopic() {
+    if (topic.length === 0 || topics.includes(topic)) {
+      setTopic("")
+      return
+    }
+    setTopics(prevState => ([
+      topic,
+      ...prevState
+    ]))
+    setTopic("");
+  }
+
+  function handleKeyPress(e) {
+    if (e.key === 'Enter' || e.key === ',') {
+      e.preventDefault();
+      addTopic();
+    }
+  }
+
+  function removeTopic(topicToRemove) {
+    // If there is only one topic it ends up being null
+    if (topics.length === 1) {
+      setTopics([]);
+    } else {
+      setTopics(prevState => {
+        return prevState.filter(topic => {
+          if (topic === topicToRemove) return false
+          return true
+        })
+      })
+    }
+  }
+
+  if (loading) return <Loader />
   return (
     <StyledContent style={{ paddingBottom: "5rem" }}>
       <Heading>
@@ -83,6 +124,31 @@ export const AddGuide = () => {
             placeholder="Video ID"
             value={videoID}
             onChange={e => setVideoID(e.target.value)} />
+        </FormBlock>
+        <FormBlock>
+          <h3>Topics</h3>
+          <p>Enter the topic(s) that this lesson plan aim's to cover.</p>
+          <div style={{ display: "flex" }}>
+            <input
+              type="text"
+              value={topic}
+              placeholder="Climate Chaos..."
+              onKeyPress={handleKeyPress}
+              onChange={(e) => setTopic(e.target.value)} />
+            <Button
+              secondary
+              style={{ marginLeft: "1rem", width: "100px", height: "auto" }}
+              onClick={(e) => { e.preventDefault(); addTopic(e.target.value) }}
+              iconLeft={faPlus}>Add</Button>
+          </div>
+          <MediumSpace>
+            {topics.map(topic => (
+              <Tag
+                key={topic}
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}>{topic}</Tag>
+            ))}
+          </MediumSpace>
         </FormBlock>
         <ButtonBlock>
           <Button onClick={addVideo}>Add Video</Button>

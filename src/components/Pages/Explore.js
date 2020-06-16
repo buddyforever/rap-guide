@@ -8,22 +8,44 @@ import VideoThumb from '../Guide/VideoThumb'
 import TagCloud from '../Guide/TagCloud'
 import Loader from '../Loader'
 import { DotWave } from '../ui/Loader'
+import { escapeRegex } from '../../utilities/regex'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_ALL_GUIDES } from '../../queries/guides'
 
-export const Home = () => {
+export const Explore = () => {
 
   /* Queries */
   const { loading, data: guides } = useQuery(GET_ALL_GUIDES);
 
   /* State */
+  const [searchQuery, setSearchQuery] = useState("");
   const [topics, setTopics] = useState([]);
+  const [filteredGuides, setFilteredGuides] = useState([]);
 
   /* Functions */
   function selectTag(tag) {
-    console.log(tag);
+    console.log(guides.guides)
+    setFilteredGuides(guides.guides.filter(guide => {
+      return guide.topics.find(topic => topic.topic === tag);
+    }))
   }
+
+  function filterGuidesByTitle(e) {
+    setSearchQuery(e.target.value)
+
+    if (e.target.value.length === 0) {
+      setFilteredGuides(guides.guides)
+      return
+    }
+
+    var expression = escapeRegex(searchQuery);
+    setFilteredGuides(guides.guides.filter(guide => {
+      return guide.videoTitle.match(expression);
+    }))
+  }
+
+
 
   /* Effects */
   useEffect(() => {
@@ -36,6 +58,7 @@ export const Home = () => {
       ]
     })
     setTopics(topicsArr);
+    setFilteredGuides(guides.guides);
   }, [guides])
 
   if (loading) return <Loader />
@@ -45,7 +68,11 @@ export const Home = () => {
         <Heading>
           <h1>Explore</h1>
           <Search>
-            <input type="text" placeholder="What are you looking for?..." />
+            <input
+              type="text"
+              placeholder="What are you looking for?..."
+              value={searchQuery}
+              onChange={filterGuidesByTitle} />
             <button><FontAwesomeIcon icon={faSearch} /></button>
           </Search>
         </Heading>
@@ -57,7 +84,7 @@ export const Home = () => {
         </Heading>
 
         <ThreeGrid>
-          {guides.guides.map(guide => {
+          {filteredGuides.map(guide => {
             return (<VideoThumb
               key={guide.id}
               guide={guide} />)
@@ -69,7 +96,7 @@ export const Home = () => {
   )
 }
 
-export default Home;
+export default Explore;
 
 const Search = styled.div`
   padding-right: 4rem;

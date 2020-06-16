@@ -35,7 +35,7 @@ const TagCloud = ({ selectTag, tags }) => {
         <Tag
           whileHover={{ scale: 1.1, rotate: '3deg' }}
           key={tag.id}
-          onClick={() => handleTagClick(tag.id)}
+          onClick={() => handleTagClick(tag.topic)}
           size={2}
         >{tag.topic}</Tag>
       ))

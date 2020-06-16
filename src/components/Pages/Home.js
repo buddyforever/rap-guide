@@ -9,6 +9,7 @@ import VideoThumb from '../Guide/VideoThumb'
 import TagCloud from '../Guide/TagCloud'
 import Loader from '../Loader'
 import { DotWave } from '../ui/Loader'
+import Explore from "../Pages/Explore"
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_ALL_GUIDES } from '../../queries/guides'
@@ -105,31 +106,7 @@ export const Home = () => {
           </StyledColumns>
         </StyledContent>
       </FullSection>
-      <FullSection space="5rem" style={{ paddingBottom: "10rem" }}>
-        <StyledContent>
-          <Heading>
-            <h1>Explore</h1>
-            <Search>
-              <input type="text" placeholder="What are you looking for?..." />
-              <button><FontAwesomeIcon icon={faSearch} /></button>
-            </Search>
-          </Heading>
-
-          <TagCloud selectTag={selectTag} tags={topics} />
-
-          <Heading>
-            <h1>Videos</h1>
-          </Heading>
-
-          <ThreeGrid>
-            {guides.guides.map(guide => {
-              return (<VideoThumb
-                key={guide.id}
-                guide={guide} />)
-            })}
-          </ThreeGrid>
-        </StyledContent>
-      </FullSection>
+      <Explore />
     </>
   )
 }
