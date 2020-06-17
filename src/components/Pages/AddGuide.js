@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
@@ -10,7 +10,7 @@ import { DotWave as Loader } from '../ui'
 
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { CREATE_GUIDE } from '../../queries/guides'
-import { GET_ALL_TOPICS } from '../../queries/topics'
+import { GET_ALL_TOPICS, CREATE_TOPIC } from '../../queries/topics'
 
 export const AddGuide = () => {
 
@@ -19,11 +19,14 @@ export const AddGuide = () => {
   const [videoUrl, setVideoUrl] = useState("")
   const [videoID, setVideoID] = useState("")
   const [message, setMessage] = useState(null)
+  const [allTopics, setAllTopics] = useState(null)
   const [topics, setTopics] = useState([])
   const [topic, setTopic] = useState("")
 
   /* Queries */
   const [addGuide] = useMutation(CREATE_GUIDE)
+  const [createTopic] = useMutation(CREATE_TOPIC)
+
   const { loading, data, refetch } = useQuery(GET_ALL_TOPICS)
 
   function addVideo() {
@@ -44,7 +47,12 @@ export const AddGuide = () => {
       variables: {
         videoTitle,
         videoUrl,
-        videoID
+        videoID,
+        topics: topics.map(topic => {
+          return {
+            id: topic.id
+          }
+        })
       }
     }).then((response) => {
       setMessage({
@@ -56,6 +64,7 @@ export const AddGuide = () => {
       setVideoTitle("");
       setVideoUrl("");
       setVideoID("");
+      setTopics([]);
     })
   }
 
@@ -65,10 +74,26 @@ export const AddGuide = () => {
       setTopic("")
       return
     }
-    setTopics(prevState => ([
-      topic,
-      ...prevState
-    ]))
+
+    const exists = allTopics.find(t => t.topic === topic)
+    if (exists) {
+      setTopics(prevState => ([
+        exists,
+        ...prevState
+      ]))
+    } else {
+      createTopic({
+        variables: {
+          topic: topic
+        }
+      }).then(response => {
+        setTopics(prevState => ([
+          response.data.createTopic,
+          ...prevState
+        ]))
+      })
+
+    }
     setTopic("");
   }
 
@@ -86,12 +111,18 @@ export const AddGuide = () => {
     } else {
       setTopics(prevState => {
         return prevState.filter(topic => {
-          if (topic === topicToRemove) return false
+          if (topic.id === topicToRemove.id) return false
           return true
         })
       })
     }
   }
+
+  useEffect(() => {
+    if (data) {
+      setAllTopics(data.topics);
+    }
+  }, [data])
 
   if (loading) return <Loader />
   return (
@@ -127,7 +158,7 @@ export const AddGuide = () => {
         </FormBlock>
         <FormBlock>
           <h3>Topics</h3>
-          <p>Enter the topic(s) that this lesson plan aim's to cover.</p>
+          <p>Enter the topic(s) that this video aim's to cover.</p>
           <div style={{ display: "flex" }}>
             <input
               type="text"
@@ -144,9 +175,9 @@ export const AddGuide = () => {
           <MediumSpace>
             {topics.map(topic => (
               <Tag
-                key={topic}
+                key={topic.id}
                 initial={{ scale: 0 }}
-                animate={{ scale: 1 }}>{topic}</Tag>
+                animate={{ scale: 1 }}>{topic.topic}</Tag>
             ))}
           </MediumSpace>
         </FormBlock>

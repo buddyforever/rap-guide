@@ -12,18 +12,15 @@ export const GET_ALL_TOPICS = gql`
   }
 `
 
-export const ADD_TOPIC_TO_GUIDE = gql`
-  mutation addTopicToGuide(
-    $topic:String!,
-    $guideID: ID!){
+export const CREATE_TOPIC = gql`
+  mutation addTopic(
+    $topic:String!){
       createTopic(data: {
         status: PUBLISHED
-        topic: $topic,
-        guides: {
-          connect: { id: $guideID }
-        }
+        topic: $topic
       }){
         id
+        topic
     }
   }
 `
