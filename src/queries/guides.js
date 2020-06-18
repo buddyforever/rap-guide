@@ -45,13 +45,14 @@ export const CREATE_GUIDE = gql`
     $videoTitle:String!,
     $videoUrl:String!,
     $videoID:String!,
+    $videoThumb: String!
     $topics:[TopicWhereUniqueInput!]){
       createGuide(data: {
         status: PUBLISHED
         videoTitle:$videoTitle
         videoUrl:$videoUrl
         videoId:$videoID
-        videoThumb: "images/default.png"
+        videoThumb: $videoThumb
         topics: {
           connect: $topics
         }

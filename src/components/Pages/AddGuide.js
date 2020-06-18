@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
+import axios from 'axios'
 
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { FormBlock, ButtonBlock } from '../../styles/FormStyles'
@@ -16,12 +17,13 @@ export const AddGuide = () => {
 
   /* State */
   const [videoTitle, setVideoTitle] = useState("")
-  const [videoUrl, setVideoUrl] = useState("")
   const [videoID, setVideoID] = useState("")
+  const [videoThumb, setVideoThumb] = useState("images/default.png")
   const [message, setMessage] = useState(null)
   const [allTopics, setAllTopics] = useState(null)
   const [topics, setTopics] = useState([])
   const [topic, setTopic] = useState("")
+  const [thumbnail, setThumbnail] = useState(null)
 
   /* Queries */
   const [addGuide] = useMutation(CREATE_GUIDE)
@@ -29,10 +31,28 @@ export const AddGuide = () => {
 
   const { loading, data, refetch } = useQuery(GET_ALL_TOPICS)
 
-  function addVideo() {
+  async function uploadFile(file_data) {
+    const data = new FormData()
+    data.append('file', file_data)
+    data.append('upload_preset', 'rap_guide')
+
+    const response = await fetch(
+      '	https://api.cloudinary.com/v1_1/burtonmedia/image/upload',
+      {
+        method: "POST",
+        body: data
+      }
+    )
+
+    const file = await response.json()
+
+    return file.secure_url;
+
+  }
+
+  async function addVideo() {
     if (
       videoTitle.length === 0 ||
-      videoUrl.length === 0 ||
       videoID.length === 0
     ) {
       setMessage({
@@ -43,29 +63,58 @@ export const AddGuide = () => {
       return
     }
 
-    addGuide({
-      variables: {
-        videoTitle,
-        videoUrl: `https://www.youtube.com/embed/${videoID}`,
-        videoID,
-        topics: topics.map(topic => {
-          return {
-            id: topic.id
+    // Upload Thumbnail
+    if (thumbnail) {
+      await uploadFile(thumbnail).then((file_url) => {
+        addGuide({
+          variables: {
+            videoTitle,
+            videoUrl: `https://www.youtube.com/embed/${videoID}`,
+            videoID,
+            videoThumb: file_url,
+            topics: topics.map(topic => {
+              return {
+                id: topic.id
+              }
+            })
           }
-        })
-      }
-    }).then((response) => {
-      setMessage({
-        type: "success",
-        title: "Video Added",
-        text: `The video <strong>${videoTitle}</strong> has been added`
-      })
+        }).then((response) => {
+          setMessage({
+            type: "success",
+            title: "Video Added",
+            text: `The video <strong>${videoTitle}</strong> has been added`
+          })
 
-      setVideoTitle("");
-      setVideoUrl("");
-      setVideoID("");
-      setTopics([]);
-    })
+          setVideoTitle("");
+          setVideoID("");
+          setTopics([]);
+        })
+      })
+    } else {
+      addGuide({
+        variables: {
+          videoTitle,
+          videoUrl: `https://www.youtube.com/embed/${videoID}`,
+          videoID,
+          videoThumb,
+          topics: topics.map(topic => {
+            return {
+              id: topic.id
+            }
+          })
+        }
+      }).then((response) => {
+        setMessage({
+          type: "success",
+          title: "Video Added",
+          text: `The video <strong>${videoTitle}</strong> has been added`
+        })
+
+        setVideoTitle("");
+        setVideoID("");
+        setTopics([]);
+      })
+    }
   }
 
   /* TOPICS */
@@ -104,6 +153,10 @@ export const AddGuide = () => {
     }
   }
 
+  function handleChangeFile(e) {
+    setThumbnail(e.target.files[0])
+  }
+
   function removeTopic(topicToRemove) {
     // If there is only one topic it ends up being null
     if (topics.length === 1) {
@@ -140,21 +193,19 @@ export const AddGuide = () => {
             onChange={e => setVideoTitle(e.target.value)} />
         </FormBlock>
         <FormBlock>
-          <label>Video URL</label>
-          <input
-            type="text"
-            placeholder="Video URL"
-            value={videoUrl}
-            onChange={e => setVideoUrl(e.target.value)} />
-        </FormBlock>
-        <FormBlock>
           <label>Video ID</label>
-          <p>Just the ID part of the url ie. youtube.com/watch?v=<strong>r2TWtjhNDww</strong></p>
+          <p style={{ fontSize: "14px", maxWidth: "100%" }}>Just the ID part of the url ie. https://youtube.com/watch?v=<strong>r2TWtjhNDww</strong></p>
           <input
             type="text"
             placeholder="Video ID"
             value={videoID}
             onChange={e => setVideoID(e.target.value)} />
+        </FormBlock>
+        <FormBlock>
+          <label>Thumbnail</label>
+          <p>
+            <input type="file" name="file" onChange={handleChangeFile} />
+          </p>
         </FormBlock>
         <FormBlock>
           <h3>Topics</h3>
