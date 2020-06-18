@@ -46,7 +46,7 @@ export const AddGuide = () => {
     addGuide({
       variables: {
         videoTitle,
-        videoUrl,
+        videoUrl: `https://www.youtube.com/embed/${videoID}`,
         videoID,
         topics: topics.map(topic => {
           return {
