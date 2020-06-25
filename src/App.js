@@ -20,7 +20,6 @@ import { UserContext } from './context/UserContext'
 import { defaultTheme } from '../src/components/themes/default'
 import RouteChange from './utilities/RouteChange'
 
-import { NewProfile } from './components/Private/NewProfile'
 import { useAuth0 } from "./react-auth0-spa";
 
 const GRAPHCMS_API =
@@ -91,12 +90,6 @@ function App() {
                   authenticationPath="/login"
                   isAuthenticated={auth.isAuthenticated()}
                   isAllowed={auth.isAuthenticated()}
-                  restrictedPath="/404"
-                />
-                <PrivateRoute
-                  path="/newprofile"
-                  component={NewProfile}
-                  isAllowed={true}
                   restrictedPath="/404"
                 />
                 <PrivateRoute

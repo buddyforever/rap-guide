@@ -5,12 +5,13 @@ import { Button } from '../ui/Button'
 import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
 import Message from '../Layout/Message'
-import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT_TYPE } from '../../queries/accounts'
 import Loader from '../Loader'
 
-export const Profile = () => {
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from '../../queries/accounts'
 
+export const Profile = () => {
+  console.log("here");
   /* Context */
   const { user, setUser } = useContext(UserContext);
 
@@ -20,15 +21,10 @@ export const Profile = () => {
       email: user.email
     }
   });
-  const [updateAccount] = useMutation(UPDATE_ACCOUNT_TYPE);
+  const [updateAccount] = useMutation(UPDATE_ACCOUNT);
 
   /* State */
-  const [accountId, setAccountId] = useState("");
-  const [nameFirst, setNameFirst] = useState("");
-  const [nameLast, setNameLast] = useState("");
-  const [email, setEmail] = useState("");
-  const [type, setType] = useState("");
-  const [image, setImage] = useState("");
+  const [displayName, setDisplayName] = useState("");
 
   /* Helpers */
   const [message, setMessage] = useState(null);
@@ -37,26 +33,14 @@ export const Profile = () => {
   function saveProfile(e) {
     e.preventDefault();
 
-    const profile = {
-      accountId,
-      nameFirst,
-      nameLast,
-      email,
-      type,
-      image
-    }
-
     // Update Database
     updateAccount({
       variables: {
-        image: user.image,
-        ...profile
+        email: user.email,
+        displayName
       }
-    }).then(() => {
-      // Update Context
-      setUser(profile);
-      auth.login(profile);
-
+    }).then((response) => {
+      console.log(response)
       setMessage({
         text: "Your profile has been saved."
       })
@@ -65,14 +49,7 @@ export const Profile = () => {
 
   useEffect(() => {
     if (!loading) {
-      const { account } = data;
-
-      setAccountId(account.accountId);
-      setNameFirst(account.nameFirst);
-      setNameLast(account.nameLast);
-      setEmail(account.email);
-      setType(account.type);
-      setImage(user.image);
+      setDisplayName(data.getAccount.displayName)
     }
   }, [data])
 
@@ -81,34 +58,14 @@ export const Profile = () => {
     <StyledContent>
       <Heading>
         <h1 style={{ display: "flex", alignItems: "center" }}>
-          <img src={image} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {nameFirst} {nameLast}
+          <img src={user.image} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {user.nameFirst} {user.nameLast}
         </h1>
       </Heading>
       <Form onSubmit={saveProfile}>
         <Message message={message} />
-        <TwoGrid>
-          <FormBlock>
-            <label>First Name</label>
-            <input type="text" placeholder="First Name" value={nameFirst} onChange={(e) => setNameFirst(e.target.value)} />
-          </FormBlock>
-          <FormBlock>
-            <label>Last Name</label>
-            <input type="text" placeholder="Last Name" value={nameLast} onChange={(e) => setNameLast(e.target.value)} />
-          </FormBlock>
-        </TwoGrid>
         <FormBlock>
-          <label>Email</label>
-          <input type="text" placeholder="email" disabled value={email} />
-        </FormBlock>
-        <FormBlock className={email === 'jessejburton@gmail.com' ? '' : 'hidden'}>
-          <label>Account Type</label>
-          <select value={type} onChange={(e) => setType(e.target.value)}>
-            <option value="administrator">Administrator</option>
-            <option value="expert">Expert</option>
-            <option value="educator">Educator</option>
-            <option value="student">Student</option>
-            <option value="public">Public</option>
-          </select>
+          <label>Display Name</label>
+          <input type="text" placeholder="Display Name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
         </FormBlock>
         <ButtonBlock>
           <Button>Save Profile</Button>

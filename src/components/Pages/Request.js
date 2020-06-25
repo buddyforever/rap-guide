@@ -17,7 +17,7 @@ export const Request = () => {
             <h1>
               {
                 rapGuideName.length
-                  ? rapGuideName
+                  ? 'Rap Guide to ' + rapGuideName
                   : 'I wish there was a Rap Guide to ...'
               }
             </h1>
@@ -28,7 +28,7 @@ export const Request = () => {
                   placeholder="Enter you Rap Guide Name..."
                   value={rapGuideName}
                   onChange={(e) => setRapGuideName(e.target.value)} />
-                <button>REQUEST</button>
+                <button onClick={() => alert('Coming Soon!')}>REQUEST</button>
               </Search>
             </MediumSpace>
           </Heading>

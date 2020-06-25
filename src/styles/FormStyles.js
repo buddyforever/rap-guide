@@ -30,6 +30,7 @@ export const FormBlock = styled.div`
   input[type=number],
   input[type=email],
   input[type=password],
+  input[type=search],
   select,
   textarea
   {

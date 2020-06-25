@@ -111,7 +111,6 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
   useEffect(() => {
     if (data) {
       setStudents(data.accounts);
-      console.log(data);
     }
   }, [data])
 
@@ -248,24 +247,18 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
           let reviewedAnnotations = [];
           if (hasAnnotations) {
             reviewedAnnotations = account.annotations.filter(annotation => annotation.isRequestRevisions && !annotation.isSubmitted)
-            submittedAnnotations = account.annotations.filter(annotation => annotation.isSubmitted)
+            submittedAnnotations = account.annotations.filter(annotation => annotation.isSubmitted && !annotation.isApproved)
             approvedAnnotations = account.annotations.filter(annotation => annotation.isApproved)
           }
           return (
             <Student key={account.id}>
-              <div>
-                <div className="image">
-                  <img src={account.image} alt={account.nameFirst + ' ' + account.nameLast} />
-                </div>
-              </div>
-              <div>{account.nameFirst} {account.nameLast}</div>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
               <div>
                 {(
                   !hasAnnotations ||
-                  !submittedAnnotations &&
-                  !approvedAnnotations &&
-                  !reviewedAnnotations) && "Not Submitted"}
+                  submittedAnnotations.length === 0 &&
+                  approvedAnnotations.length === 0 &&
+                  reviewedAnnotations.length === 0) && "Not Submitted"}
                 {submittedAnnotations.map(annotation => (
                   <div key={annotation.id}>
                     <LinkButton
@@ -318,10 +311,9 @@ export default LessonDashboardTeacher;
 
 const Student = styled.div`
   width: 100%;
-  display: grid;
-  grid-template-columns: 5rem 1fr 1fr 1fr;
+  display: flex;
   align-items: center;
-  column-gap: 2.5rem;
+  justify-content: space-between;
   padding: 1rem;
   background-color: #EEE;
   border-radius: 3px;

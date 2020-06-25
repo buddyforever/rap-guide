@@ -263,8 +263,9 @@ export const StyledMovingColumn = styled.div`
   }
 `
 
-export const FullSection = styled.section`
-  min-height: ${props => props.minHeight || "80vh"};
+export const FullSection = styled(motion.section)`
+  min-height: ${props => props.minHeight || "90vh"};
+  width: 100vw;
   position: relative;
 
   padding: ${props => props.space || "5rem"} 0;
@@ -274,6 +275,6 @@ export const FullSection = styled.section`
   &.centered {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
   }
 `

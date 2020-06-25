@@ -45,7 +45,7 @@ const AddLesson = () => {
   }
 
   return (
-    <StyledContent>
+    <StyledContent style={{ marginBottom: "5rem" }}>
       <Heading>
         <h1>Lesson Editor</h1>
         <MediumSpace>

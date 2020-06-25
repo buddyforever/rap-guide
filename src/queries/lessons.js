@@ -194,7 +194,11 @@ export const GET_LESSON_STUDENTS = gql`
       nameLast
       email
       image
-      annotations{
+      annotations(where: {
+        lesson: {
+          id: $id
+        }
+      }){
         id
         annotation
         isSubmitted

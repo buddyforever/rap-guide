@@ -56,7 +56,7 @@ const EditLesson = () => {
 
   if (loading) return <Loader />
   return (
-    <StyledContent className="editor">
+    <StyledContent style={{ marginBottom: "5rem" }} className="editor">
       <Heading>
         <h1>Lesson Editor</h1>
         <MediumSpace>
