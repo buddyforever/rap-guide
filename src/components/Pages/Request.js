@@ -1,37 +1,148 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
+import { motion } from 'framer-motion'
+import { Editor } from '@tinymce/tinymce-react';
 
-import { StyledContent, Heading, MediumSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
+import { StyledContent, Heading, MediumSpace, LargeSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
+import { DotWave as Loader, Button, Message } from '../ui'
+import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
+import { dateFormat } from '../../utilities/DateFormat'
+
+import { useQuery, useMutation } from '@apollo/react-hooks'
+import { CREATE_REQUEST, GET_REQUESTS } from '../../queries/requests'
 
 export const Request = () => {
 
-  const [rapGuideName, setRapGuideName] = useState("")
+  const infoRef = useRef(null);
 
+  const [message, setMessage] = useState("")
+  const [rapGuideTitle, setRapGuideTitle] = useState("")
+  const [rapGuideName, setRapGuideName] = useState("")
+  const [rapGuideEmail, setRapGuideEmail] = useState("")
+  const [rapGuideInformation, setRapGuideInformation] = useState("")
+
+  /* Queries */
+  const { loading, data, refetch } = useQuery(GET_REQUESTS)
+  const [createRequest] = useMutation(CREATE_REQUEST)
+
+  function handleRapGuideInformation(content, editor) {
+    setRapGuideInformation(content);
+  }
+
+  function handleCreateRequest(e) {
+    e.preventDefault()
+
+    let errors = []
+    if (rapGuideTitle.length === 0) {
+      errors.push("<p>Please enter a Title for your request");
+    }
+    if (rapGuideInformation.length === 0) {
+      errors.push("<p>Please enter some Information about your Idea");
+    }
+
+    if (errors.length) {
+      setMessage({
+        type: "error",
+        title: "Please fix these errors",
+        text: errors.join(" ")
+      })
+      infoRef.current.classList.add("error")
+      return
+    }
+
+    createRequest({
+      variables: {
+        title: rapGuideTitle,
+        name: rapGuideName,
+        email: rapGuideEmail,
+        information: rapGuideInformation
+      }
+    }).then(() => {
+      setRapGuideTitle("")
+      setRapGuideName("")
+      setRapGuideEmail("")
+      setRapGuideInformation("")
+      setMessage({
+        type: "success",
+        title: "Thank You!",
+        text: "Your request has been received!"
+      })
+      refetch()
+    })
+  }
+
+  if (loading) return <Loader />
   return (
     <>
       {/* PANEL 1 */}
-      <FullSection className="centered">
+      <FullSection>
         <StyledContent style={{ width: "100%" }}>
-          <Heading>
-            <h1>
-              {
-                rapGuideName.length
-                  ? 'Rap Guide to ' + rapGuideName
-                  : 'I wish there was a Rap Guide to ...'
-              }
-            </h1>
-            <MediumSpace>
-              <Search>
-                <input
-                  type="text"
-                  placeholder="Enter you Rap Guide Name..."
-                  value={rapGuideName}
-                  onChange={(e) => setRapGuideName(e.target.value)} />
-                <button onClick={() => alert('Coming Soon!')}>REQUEST</button>
-              </Search>
-            </MediumSpace>
-          </Heading>
+          <Form onSubmit={handleCreateRequest}>
+            <Heading style={{ paddingBottom: 0 }}>
+              <h1>
+                {
+                  rapGuideTitle.length
+                    ? 'Rap Guide to ' + rapGuideTitle
+                    : 'I wish there was a Rap Guide to ...'
+                }
+              </h1>
+            </Heading>
+            <FormBlock>
+              <input
+                type="text"
+                placeholder="Enter you Rap Guide Name..."
+                value={rapGuideTitle}
+                onChange={(e) => setRapGuideTitle(e.target.value)} />
+            </FormBlock>
+            {rapGuideTitle &&
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+              >
+                <p style={{ fontSize: "1.4rem" }}>* Your name and email will not be published</p>
+                <FormBlock>
+                  <h3>Your Name</h3>
+                  <input
+                    type="text"
+                    placeholder="Your Name"
+                    value={rapGuideName}
+                    onChange={(e) => setRapGuideName(e.target.value)} />
+                </FormBlock>
+                <FormBlock>
+                  <h3>Your Email</h3>
+                  <input
+                    type="email"
+                    placeholder="Your Email"
+                    value={rapGuideEmail}
+                    onChange={(e) => setRapGuideEmail(e.target.value)} />
+                </FormBlock>
+                <FormBlock>
+                  <h3>About Your Idea</h3>
+                  <Editor
+                    initialValue={rapGuideInformation}
+                    apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
+                    init={{
+                      height: 300,
+                      menubar: false,
+                      plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                      ],
+                      toolbar:
+                        'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                    }}
+                    onEditorChange={handleRapGuideInformation}
+                  />
+                </FormBlock>
+                <ButtonBlock>
+                  <span></span>
+                  <Button>REQUEST</Button>
+                </ButtonBlock>
+              </motion.div>
+            }
+          </Form>
         </StyledContent>
       </FullSection>
 
@@ -121,13 +232,47 @@ export const Request = () => {
           <MediumSpace style={{ fontSize: "18px" }}>
             <p>Below are Rap Guides that users of this site have requested, which we hope to be able to make before too long.</p>
           </MediumSpace>
+          {data &&
+            <LargeSpace>
+              {data.requests.map(request => (
+                <StyledRequest key={request.id}>
+                  <h2>{request.title}</h2>
+                  <span className="date">{dateFormat(request.updatedAt)}</span>
+                  <p dangerouslySetInnerHTML={{ __html: request.information }} />
+                </StyledRequest>
+              ))}
+            </LargeSpace>
+          }
         </StyledContent>
       </FullSection>
+      {
+        message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
     </>
   )
 }
 
 export default Request;
+
+const StyledRequest = styled.div`
+  margin: 5rem 0;
+
+  ul {
+    padding-left: 5rem;
+  }
+
+  .date {
+    font-size: 1.4rem;
+    color: #666;
+  }
+`
 
 const Search = styled.div`
   padding-right: 4rem;

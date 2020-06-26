@@ -46,6 +46,11 @@ export const FormBlock = styled.div`
   textarea {
     min-height: 15rem;
   }
+
+  input.error,
+  textarea.error {
+    border: 1px solid #DD3333;
+  }
 `
 
 export const ButtonBlock = styled.div`
