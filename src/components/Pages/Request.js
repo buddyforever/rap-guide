@@ -3,6 +3,7 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Editor } from '@tinymce/tinymce-react';
+import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 import { StyledContent, Heading, MediumSpace, LargeSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
 import { DotWave as Loader, Button, Message } from '../ui'
@@ -14,7 +15,8 @@ import { CREATE_REQUEST, GET_REQUESTS } from '../../queries/requests'
 
 export const Request = () => {
 
-  const infoRef = useRef(null);
+  const infoRef = useRef(null)
+  const requestRef = useRef(null)
 
   const [message, setMessage] = useState("")
   const [rapGuideTitle, setRapGuideTitle] = useState("")
@@ -64,11 +66,11 @@ export const Request = () => {
       setRapGuideEmail("")
       setRapGuideInformation("")
       setMessage({
+        autoDismiss: 10000,
         type: "success",
         title: "Thank You!",
-        text: "Your request has been received!"
+        text: "Your request has been received, your request will show up <a href='#requests'>down below</a> once it has been approved!"
       })
-      refetch()
     })
   }
 
@@ -225,7 +227,7 @@ export const Request = () => {
           display: "flex",
           alignItems: "center"
         }}>
-        <StyledContent style={{ width: "100%" }}>
+        <StyledContent style={{ width: "100%" }} id="requests">
           <Heading>
             <h1>Submitted Requests</h1>
           </Heading>
@@ -243,6 +245,7 @@ export const Request = () => {
               ))}
             </LargeSpace>
           }
+          {data.requests.length === 0 && <p>There are currently no requests that have been approved. Check back soon!</p>}
         </StyledContent>
       </FullSection>
       {

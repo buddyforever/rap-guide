@@ -14,6 +14,7 @@ export const CREATE_REQUEST = gql`
         name: $name
         email: $email
         information: $information
+        isApproved: false
     }) {
       id
       title
@@ -25,6 +26,7 @@ export const CREATE_REQUEST = gql`
 export const GET_REQUESTS = gql`
   query getRequests {
     requests(
+      where: { isApproved: true }
       orderBy:createdAt_DESC
       first: 30) {
       id
@@ -34,3 +36,5 @@ export const GET_REQUESTS = gql`
     }
   }
 `
+
+// Need to make an approval process for the requests that get submitted. Then a commenting process.
