@@ -19,8 +19,7 @@ export const PrivateRoute = (props) => {
     }
   }, [profile]);
 
-
-  if (loading || !profile || !user) return null;
+  if (loading) return null;
 
   let redirectPath = '';
   if (!isAuthenticated) {

@@ -7,12 +7,8 @@ const maxFontSize = 3;
 
 const TagCloud = ({ selectTag, tags }) => {
 
-  const [minMax, setMinMax] = useState([]);
-
-  useEffect(() => {
-    const values = tags.map(tag => tag.lessons.length);
-    setMinMax(getMinMax(values));
-  }, [tags])
+  const values = tags.map(tag => tag.count);
+  const minMax = getMinMax(values);
 
   function getMinMax(arr) {
     return {
@@ -22,7 +18,7 @@ const TagCloud = ({ selectTag, tags }) => {
   }
 
   function getFontSize(value) {
-    return (((minMax.min - value) / (minMax.max - minMax.min)) * (maxFontSize - minFontSize)) + minFontSize
+    return -(((minMax.min - value) / (minMax.max - minMax.min)) * (maxFontSize - minFontSize)) + minFontSize
   }
 
   function handleTagClick(tag) {
@@ -36,7 +32,7 @@ const TagCloud = ({ selectTag, tags }) => {
           whileHover={{ scale: 1.1, rotate: '3deg' }}
           key={tag.id}
           onClick={() => handleTagClick(tag.topic)}
-          size={2}
+          size={getFontSize(tag.count)}
         >{tag.topic}</Tag>
       ))
       }

@@ -25,7 +25,6 @@ export const Explore = () => {
 
   /* Functions */
   function selectTag(tag) {
-    console.log(guides.guides)
     setFilteredGuides(guides.guides.filter(guide => {
       return guide.topics.find(topic => topic.topic === tag);
     }))
@@ -45,16 +44,18 @@ export const Explore = () => {
     }))
   }
 
-
-
   /* Effects */
   useEffect(() => {
     if (!guides) return
     let topicsArr = []
-    guides.guides.map(guide => {
+    guides.topics.map(topic => {
       return topicsArr = [
         ...topicsArr,
-        ...guide.topics
+        {
+          id: topic.id,
+          topic: topic.topic,
+          count: topic.guides.length
+        }
       ]
     })
     setTopics(topicsArr);

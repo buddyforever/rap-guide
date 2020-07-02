@@ -16,7 +16,15 @@ export const GET_ALL_GUIDES = gql`
         }
       }
     }
+    topics{
+      id
+      topic
+      guides{
+        id
+      }
+    }
   }
+
 `
 
 export const GET_GUIDE_BY_ID = gql`

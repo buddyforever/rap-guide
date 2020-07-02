@@ -25,7 +25,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
       {
         isAuthenticated &&
         <>
-          {/*<NavLink to="/profile" activeClassName="active" onClick={toggleMenu}>Profile</NavLink>*/}
+          <NavLink to="/profile" activeClassName="active" onClick={toggleMenu}>Profile</NavLink>
           <button onClick={logout}>Logout</button>
         </>
       }

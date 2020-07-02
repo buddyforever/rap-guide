@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { Button } from '../Button'
 import { motion } from 'framer-motion'
 
-const ConfirmButton = ({ children, onConfirm, onClick = null, ...rest }) => {
+const ConfirmButton = ({ children, onConfirm, preClick = null, ...rest }) => {
 
   /* Theme Context */
   const themeContext = useContext(ThemeContext);
@@ -12,15 +12,17 @@ const ConfirmButton = ({ children, onConfirm, onClick = null, ...rest }) => {
   /* State */
   const [confirm, setConfirm] = useState(false)
 
-  function toggleConfirm() {
-    if (onClick) {
-      onClick(!confirm)
+  function toggleConfirm(e) {
+    e.preventDefault()
+    if (preClick) {
+      let check = preClick(!confirm)
+      if (!check) return
     }
     setConfirm(prevState => !prevState)
   }
 
   function handleConfirm() {
-    toggleConfirm()
+    setConfirm(false)
     onConfirm()
   }
 

@@ -1,17 +1,19 @@
 import React, { useState, useEffect, useContext } from 'react'
-import { StyledContent, Heading, TwoGrid } from '../../styles/PageStyles'
+import { motion, AnimatePresence } from 'framer-motion'
+
+import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { FormBlock, ButtonBlock, Form } from '../../styles/FormStyles'
-import { Button } from '../ui/Button'
-import auth from '../../auth/auth'
 import { UserContext } from '../../context/UserContext'
-import Message from '../Layout/Message'
+import { Message, Button } from '../ui'
 import Loader from '../Loader'
+import { AnimalChooser } from '../AnimalChooser'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_ACCOUNT_BY_EMAIL, UPDATE_ACCOUNT } from '../../queries/accounts'
 
+import { animals } from '../../data/animals'
+
 export const Profile = () => {
-  console.log("here");
   /* Context */
   const { user, setUser } = useContext(UserContext);
 
@@ -24,54 +26,69 @@ export const Profile = () => {
   const [updateAccount] = useMutation(UPDATE_ACCOUNT);
 
   /* State */
-  const [displayName, setDisplayName] = useState("");
+  const [displayName, setDisplayName] = useState(null)
 
   /* Helpers */
   const [message, setMessage] = useState(null);
 
   /* Functions */
-  function saveProfile(e) {
-    e.preventDefault();
+  function handleSelectAnimal(animal) {
+    let num = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+    let display = animal.replace(/\s+/g, '-').toLowerCase() + "-" + num;
 
     // Update Database
     updateAccount({
       variables: {
         email: user.email,
-        displayName
+        type: user.type,
+        displayName: display
       }
     }).then((response) => {
-      console.log(response)
       setMessage({
-        text: "Your profile has been saved."
+        type: 'success',
+        title: 'Profile Saved',
+        text: `Your profile has been saved. Your display name is <strong>${display}</strong>.`
       })
     })
   }
 
   useEffect(() => {
     if (!loading) {
-      setDisplayName(data.getAccount.displayName)
+      setDisplayName(data.account.displayName || "")
     }
   }, [data])
 
   if (loading) return <Loader />
   return (
-    <StyledContent>
+    <StyledContent style={{ marginBottom: "5rem" }}>
       <Heading>
         <h1 style={{ display: "flex", alignItems: "center" }}>
-          <img src={user.image} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {user.nameFirst} {user.nameLast}
+          <img src={user.picture} alt="Profile" style={{ maxHeight: "6rem", marginRight: "1rem", borderRadius: "50%" }} /> {user.given_name} {user.family_name} {displayName && <span style={{ marginLeft: "2.5rem", fontSize: "1.8rem" }}>({displayName})</span>}
         </h1>
       </Heading>
-      <Form onSubmit={saveProfile}>
-        <Message message={message} />
-        <FormBlock>
-          <label>Display Name</label>
-          <input type="text" placeholder="Display Name" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        </FormBlock>
-        <ButtonBlock>
-          <Button>Save Profile</Button>
-        </ButtonBlock>
-      </Form>
-    </StyledContent>
+      {displayName &&
+        <p>Your anonymous animal display name is <strong>{displayName}</strong></p>
+      }
+      {!displayName &&
+        <Form>
+          <MediumSpace>
+            <p>Your identity will be kept a secret from your classmates through the use of an animal display name. Select your own animal by searching through the available names, or get one chosen for you at random.</p>
+            <p><strong>Once you choose an animal you can't change it, so choose wisely!</strong></p>
+          </MediumSpace >
+          <AnimalChooser selectAnimal={handleSelectAnimal} />
+        </Form >
+      }
+      {
+        message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
+    </StyledContent >
   )
 }
 
