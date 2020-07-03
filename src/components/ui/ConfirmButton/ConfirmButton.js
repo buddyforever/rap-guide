@@ -16,7 +16,7 @@ const ConfirmButton = ({ children, onConfirm, preClick = null, ...rest }) => {
     e.preventDefault()
     if (preClick) {
       let check = preClick(!confirm)
-      if (!check) return
+      if (check === false) return
     }
     setConfirm(prevState => !prevState)
   }

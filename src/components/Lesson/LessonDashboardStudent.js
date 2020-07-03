@@ -1,5 +1,6 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { UserContext } from '../../context/UserContext'
+import styled from 'styled-components'
 
 import { useStateWithName } from '../Hooks/useStateWithName'
 import { StyledMovingColumn, Heading, MediumSpace, StyledContent, HtmlContent, StyledColumns } from '../../styles/PageStyles'
@@ -270,7 +271,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
                 </div>
               }
               {annotation && (!selectedLyrics || selectedLyrics.length === 0) &&
-                <div>
+                <StyledAnnotation>
                   {annotation.isSubmitted &&
                     <div>
                       <h6 style={{ margin: "1rem 0" }}>Lyrics</h6>
@@ -305,7 +306,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
                       ))}
                     </MediumSpace>
                   }
-                </div>
+                </StyledAnnotation>
               }
               {item &&
                 <div dangerouslySetInnerHTML={{ __html: item }} />
@@ -344,3 +345,15 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
 
 export default LessonDashboardStudent
 
+const StyledAnnotation = styled.div`
+  img.left {
+    margin-right: 10px;
+  }
+  img.right {
+    margin-left: 10px;
+  }
+  img.center {
+    display: block;
+    margin: 0 auto;
+  }
+`

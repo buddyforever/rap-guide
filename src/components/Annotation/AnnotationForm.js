@@ -1,9 +1,9 @@
 import React, { useState, useContext, useEffect } from 'react'
 import styled from 'styled-components'
+import { Editor } from '@tinymce/tinymce-react';
 
 import { ButtonBlock } from '../../styles/FormStyles'
 import { Heading, MediumSpace } from '../../styles/PageStyles'
-import { Editor } from '@tinymce/tinymce-react';
 import { ConfirmButton } from '../ui/ConfirmButton'
 import { dateFormat } from '../../utilities/DateFormat'
 import { UserContext } from '../../context/UserContext'
@@ -114,11 +114,37 @@ export const AnnotationForm = ({
             menubar: false,
             plugins: [
               'advlist autolink lists link image charmap print preview anchor',
-              'searchreplace visualblocks code fullscreen',
+              'searchreplace visualblocks code fullscreen image',
               'insertdatetime media table paste code help wordcount'
             ],
+            a11y_advanced_options: true,
+            content_style: 'img.left { float: left; margin-right: 10px } ' +
+              'img.right { float: right; margin-left: 10px } ' +
+              'img.center { display: block; margin: 0 auto; } ',
+            formats: {
+              alignleft: { selector: 'img', classes: 'left' },
+              aligncenter: { selector: 'img', classes: 'center' },
+              alignright: { selector: 'img', classes: 'right' }
+            },
             toolbar:
-              'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+              'undo redo | formatselect | link | bold italic image | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+            images_upload_handler: async function (blobInfo, success, failure, progress) {
+              const data = new FormData()
+              data.append('file', blobInfo.blob(), blobInfo.filename())
+              data.append('upload_preset', 'rap_guide_annotation')
+
+              const response = await fetch(
+                '	https://api.cloudinary.com/v1_1/burtonmedia/image/upload',
+                {
+                  method: "POST",
+                  body: data
+                }
+              )
+
+              const file = await response.json()
+
+              success(file.secure_url);
+            }
           }}
           onEditorChange={handleEditorChange}
         />
@@ -134,7 +160,7 @@ export const AnnotationForm = ({
                 onClick={handleSaveAnnotation}>Save</Button>
             }
             <ConfirmButton
-              onClick={(checked) => setIsSubmit(checked)}
+              preClick={(checked) => setIsSubmit(checked)}
               onConfirm={handleSubmitAnnotation}>Submit for Review</ConfirmButton>
           </div>
         }
