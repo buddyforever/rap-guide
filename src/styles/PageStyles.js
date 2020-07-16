@@ -247,6 +247,7 @@ export const StyledMovingColumn = styled.div`
   }
 
   .content {
+    width: 100%;
     position: absolute;
     padding-left: 2rem;
     border-left: 3px solid #DD3333;

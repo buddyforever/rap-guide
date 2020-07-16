@@ -8,6 +8,8 @@ export const GET_ACCOUNT_BY_EMAIL = gql`
       id
       type
       displayName
+      isPublic
+      twitter
     }
   }
 `
@@ -43,13 +45,22 @@ export const CREATE_ACCOUNT = gql`
 `
 
 export const UPDATE_ACCOUNT = gql`
-  mutation updateAccount($email: String!,$displayName: String!, $type: String!) {
+  mutation updateAccount(
+    $email: String!,
+    $displayName: String!,
+    $type: String!,
+    $isPublic: Boolean!,
+    $twitter: String!,
+    $nameFirst: String!) {
     updateAccount(
       where: { email: $email }
       data: {
       status: PUBLISHED
       type: $type
       displayName: $displayName
+      isPublic: $isPublic
+      twitter: $twitter
+      nameFirst: $nameFirst
     }) {
       id
       displayName

@@ -91,8 +91,11 @@ export const GET_LESSON_BY_ID = gql`
         email
         nameFirst
         nameLast
+        displayName
+        isPublic
+        twitter
         type
-        annotations {
+        annotations(where: { lesson: {id: $id }}) {
           id
           annotation
           isSubmitted
@@ -103,6 +106,9 @@ export const GET_LESSON_BY_ID = gql`
             id
             nameFirst
             nameLast
+            displayName
+            isPublic
+            twitter
             email
           }
           lyrics {
@@ -115,7 +121,7 @@ export const GET_LESSON_BY_ID = gql`
       lyrics {
         id
         lyric
-        notes {
+        notes(where: { lesson: {id: $id }}) {
           id
           note
           isExample
@@ -125,7 +131,7 @@ export const GET_LESSON_BY_ID = gql`
             order
           }
         }
-        annotations {
+        annotations(where: { lesson: {id: $id }}) {
           id
           annotation
           updatedAt
@@ -136,6 +142,9 @@ export const GET_LESSON_BY_ID = gql`
             id
             nameFirst
             nameLast
+            displayName
+            isPublic
+            twitter
             email
             image
           }
@@ -151,6 +160,9 @@ export const GET_LESSON_BY_ID = gql`
               id
               nameFirst
               nameLast
+              displayName
+              isPublic
+              twitter
               image
               email
             }

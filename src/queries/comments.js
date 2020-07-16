@@ -1,14 +1,16 @@
 import gql from 'graphql-tag'
 
 export const CREATE_COMMENT = gql`
-  mutation createcomment(
+  mutation createComment(
     $comment: String!,
     $annotationId: ID!,
-    $account: ID!
+    $account: ID!,
+    $isPublic: Boolean!
   ){
-    createcomment(data: {
+    createComment(data: {
       status:PUBLISHED
       comment: $comment
+      isPublic: $isPublic
       annotation:{
         connect: { id: $annotationId }
       }
@@ -19,10 +21,10 @@ export const CREATE_COMMENT = gql`
       id
       updatedAt
       comment
+      isPublic
       account {
-        nameFirst
-        nameLast
-        image
+        id
+        displayName
       }
     }
   }

@@ -1,6 +1,8 @@
 import React, { useContext, useState, useEffect, useRef } from 'react'
 import { UserContext } from '../../context/UserContext'
 import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
 
 import { useStateWithName } from '../Hooks/useStateWithName'
 import { StyledMovingColumn, Heading, MediumSpace, StyledContent, HtmlContent, StyledColumns } from '../../styles/PageStyles'
@@ -227,7 +229,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
       }
       {!["In Session", "Closed *"].includes(lesson.lessonStatus) &&
         <HtmlContent>
-          <MediumSpace><p style={{ fontSize: "20px", textAlign: "center" }}>This lesson is now closed. Thank you for your participation. Annotation voting is now open so check out your fellow students work below and show your support by clicking like beside your favorite annotations!</p></MediumSpace>
+          <MediumSpace><p style={{ fontSize: "20px", textAlign: "center", margin: "0 auto" }}>This lesson is now <strong>closed</strong>. Thank you for your participation. Annotation voting is now open so check out your fellow students work below and show your support by clicking <strong style={{ color: "#DD3333" }}><FontAwesomeIcon icon={faThumbsUp} /> like</strong> beside your favorite annotations!</p></MediumSpace>
         </HtmlContent>
       }
 
@@ -289,7 +291,7 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
                   }
                   <h3 style={{ margin: "1rem 0" }}>Annotation</h3>
                   <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
-                  {annotation.isSubmitted &&
+                  {annotation.isSubmitted && !annotation.isApproved &&
                     <span className="primary">* SUBMITTED FOR REVIEW</span>
                   }
                   {!annotation.isSubmitted && !annotation.isApproved &&

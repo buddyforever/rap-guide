@@ -4,7 +4,7 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 
-const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
+const Lyric = ({ lyric, selected = false, isSelectable = false, isPublic = false, ...rest }) => {
 
   let isAssigned = lyric.annotations
   let isAnnotated = lyric.annotations && lyric.annotations.length > 0
@@ -19,12 +19,13 @@ const Lyric = ({ lyric, selected = false, isSelectable = false, ...rest }) => {
   }
 
   /* Handle adding any necessary classes */
-  let classes = []
+  let classes = ["lyric"]
   if (isAssigned) classes.push("assigned");
   if (isAnnotated) classes.push("annotated");
   if (isSubmitted) classes.push("submitted");
   if (isExample) classes.push("example");
   if (selected) classes.push("selected");
+  if (isPublic) classes.push("public")
   if (hasNote) classes.push("noted");
   if (isSelectable || isAssigned || isAnnotated || isSubmitted) classes.push("selectable");
 
@@ -67,8 +68,6 @@ const StyledLyric = styled.div`
 
   &.noted {
     background-color: #CBD5E0;
-
-    &:hover
   }
 
   &.selected {
@@ -83,13 +82,17 @@ const StyledLyric = styled.div`
     }
   }
 
-  &.annotated {
+  &.annotated:not(.public) {
     box-shadow: inset 0 -6px rgba(221, 51, 51, 0.5);
 
     &:hover {
       background-color: rgba(221, 51, 51, 0.5);
       color: black;
     }
+  }
+
+  &.annotated.public {
+    background-color: #baccd1;
   }
 
   &.example {

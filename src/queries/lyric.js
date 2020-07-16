@@ -17,14 +17,40 @@ export const GET_LESSON_LYRICS_BY_GUIDE_ID = gql`
       lyric
       order
       bar
-      annotations(where: {
-        lesson: {
-          id: $lessonID
-        }
-        isApproved:true
+      annotations(
+        where: {
+          lesson: {
+            id: $lessonID
+          }
+          #isApproved:true
       }) {
         id
-        annotations
+        annotation
+        lyrics {
+          id
+          lyric
+          order
+        }
+        comments {
+          id
+          updatedAt
+          comment
+          account {
+            id
+            displayName
+          }
+        }
+        updatedAt
+        account {
+          id
+          displayName
+        }
+        likes {
+          id
+          account {
+            id
+          }
+        }
       }
     }
   }

@@ -8,10 +8,11 @@ export const dateFormat = (dateAsString, type = 'short') => {
     ampm = "PM"
   }
   let minutes = (date.getMinutes() < 10 ? '0' : '') + date.getMinutes();
+  let month = date.getMonth() + 1
 
   switch (type) {
     case 'short':
-      return date.getMonth() + "/" + date.getDate() + "/" + date.getFullYear() + " at " + hours + ":" + minutes + " " + ampm;
+      return month + "/" + date.getDate() + "/" + date.getFullYear() + " at " + hours + ":" + minutes + " " + ampm;
     default:
       return date;
   }

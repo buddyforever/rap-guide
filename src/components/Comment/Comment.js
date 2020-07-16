@@ -10,20 +10,31 @@ export const Comment = ({
   account
 }) => {
 
-  let name = account.nameFirst + ' ' + account.nameLast;
+  let name = account.displayName || 'anonymous'
+  let url = ""
+  if (account.isPublic) {
+    name = account.nameFirst
+    if (account.twitter.length) {
+      url = `https://www.twitter.com/${account.twitter}`
+    }
+  }
 
   return (
     <StyledComment id={id}>
-      <div className="comment_image">
-        <img src={account.image} alt={name} />
-      </div>
       <div className="comment_text">
         {comment}
-        <div className="comment_author">
-          posted by {name} on {dateFormat(updatedAt)}
-        </div>
+        {account.isPublic && account.twitter.length && (
+          <div className="comment_author">
+            posted by <a target="_blank" href={url}>{name}</a> on {dateFormat(updatedAt)}
+          </div>
+        )}
+        {(!account.twitter.length || !account.isPublic) && (
+          <div className="comment_author">
+            posted by {name} on {dateFormat(updatedAt)}
+          </div>
+        )}
       </div>
-    </StyledComment>
+    </StyledComment >
   )
 }
 

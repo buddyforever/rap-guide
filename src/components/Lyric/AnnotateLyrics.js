@@ -48,6 +48,7 @@ const AnnotateLyrics = ({
       {lyrics.map(lyric => {
         nextBar = (currentBar !== lyric.bar);
         currentBar = lyric.bar;
+        let isSubmitted = false;
         let isSelected =
           selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id) ? true : false
         let isAssigned =
@@ -57,6 +58,7 @@ const AnnotateLyrics = ({
         if (lyric.annotations && lyric.annotations.length) {
           relatedName = lyric.annotations[0].id
           isAnnotated = true
+          isSubmitted = lyric.annotations[0].isSubmitted
         }
         if (!relatedName && lyric.notes && lyric.notes.length) {
           relatedName = lyric.notes[0].id
@@ -102,6 +104,7 @@ const AnnotateLyrics = ({
                 }}
                 onClick={(e) => {
                   if (lyric.isExample) return;
+                  if (isSubmitted) return;
                   const pos = e.target.getBoundingClientRect();
                   const maxY = documentOffset(e.target).top - window.scrollY - 130; // How far up I can move
                   handleClick(lyric, pos.y, maxY);
