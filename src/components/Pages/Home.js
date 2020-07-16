@@ -58,7 +58,7 @@ export const Home = () => {
               <div className="hidden">
                 <p>Rap Guides can be enjoyed by anyone, but they also points towards a body of knowledge that can only be fully understood through reading and study.</p>
 
-                <p>Rap Guide are corroborated, citing information drawn from reliable sources, to the best of the artist’s knowledge. If a song is developed in consultation with an academic expert, it can also be called a “peer reviewed rap”.</p>
+                <p>Rap Guides are corroborated, citing information drawn from reliable sources, to the best of the artist’s knowledge. If a song is developed in consultation with an academic expert, it can also be called a “peer reviewed rap”.</p>
 
                 <p>These songs integrate the editorial perspective, creative vision, and stylistic and rhetorical choices of the artist, but they do not knowingly communicate falsehoods.</p>
 

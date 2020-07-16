@@ -34,7 +34,7 @@ export const Comment = ({
           </div>
         )}
       </div>
-    </StyledComment >
+    </StyledComment>
   )
 }
 
