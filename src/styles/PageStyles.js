@@ -9,6 +9,8 @@ export const StyledContent = styled.div`
   max-width: 1100px;
   padding: 0 50px;
   margin: 0 auto;
+  position: relative;
+
 
   p {
     margin: 1rem 0;

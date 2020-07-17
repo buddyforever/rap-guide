@@ -156,13 +156,18 @@ export const Request = () => {
           display: "flex",
           alignItems: "center"
         }}>
+        <StyledVideoBackground>
+          <div className="content-foreground">
+            <iframe title="Commission Video" src="https://www.youtube.com/embed/YMYrqOGCQo0?controls=0&autoplay=1&mute=1&loop=1&playlist=YMYrqOGCQo0" frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+          </div>
+        </StyledVideoBackground>
         <StyledContent>
           <StyledColumns>
             <MediumSpace style={{ fontSize: "18px" }}>
               <Heading>
                 <h1>Commission a Video</h1>
               </Heading>
-              <p>If a Rap Guide song and video doesn’t exist for a topic you wish the world knew more about, <Link to="/contact">contact us</Link> with the details and we can work together to produce it.</p>
+              <StyledParagraph>If a Rap Guide song and video doesn’t exist for a topic you wish the world knew more about, <Link to="/contact">contact us</Link> with the details and we can work together to produce it.</StyledParagraph>
             </MediumSpace>
             <MediumSpace style={{ textAlign: "center" }}>
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 209 233"><title>baba-rapguide-com</title><g id="Layer_1" data-name="Layer 1"><path fill="#FFFFFF" d="M122.66,111.32C146.43,92.46,157,66,157.16,27H140.83c0,3-.1,5.89-.24,8.74H66.72C66.57,32.9,66.5,30,66.49,27H50.16c.12,36.22,9.27,61.63,29.61,80.18a155.23,155.23,0,0,1,17.4-11.07A72.29,72.29,0,0,1,81.31,81.29h44.81c-7,9-17.05,16.88-31.41,23.83-44.54,21.55-45.4,89.56-45.34,97.82H65.7q0-6.47.7-12.87H141c.42,4.27.64,8.57.64,12.87H158C158,195.36,157.25,137.43,122.66,111.32ZM69,54.29a103.19,103.19,0,0,1-1.8-11.44h72.83a100.86,100.86,0,0,1-1.78,11.44Zm7.45,19.89A65.05,65.05,0,0,1,70.9,61.4h65.55a64.9,64.9,0,0,1-5.63,12.78Zm23.89,50.94c1.13-.54,2.17-1.13,3.27-1.69,1.09.56,2.16,1.14,3.29,1.69a47.84,47.84,0,0,1,18.19,16H82.29A47.43,47.43,0,0,1,100.38,125.12ZM77.93,148.21h51.59a89.22,89.22,0,0,1,6.21,14.86h-64a89.15,89.15,0,0,1,6.19-14.86ZM140.14,183H67.25c.63-4.32,1.46-8.59,2.49-12.78h68C138.71,174.37,139.53,178.64,140.14,183Z" /></g></svg>
@@ -320,3 +325,30 @@ const Search = styled.div`
   }
 `
 
+const StyledVideoBackground = styled.div`
+    position: absolute;
+    left: 0;
+    top: 0;
+    opacity: 0.3;
+
+    .content-foreground {
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+
+      @media only screen and (max-width: 950px){
+        display: none;
+      }
+
+      iframe {
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+      }
+    }
+`
+
+const StyledParagraph = styled.p`
+  text-shadow: 3px 3px 2px rgba(0,0,0,1);
+`
