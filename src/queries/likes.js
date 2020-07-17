@@ -31,3 +31,23 @@ export const DELETE_LIKE = gql`
   }
 `
 
+export const GET_LESSON_LIKES_BY_ACCOUNT = gql`
+  query getLikes(
+    $accountid: ID!,
+  	$lessonid: ID!
+  ) {
+    likes(where: {
+      account: {
+        id:$accountid
+      }
+      annotation: {
+        lesson:{
+          id: $lessonid
+        }
+      }
+    }
+    ) {
+			id
+    }
+  }
+`

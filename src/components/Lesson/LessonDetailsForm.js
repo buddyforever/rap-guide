@@ -20,6 +20,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
   const [lessonTitle, setLessonTitle] = useState(lesson.lessonTitle || "")
   const [lessonDescription, setLessonDescription] = useState(lesson.lessonDescription || "<p></p>")
   const [maxStudents, setMaxStudents] = useState(lesson.maxStudents || '')
+  const [minLikes, setMinLikes] = useState(lesson.minLikes || '')
   const [topics, setTopics] = useState(lesson.topics || [])
   const [topic, setTopic] = useState("")
 
@@ -35,6 +36,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
     if (!lessonTitle.length) errors = ["Please enter a title", ...errors]
     if (!lessonDescription.length) errors = ["Please enter a description", ...errors]
     if (isNaN(maxStudents)) errors = ["Please enter the maximum number of students", ...errors]
+    if (isNaN(minLikes)) errors = ["Please enter the minimum number of annotation likes a student needs to complete the lesson", ...errors]
     if (errors.length) {
       setMessage({
         type: "error",
@@ -57,7 +59,8 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
       },
       accounts: [{
         id: user.id
-      }]
+      }],
+      minLikes: parseInt(minLikes)
     });
   }
 
@@ -155,6 +158,16 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
           value={maxStudents}
           onChange={(e) => setMaxStudents(e.target.value)}
           placeholder="20..." />
+      </FormBlock>
+
+      <FormBlock>
+        <h3>Likes/Upvotes</h3>
+        <p>Enter the minimum number of annotation likes a student needs to complete the lesson.</p>
+        <input
+          type="number"
+          value={minLikes}
+          onChange={(e) => setMinLikes(e.target.value)}
+          placeholder="3..." />
       </FormBlock>
 
       <FormBlock style={{ display: "none" }}>

@@ -197,6 +197,12 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
               </Data>
               <span>Submitted annotations</span>
             </p>
+            <p>
+              <Data>
+                {lesson.minLikes}
+              </Data>
+              <span>Likes/Upvotes needed per student</span>
+            </p>
           </div>
           <div>
             {/*
@@ -253,6 +259,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
           return (
             <Student key={account.id}>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
+              <div><strong>{account.likes.length}</strong> liked annotations</div>
               <div>
                 {(
                   !hasAnnotations ||
@@ -303,7 +310,7 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
             approveAnnotation={handleApproveAnnotation} />
         }
       </Modal>
-    </StyledContent>
+    </StyledContent >
   )
 }
 

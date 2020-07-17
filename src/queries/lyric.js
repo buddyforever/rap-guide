@@ -38,6 +38,9 @@ export const GET_LESSON_LYRICS_BY_GUIDE_ID = gql`
           account {
             id
             displayName
+            nameFirst
+            isPublic
+            twitter
           }
         }
         updatedAt

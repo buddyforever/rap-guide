@@ -14,8 +14,9 @@ import AnnotationForm from '../Annotation/AnnotationForm'
 import { Message } from '../ui/Message'
 import { Comment } from '../Comment/Comment'
 
-import { useMutation } from '@apollo/react-hooks'
+import { useMutation, useQuery } from '@apollo/react-hooks'
 import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
+import { GET_LESSON_LIKES_BY_ACCOUNT } from '../../queries/likes'
 
 const LessonDashboardStudent = ({ lesson, refetch }) => {
 
@@ -42,6 +43,12 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
   /* Queries */
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
   const [updateAnnotation] = useMutation(UPDATE_ANNOTATION)
+  const { loading, data: likes, refetch: refetchLikeCount } = useQuery(GET_LESSON_LIKES_BY_ACCOUNT, {
+    variables: {
+      accountid: user.id,
+      lessonid: lesson.id
+    }
+  })
 
   function handleSaveAnnotation(annotationToSave, isSubmitted) {
     setIsSaving(true)
@@ -230,6 +237,13 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
       {!["In Session", "Closed *"].includes(lesson.lessonStatus) &&
         <HtmlContent>
           <MediumSpace><p style={{ fontSize: "20px", textAlign: "center", margin: "0 auto" }}>This lesson is now <strong>closed</strong>. Thank you for your participation. Annotation voting is now open so check out your fellow students work below and show your support by clicking <strong style={{ color: "#DD3333" }}><FontAwesomeIcon icon={faThumbsUp} /> like</strong> beside your favorite annotations!</p></MediumSpace>
+          {!loading && likes &&
+            <MediumSpace>
+              <p style={{ fontSize: "20px", textAlign: "center", margin: "0 auto" }}>
+                You have liked <strong style={{ color: "#DD3333" }}>{likes.likes.length}</strong> annotation{likes.likes.length > 1 && "s"}. This lesson requires you to like at least <strong style={{ color: "#DD3333" }}>{lesson.minLikes || 0}</strong> annotations to fully complete.
+              </p>
+            </MediumSpace>
+          }
         </HtmlContent>
       }
 

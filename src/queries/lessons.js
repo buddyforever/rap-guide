@@ -9,6 +9,7 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
       lessonStatus
       maxStudents
       dueDate
+      minLikes
       accounts {
         id
         image
@@ -85,6 +86,7 @@ export const GET_LESSON_BY_ID = gql`
       lessonStatus
       maxStudents
       dueDate
+      minLikes
       accounts {
         id
         image
@@ -194,7 +196,7 @@ export const GET_LESSON_BY_ID = gql`
 `
 
 export const GET_LESSON_STUDENTS = gql`
-  query getAccounts($id: ID!) {
+query getAccounts($id: ID!) {
     accounts(where: {
       type_not: "educator"
       lessons_some: {
@@ -206,6 +208,15 @@ export const GET_LESSON_STUDENTS = gql`
       nameLast
       email
       image
+      likes(where: {
+        annotation: {
+          lesson: {
+            id: $id
+          }
+        }
+      }) {
+        id
+      }
       annotations(where: {
         lesson: {
           id: $id
@@ -252,7 +263,8 @@ export const CREATE_LESSON = gql`
     $lessonDescription:String!,
     $maxStudents: Int!,
     $guide: GuideWhereUniqueInput!,
-    $accounts: [AccountWhereUniqueInput!]
+    $accounts: [AccountWhereUniqueInput!],
+    $minLikes: Int!
   ) {
     createLesson(data: {
       status: PUBLISHED
@@ -262,6 +274,7 @@ export const CREATE_LESSON = gql`
       maxStudents: $maxStudents
       guide: { connect: $guide }
       accounts: { connect: $accounts }
+      minLikes: $minLikes
     }){
     id
     }
@@ -273,7 +286,8 @@ export const UPDATE_LESSON_DETAILS = gql`
     $id: ID!,
     $lessonTitle:String!,
     $lessonDescription:String!,
-    $maxStudents: Int!
+    $maxStudents: Int!,
+    $minLikes: Int!
   ) {
     updateLesson(
       where: { id: $id }
@@ -282,6 +296,7 @@ export const UPDATE_LESSON_DETAILS = gql`
         lessonTitle: $lessonTitle
         lessonDescription: $lessonDescription
         maxStudents: $maxStudents
+        minLikes: $minLikes
       }){
     id
     }

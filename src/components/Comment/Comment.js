@@ -23,12 +23,12 @@ export const Comment = ({
     <StyledComment id={id}>
       <div className="comment_text">
         {comment}
-        {account.isPublic && account.twitter.length && (
+        {account.isPublic && account.twitter && (
           <div className="comment_author">
             posted by <a target="_blank" href={url}>{name}</a> on {dateFormat(updatedAt)}
           </div>
         )}
-        {(!account.twitter.length || !account.isPublic) && (
+        {(!account.twitter || !account.twitter.length || !account.isPublic) && (
           <div className="comment_author">
             posted by {name} on {dateFormat(updatedAt)}
           </div>

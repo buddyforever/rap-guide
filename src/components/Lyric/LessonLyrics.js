@@ -169,6 +169,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
   }
 
   function showAnnotation(annotations, index, lyricsHeight, arrowTop, maxY) {
+    if (!annotations || !annotations.length) return
     setSelectedAnnotations(annotations)
     setCurrentAnnotation(index)
     highlightLyrics(annotations[index].lyrics)
@@ -212,6 +213,20 @@ const LessonLyrics = ({ guideID, lessonID }) => {
     }).then(response => {
       refetch()
       setComment("")
+      let newState = selectedAnnotations.map(annotation => {
+        if (annotation.id === selectedAnnotations[currentAnnotation].id) {
+          return {
+            ...annotation,
+            comments: [
+              ...selectedAnnotations[currentAnnotation].comments,
+              response.data.createComment
+            ]
+          }
+        } else {
+          return annotation
+        }
+      })
+      setSelectedAnnotations(newState)
     })
   }
 
@@ -307,8 +322,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: selectedAnnotations[currentAnnotation].annotation }} />
                 <div className="author">
-                  by {selectedAnnotations[currentAnnotation].account.displayName || 'anonymous'}
-                at {dateFormat(selectedAnnotations[currentAnnotation].updatedAt)}
+                  by {selectedAnnotations[currentAnnotation].account.displayName || 'anonymous'} at {dateFormat(selectedAnnotations[currentAnnotation].updatedAt)}
                 </div>
                 <div className="likes">
                   <span
