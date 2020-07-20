@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useParams } from "react-router-dom"
 
 import LessonDashboardTeacher from '../Lesson/LessonDashboardTeacher'
@@ -10,6 +10,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { GET_LESSON_BY_ID } from '../../queries/lessons'
 
 export const Lesson = () => {
+
+  const [viewMode, setViewMode] = useState(false)
 
   /* Context */
   // TODO check to see if the user has access
@@ -28,8 +30,8 @@ export const Lesson = () => {
   if (loading) return <Loader />
   return (
     <>
-      {user && user.type === 'educator' ?
-        <LessonDashboardTeacher lesson={data.lesson} refetch={refetch} /> : (<LessonDashboardStudent lesson={data.lesson} refetch={refetch} />)
+      {!viewMode && user && user.type === 'educator' ?
+        <LessonDashboardTeacher setViewMode={setViewMode} lesson={data.lesson} refetch={refetch} /> : (<LessonDashboardStudent setViewMode={setViewMode} lesson={data.lesson} refetch={refetch} />)
       }
     </>
   )

@@ -29,7 +29,7 @@ const domain = window.location.port ?
   window.location.protocol + "//" + window.location.hostname + ":" + window.location.port :
   window.location.protocol + "//" + window.location.hostname
 
-const LessonDashboardTeacher = ({ lesson, refetch }) => {
+const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
 
   /* Queries */
   const { data, loading, refetch: refetchStudents } = useQuery(GET_LESSON_STUDENTS, {
@@ -173,6 +173,11 @@ const LessonDashboardTeacher = ({ lesson, refetch }) => {
             <Link to={"/lesson/edit/" + lesson.id}>
               <Button>Edit Lesson</Button>
             </Link>
+            <Button
+              style={{ marginLeft: "1rem" }}
+              onClick={() => setViewMode(true)}>
+              View Lesson
+            </Button>
           </div>
         </Split>
       </Heading>

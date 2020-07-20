@@ -1,7 +1,8 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import styled from 'styled-components'
 
 import { dateFormat } from '../../utilities/DateFormat'
+import { UserContext } from '../../context/UserContext'
 
 export const Comment = ({
   id,
@@ -9,6 +10,8 @@ export const Comment = ({
   updatedAt,
   account
 }) => {
+
+  const { user } = useContext(UserContext);
 
   let name = account.displayName || 'anonymous'
   let url = ""
@@ -33,6 +36,7 @@ export const Comment = ({
             posted by {name} on {dateFormat(updatedAt)}
           </div>
         )}
+        {/* {account.id === user.id && <button>remove</button>} */}
       </div>
     </StyledComment>
   )

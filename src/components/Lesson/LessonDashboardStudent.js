@@ -13,12 +13,13 @@ import Loader from '../Loader'
 import AnnotationForm from '../Annotation/AnnotationForm'
 import { Message } from '../ui/Message'
 import { Comment } from '../Comment/Comment'
+import { Button } from '../ui'
 
 import { useMutation, useQuery } from '@apollo/react-hooks'
 import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
 import { GET_LESSON_LIKES_BY_ACCOUNT } from '../../queries/likes'
 
-const LessonDashboardStudent = ({ lesson, refetch }) => {
+const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
 
   /* Refs */
   const ref = useRef();
@@ -228,6 +229,12 @@ const LessonDashboardStudent = ({ lesson, refetch }) => {
       <Heading>
         <h1 style={{ textAlign: "center" }}>{lesson.lessonTitle}</h1>
       </Heading>
+
+      {user && user.type === 'educator' && (
+        <div style={{ textAlign: "center" }}>
+          <Button onClick={() => setViewMode(false)}>Back to Teacher Dashboard</Button>
+        </div>
+      )}
 
       {["In Session", "Closed *"].includes(lesson.lessonStatus) &&
         <HtmlContent>

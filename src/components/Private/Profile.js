@@ -16,7 +16,7 @@ import { animals } from '../../data/animals'
 export const Profile = () => {
   /* Context */
   const { user, setUser } = useContext(UserContext);
-  console.log(user);
+
   /* Queries */
   const { loading, data } = useQuery(GET_ACCOUNT_BY_EMAIL, {
     variables: {
