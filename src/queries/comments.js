@@ -29,3 +29,15 @@ export const CREATE_COMMENT = gql`
     }
   }
 `
+
+export const DELETE_COMMENT = gql`
+  mutation deleteComment(
+    $id: ID!
+  ){
+    deleteComment(where: {
+      id: $id
+    }){
+      id
+    }
+  }
+`

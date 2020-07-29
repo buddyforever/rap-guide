@@ -12,6 +12,7 @@ import { About, Contact, Lessons, Login, PageNotFound, Request, Explore, Temp, H
 import LessonSignup from './components/Lesson/LessonSignup'
 import PrivateRoute from './auth/PrivateRoute'
 import Lesson from './components/Private/Lesson'
+import Annotations from './components/Private/Annotations'
 import AddLesson from './components/Lesson/AddLesson'
 import EditLesson from './components/Lesson/EditLesson.js'
 import Profile from './components/Private/Profile'
@@ -81,6 +82,13 @@ function App() {
                   path="/lesson/:id"
                   component={Lesson}
                   authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404" />
+                <PrivateRoute
+                  path="/annotations/:id"
+                  component={Annotations}
+                  authenticationPath="/annotations"
                   isAuthenticated={auth.isAuthenticated()}
                   isAllowed={auth.isAuthenticated()}
                   restrictedPath="/404" />

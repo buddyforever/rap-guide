@@ -147,3 +147,54 @@ export const UPDATE_ANNOTATION = gql`
     }
   }
 `
+
+export const GET_ANNOTATIONS_BY_LESSON_ID = gql`
+  query getAnnotations(
+    $id: ID!
+  ) {
+    annotations(
+      where: {
+      lesson: {
+	      id: $id
+      }
+      isSubmitted: true
+    }){
+      id
+      annotation
+      isSubmitted
+      isApproved
+      isRequestRevisions
+      lyrics {
+        lyric
+      }
+      updatedAt
+      lesson {
+        id
+        lessonTitle
+      }
+      likes {
+        account {
+          id
+        }
+      }
+      comments {
+        id
+        updatedAt
+        comment
+        account {
+          id
+          nameFirst
+          nameLast
+        }
+      }
+      account {
+        nameFirst
+        nameLast
+        email
+        twitter
+        isPublic
+        displayName
+      }
+    }
+  }
+`

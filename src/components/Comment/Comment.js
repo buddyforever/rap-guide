@@ -1,8 +1,11 @@
-import React, { useContext } from 'react'
+import React, { useContext, useRef } from 'react'
 import styled from 'styled-components'
 
 import { dateFormat } from '../../utilities/DateFormat'
 import { UserContext } from '../../context/UserContext'
+
+import { useMutation } from '@apollo/react-hooks'
+import { DELETE_COMMENT } from '../../queries/comments'
 
 export const Comment = ({
   id,
@@ -11,9 +14,10 @@ export const Comment = ({
   account
 }) => {
 
-  const { user } = useContext(UserContext);
+  const { user } = useContext(UserContext)
+  const commentRef = useRef(null)
 
-  let name = account.displayName || 'anonymous'
+  let name = account.displayName || 'someone'
   let url = ""
   if (account.isPublic) {
     name = account.nameFirst
@@ -22,8 +26,14 @@ export const Comment = ({
     }
   }
 
+  function removeComment() {
+    // TODO - IMPLEMENT REMOVE COMMENT
+    console.log(comment.id);
+    commentRef.current.remove();
+  }
+
   return (
-    <StyledComment id={id}>
+    <StyledComment id={id} ref={commentRef}>
       <div className="comment_text">
         {comment}
         {account.isPublic && account.twitter && (
@@ -36,7 +46,7 @@ export const Comment = ({
             posted by {name} on {dateFormat(updatedAt)}
           </div>
         )}
-        {/* {account.id === user.id && <button>remove</button>} */}
+        {/*account.id === user.id && <button onClick={removeComment}>remove</button>*/}
       </div>
     </StyledComment>
   )

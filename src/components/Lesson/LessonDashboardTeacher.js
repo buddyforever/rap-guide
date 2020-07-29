@@ -210,6 +210,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
             </p>
           </div>
           <div>
+            <p><Link to={`/annotations/${lesson.id}`}>View Annotations</Link></p>
             {/*
             <h2>Recent Activity</h2>
             <ActivityList>
