@@ -1,230 +1,88 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { Redirect } from 'react-router-dom'
+import styled from 'styled-components'
 
-import { StyledContent } from '../../styles/PageStyles'
-import { FormBlock } from '../../styles/FormStyles'
-import { Button } from '../ui/Button'
-import { DotWave as Loader } from '../ui/Loader'
+import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_GUIDE_BY_ID, GET_ALL_GUIDES } from '../../queries/guides'
 import gql from 'graphql-tag'
 
-export const Temp = () => {
+const Temp = () => {
 
-  const [newOrder, setNewOrder] = useState("");
-  const [newLyric, setNewLyric] = useState("");
-  const [newBar, setNewBar] = useState("");
+  const [message, setMessage] = useState("")
+  const [completed, setCompleted] = useState(0)
 
-  const { loading: guudesLoading, data: guidesData } = useQuery(GET_ALL_GUIDES);
 
-  const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
-    variables: {
-      id: "ckbdz8gy86efw0b14s458x8ku"
+  const { loading, data, refetch } = useQuery(GET_ANNOTATIONS)
+
+  const [updateAnnotation] = useMutation(UPDATE_ANNOTATION_ORDER)
+  return null
+  useEffect(() => {
+    /*     if (data) {
+          setMessage(`loaded ${data.annotations.length} annotations`)
+          let shuffledAnnotations = shuffle(data.annotations)
+          shuffledAnnotations.map((annotation, index) => {
+            updateAnnotation({
+              variables: {
+                id: annotation.id,
+                order: index
+              }
+            })
+            setCompleted(prevState => prevState + 1)
+          })
+        } */
+  }, [data])
+
+  function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+      // Pick a remaining element...
+      randomIndex = Math.floor(Math.random() * currentIndex);
+      currentIndex -= 1;
+
+      // And swap it with the current element.
+      temporaryValue = array[currentIndex];
+      array[currentIndex] = array[randomIndex];
+      array[randomIndex] = temporaryValue;
     }
-  })
 
-  const [updateLyricBar] = useMutation(UPDATE_LYRIC_BAR);
-  const [updateLyricText] = useMutation(UPDATE_LYRIC);
-  const [updateLyricOrder] = useMutation(UPDATE_LYRIC_ORDER);
-  const [removeLyricById] = useMutation(REMOVE_LYRIC);
-  const [createLyric] = useMutation(CREATE_LYRIC);
-
-  function handleCreateLyric(e) {
-    e.preventDefault();
-
-    let variables = {
-      guideId: data.guide.id,
-      order: parseInt(newOrder),
-      lyric: newLyric,
-      bar: parseInt(newBar)
-    }
-
-    createLyric({
-      variables
-    }).then(() => {
-      setNewOrder(parseInt(newOrder) + 1);
-      setNewLyric("");
-      refetch();
-    })
+    return array;
   }
 
-  function updateOrder(id, order) {
-    updateLyricOrder({
-      variables: {
-        id: id,
-        order: parseInt(order)
-      }
-    }).then(response => {
-      console.log(response);
-    })
-  }
 
-  function updateLyric(id, lyric) {
-    updateLyricText({
-      variables: {
-        id: id,
-        lyric: lyric
-      }
-    }).then(response => {
-      console.log(response);
-      refetch();
-    })
-  }
-
-  function updateBar(id, bar) {
-    updateLyricBar({
-      variables: {
-        id: id,
-        bar: parseInt(bar)
-      }
-    }).then(response => {
-      console.log(response);
-    })
-  }
-
-  async function removeLyric(id) {
-    await removeLyricById({
-      variables: {
-        id: id
-      }
-    }).then(response => {
-      console.log(response);
-      refetch();
-    })
-  }
-
-  let currentBar = 1;
-  let nextBar = false;
-
-
-
-
-  if (loading) return <Loader />
+  if (loading) return null
   return (
-    <StyledContent style={{ paddingTop: "15rem", width: "100%" }}>
-      <div style={{ position: "fixed", marginTop: "-5rem", right: "3rem" }}><button onClick={() => refetch()} style={{ padding: "1rem" }}>REFETCH</button></div>
-      <FormBlock>
-        <p style={{ display: "flex", flex: "1 1 auto" }}>
-          <input type="text" style={{ width: "75px" }} placeholder="Order" value={newOrder} onChange={e => setNewOrder(e.target.value)} />
-          <input type="text" style={{ width: "100%" }} placeholder="Lyric" value={newLyric} onChange={e => setNewLyric(e.target.value)} />
-          <input type="text" style={{ width: "75px" }} placeholder="Bar" value={newBar} onChange={e => setNewBar(e.target.value)} />
-        </p>
-        <p>
-          <Button onClick={handleCreateLyric}>Add Lyric</Button>
-        </p>
-      </FormBlock>
-      {data.guide.lyrics.map(lyric => {
-        nextBar = (currentBar !== lyric.bar);
-        currentBar = lyric.bar;
-        return (
-          <FormBlock key={lyric.id}>
-            {nextBar && <div><br /><br /><br /></div>}
-            <strong>{lyric.lyric}</strong><br />
-            <input
-              type="text"
-              onChange={(e) => updateOrder(lyric.id, e.target.value)}
-              placeholder={lyric.order}
-              style={{ width: "5rem" }} />
-            <input
-              onBlur={(e) => updateLyric(lyric.id, e.target.value)}
-              type="text"
-              placeholder={lyric.lyric}
-              style={{ width: "50ch" }} />
-            <input
-              type="text"
-              onChange={(e) => updateBar(lyric.id, e.target.value)}
-              placeholder={lyric.bar}
-              style={{ width: "5rem" }} />
-            <Button onClick={(e) => removeLyric(lyric.id)}>REMOVE</Button>
-          </FormBlock>
-        )
-      })}
+    <StyledContent style={{ maxWidth: "600px", margin: "0 auto" }}>
+      <h1>{message}</h1>
+      <h2>Updated {completed} annotations.</h2>
     </StyledContent>
   )
 }
 
 export default Temp;
 
-const CREATE_LYRIC = gql`
-  mutation createLyric(
-    $guideId: ID!,
-    $order: Int!,
-    $lyric: String!,
-    $bar: Int!
-  ){
-    createLyric(data: {
-			status:PUBLISHED
-      guide: {
-        connect: {
-          id: $guideId
-        }
-      }
-      order: $order
-      lyric: $lyric
-      bar: $bar
-    }){
+const GET_ANNOTATIONS = gql`
+  query annotations {
+    annotations{
       id
-      lyric
-      guide {
-        id
-      }
+      annotation
       order
-      bar
     }
   }
 `
 
-const UPDATE_LYRIC_BAR = gql`
-  mutation updateLyric(
-    $id: ID,
-    $bar: Int!
-  ){
-    updateLyric(
-      where: { id: $id },
+const UPDATE_ANNOTATION_ORDER = gql`
+  mutation updateOrder($id: ID!,$order: Int!) {
+    updateAnnotation(
+      where: { id: $id }
       data: {
-      bar: $bar
-    }){
-      id
+        order: $order
+      }) {
+        id
+        order
+      }
     }
-  }
-`
-
-const UPDATE_LYRIC = gql`
-  mutation updateLyric(
-    $id: ID,
-    $lyric: String!
-  ){
-    updateLyric(
-      where: { id: $id },
-      data: {
-      lyric: $lyric
-    }){
-      id
-    }
-  }
-`
-
-const UPDATE_LYRIC_ORDER = gql`
-  mutation updateLyric(
-    $id: ID,
-    $order: Int!
-  ){
-    updateLyric(
-      where: { id: $id },
-      data: {
-      order: $order
-    }){
-      id
-    }
-  }
-`
-
-const REMOVE_LYRIC = gql`
-  mutation deleteLyric(
-    $id: ID
-  ){
-    deleteLyric(where: { id: $id }){
-      id
-    }
-  }
 `

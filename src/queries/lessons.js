@@ -97,13 +97,16 @@ export const GET_LESSON_BY_ID = gql`
         isPublic
         twitter
         type
-        annotations(where: { lesson: {id: $id }}) {
+        annotations(
+          orderBy: order_ASC
+          where: { lesson: {id: $id }}) {
           id
           annotation
           isSubmitted
           isApproved
           isRequestRevisions
           updatedAt
+          createdAt
           account {
             id
             nameFirst
@@ -133,10 +136,13 @@ export const GET_LESSON_BY_ID = gql`
             order
           }
         }
-        annotations(where: { lesson: {id: $id }}) {
+        annotations(
+          orderBy: order_ASC
+          where: { lesson: {id: $id }}) {
           id
           annotation
           updatedAt
+          createdAt
           isSubmitted
           isApproved
           isRequestRevisions

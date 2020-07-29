@@ -18,11 +18,12 @@ export const GET_LESSON_LYRICS_BY_GUIDE_ID = gql`
       order
       bar
       annotations(
+        orderBy: order_ASC
         where: {
           lesson: {
             id: $lessonID
           }
-          #isApproved:true
+          #isApproved:1
       }) {
         id
         annotation
@@ -44,6 +45,7 @@ export const GET_LESSON_LYRICS_BY_GUIDE_ID = gql`
           }
         }
         updatedAt
+        createdAt
         account {
           id
           displayName

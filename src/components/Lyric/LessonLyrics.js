@@ -283,7 +283,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
         contentTop={offset}
         className={hidden ? "hidden" : ""}>
         <div className="arrow"></div>
-        <div className="content" ref={annotationRef}>
+        <div className="content view" ref={annotationRef}>
           {selectedAnnotations && (
             <AnimatePresence initial={false} exitBeforeEnter>
               <StyledAnnotation
@@ -322,7 +322,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: selectedAnnotations[currentAnnotation].annotation }} />
                 <div className="author">
-                  by {selectedAnnotations[currentAnnotation].account.displayName || 'anonymous'} at {dateFormat(selectedAnnotations[currentAnnotation].updatedAt)}
+                  by {selectedAnnotations[currentAnnotation].account.displayName || 'anonymous'} at {dateFormat(selectedAnnotations[currentAnnotation].createdAt)}
                 </div>
                 <div className="likes">
                   <span

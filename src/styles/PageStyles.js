@@ -258,6 +258,18 @@ export const StyledMovingColumn = styled.div`
     min-height: 7rem;
     top: ${props => props.contentTop}px;
 
+    &.view {
+      max-height: 700px;
+      overflow-y: scroll;
+      overflow-x: hidden;
+      padding: 2.5rem;
+      word-break: break-word;
+    }
+
+    img {
+      max-width: 100%;
+    }
+
     .lyrics {
       margin-bottom: 2rem;
       padding-bottom: 2rem;

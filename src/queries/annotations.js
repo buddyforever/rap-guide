@@ -96,6 +96,7 @@ export const CREATE_ANNOTATION = gql`
       id
       annotation
       updatedAt
+      createdAt
       isSubmitted
       isApproved
       account {
@@ -131,6 +132,7 @@ export const UPDATE_ANNOTATION = gql`
       id
       annotation
       updatedAt
+      createdAt
       isSubmitted
       isApproved
       account {
@@ -153,6 +155,7 @@ export const GET_ANNOTATIONS_BY_LESSON_ID = gql`
     $id: ID!
   ) {
     annotations(
+      orderBy: order_ASC
       where: {
       lesson: {
 	      id: $id
@@ -168,6 +171,7 @@ export const GET_ANNOTATIONS_BY_LESSON_ID = gql`
         lyric
       }
       updatedAt
+      createdAt
       lesson {
         id
         lessonTitle
@@ -180,6 +184,7 @@ export const GET_ANNOTATIONS_BY_LESSON_ID = gql`
       comments {
         id
         updatedAt
+        createdAt
         comment
         account {
           id

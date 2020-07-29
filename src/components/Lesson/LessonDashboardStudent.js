@@ -275,7 +275,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
             contentTop={offset}
             className={hidden ? "hidden" : ""}>
             <div className="arrow"></div>
-            <div className="content" ref={ref}>
+            <div className="content view" ref={ref}>
               {note && !annotation &&
                 <div>
                   <h3 style={{ margin: "1rem 0" }}>Lyrics</h3>
