@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
-import { StyledContent } from '../../styles/PageStyles'
+import { StyledContent } from '../styles/PageStyles'
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_GUIDE_BY_ID } from '../../queries/guides'
+import { GET_GUIDE_BY_ID } from '../queries/guides'
 import gql from 'graphql-tag'
 
-export const Temp = () => {
+export const UpdateLyrics = () => {
 
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
     variables: {
@@ -95,7 +95,7 @@ export const Temp = () => {
   )
 }
 
-export default Temp;
+export default UpdateLyrics;
 
 
 const UPDATE_LYRIC_BAR = gql`

@@ -46,6 +46,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
   const [selectedAnnotation, setSelectedAnnotation] = useState(null);
   const [lessonSignupUrl, setLessonSignupUrl] = useState("E" + lesson.id);
   const [students, setStudents] = useState([]);
+  const [submittedAnnotations, setSubmittedAnnotations] = useState(0);
 
   /* Functions */
   function updateLessonStatus(e) {
@@ -111,6 +112,17 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
   useEffect(() => {
     if (data) {
       setStudents(data.accounts);
+
+      // Set the number of submitted annotations
+      let num = 0
+
+      lesson.accounts.map(account => {
+        if (account.annotations && account.annotations.length > 0) {
+          num += account.annotations.filter(annotation => annotation.isSubmitted).length
+        }
+      })
+
+      setSubmittedAnnotations(num)
     }
   }, [data])
 
@@ -198,7 +210,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
             </p>
             <p>
               <Data>
-                {lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length}
+                {submittedAnnotations}
               </Data>
               <span>Submitted annotations</span>
             </p>

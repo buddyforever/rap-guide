@@ -260,7 +260,11 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
 
       <Video guide={lesson.guide} />
 
-      {["In Session", "Closed *"].includes(lesson.lessonStatus) &&
+      {/*
+        Made it so that teachers ALWAYS see the annotated lyrics
+        Need to update the text to represent this better
+      */}
+      {(user.type !== 'educator' && ["In Session", "Closed *"].includes(lesson.lessonStatus)) &&
         <StyledColumns>
           <AnnotateLyrics
             lyrics={lyrics}
@@ -349,7 +353,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
           </StyledMovingColumn>
         </StyledColumns>
       }
-      {!["In Session", "Closed *"].includes(lesson.lessonStatus) &&
+      {(user.type === 'educator' || !["In Session", "Closed *"].includes(lesson.lessonStatus)) &&
         <LessonLyrics guideID={lesson.guide.id} lessonID={lesson.id} />
       }
       {

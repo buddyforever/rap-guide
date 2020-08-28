@@ -9,6 +9,7 @@ import { ThemeProvider } from 'styled-components'
 import Guide from './components/Guide/Guide'
 import Layout from './components/Layout/Layout'
 import { About, Contact, Lessons, Login, PageNotFound, Request, Explore, Temp, Home, AddGuide } from './components/Pages'
+import UpdateLyrics from './TEMP/UpdateLyrics'
 import LessonSignup from './components/Lesson/LessonSignup'
 import PrivateRoute from './auth/PrivateRoute'
 import Lesson from './components/Private/Lesson'
@@ -51,6 +52,7 @@ function App() {
                 <Route path="/lessons" component={Lessons} />
                 <Route path="/temp" component={Temp} />
                 <Route path="/addguide" component={AddGuide} />
+                <Route path="/updatelyrics" component={UpdateLyrics} />
                 <Route path="/request" component={Request} />
                 <Route path="/about" component={About} />
                 <Route path="/login" component={Login} />
