@@ -17,7 +17,7 @@ export const StyledContent = styled.div`
     font-size: 20px;
     line-height: 28px;
     letter-spacing: 1px;
-    max-width: 50ch;
+    max-width: 60ch;
   }
 
   p a,
