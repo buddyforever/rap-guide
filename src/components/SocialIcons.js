@@ -1,21 +1,40 @@
 import React from 'react'
+import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
 import { faFacebook, faYoutube, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons'
 
 const SocialIcons = () => {
   return (
     <StyledSocialIcons>
-      <a href="https://www.facebook.com" target="_blank" className="facebook">
+      <Link to="/contact"><FontAwesomeIcon icon={faEnvelope} /></Link>
+      <a
+        href="https://www.facebook.com/rapguidemedia"
+        target="_blank"
+        className="facebook"
+        rel="noopener noreferrer">
         <FontAwesomeIcon icon={faFacebook} />
       </a>
-      <a href="https://www.youtube.com" target="_blank" className="youtube">
+      <a
+        href="https://www.youtube.com/playlist?list=PLuHbMGCLLUYacqbi0kPnL6lK6KDLOM6BC"
+        target="_blank"
+        className="youtube"
+        rel="noopener noreferrer">
         <FontAwesomeIcon icon={faYoutube} />
       </a>
-      <a href="https://www.instagram.com" target="_blank" className="instagram">
+      <a
+        href="https://instagram.com/rapguidemedia"
+        target="_blank"
+        className="instagram"
+        rel="noopener noreferrer">
         <FontAwesomeIcon icon={faInstagram} />
       </a>
-      <a href="https://www.twitter.com" target="_blank" className="twitter">
+      <a
+        href="https://twitter.com/rapguide"
+        target="_blank"
+        className="twitter"
+        rel="noopener noreferrer">
         <FontAwesomeIcon icon={faTwitter} />
       </a>
     </StyledSocialIcons>

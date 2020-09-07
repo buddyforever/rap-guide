@@ -12,18 +12,19 @@ export const Footer = () => {
           <SocialIcons />
         </div>
         <div>
-          <h3>TOPICS</h3>
+          <h3>RECENT</h3>
           <ul>
-            <li><a href="#">Climate Chaos</a></li>
-            <li><a href="#">Religion</a></li>
-            <li><a href="#">Consciousness</a></li>
-            <li><a href="#">Culture</a></li>
+            <li><Link to="/guide/ckcaswe3mx59o0b97mg5j9t1e">Darwin Day</Link></li>
+            <li><Link to="/guide/ckc6ui9ulw9n40b09vsxnfafr">Stay Home</Link></li>
+            <li><Link to="/guide/ckbybwn643izk0b978rht2qae">Revenge of the Somatic</Link></li>
+            <li><Link to="/guide/ckbdz8gy86efw0b14s458x8ku">Genes's Eye View</Link></li>
           </ul>
         </div>
         <div>
-          <h3>LINKS</h3>
+          <h3>PAGES</h3>
           <ul>
-            <li><Link to="/">Explore</Link></li>
+            <li><Link to="/">Home</Link></li>
+            <li><Link to="/explore">Explore</Link></li>
             <li><Link to="/lessons">Lessons</Link></li>
             <li><Link to="/request">Request</Link></li>
             <li><Link to="/about">About</Link></li>
@@ -32,7 +33,7 @@ export const Footer = () => {
         </div>
         <div>
           <h3>ABOUT</h3>
-          <p>A New Teaching And Learning Platform For Engaging With Complex Ideas In Science And Society Through Interactive Rap Music Videos.</p>
+          <p style={{ letterSpacing: "1px", lineHeight: "1.2em" }}>RapGuide.com helps teachers create engaging classroom content using informative rap music videos, and helps students and lifelong learners engage with science through the arts.</p>
         </div>
       </div>
     </StyledFooter>

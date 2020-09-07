@@ -67,8 +67,11 @@ export const Home = () => {
                 Rap Guides make complex topics accessible and entertaining.
               </p>
             </MediumSpace>
-            <MediumSpace style={{ textAlign: "center", display: "flex", alignItems: "center", justifyContent: "center", height: "100%" }}>
-              <img src="images/illustration1.svg" alt="Rap Guide" style={{ width: "100%" }} />
+            <MediumSpace style={{ textAlign: "center", display: "flex" }}>
+              <img
+                src="images/illustration1.svg"
+                alt="Rap Guide"
+                style={{ width: "100%" }} />
             </MediumSpace>
           </StyledColumns>
         </StyledContent>
