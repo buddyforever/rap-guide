@@ -99,8 +99,19 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
   any lyrics that are associated with the specific annotation */
   async function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
     setNote(null)
+    let hasMyAnnotation = lyric.annotations.find(annotation => {
+      return annotation.account.id === user.id
+    })
+    if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id) && selectedLyrics.length === 4) {
+      setMessage({
+        type: "warning",
+        title: "Too many lines",
+        text: "Please select a maximum of 4 lines per annotation"
+      })
+      return // Only allow up to 4 lines selected
+    }
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
-      if (lyric.annotations && lyric.annotations.length > 0) { // Has annotation
+      if (lyric.annotations && lyric.annotations.length > 0 && hasMyAnnotation) { // Has annotation
         setSelectedLyrics(lyric.annotations[0].lyrics);
         setAnnotation(lyric.annotations[0]);
         setGroupedLyrics(true);
@@ -192,7 +203,9 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
 
     // TODO handle this on the server side, for now just remove any annotations that
     // do not belong to the current user
-    let removedAnnotationLyrics = combinedLyrics.map(lyric => {
+    let removedAnnotationLyrics = combinedLyrics
+    /*
+    combinedLyrics.map(lyric => {
       if (lyric.annotations) {
         return {
           ...lyric,
@@ -201,7 +214,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
       } else {
         return lyric
       }
-    })
+    })*/
 
     setAssignedLyrics(lesson.lyrics);
     setLyrics(removedAnnotationLyrics);

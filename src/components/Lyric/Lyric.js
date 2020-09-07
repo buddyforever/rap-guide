@@ -4,7 +4,15 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faStar } from '@fortawesome/free-solid-svg-icons'
 
-const Lyric = ({ lyric, selected = false, isSelectable = false, isPublic = false, ...rest }) => {
+const Lyric = ({
+  lyric,
+  selected = false,
+  isSelectable = false,
+  isPublic = false,
+  weight = null,
+  hasMyAnnotation = false,
+  mineOnly = false,
+  ...rest }) => {
 
   let isAssigned = lyric.annotations
   let isAnnotated = lyric.annotations && lyric.annotations.length > 0
@@ -16,6 +24,11 @@ const Lyric = ({ lyric, selected = false, isSelectable = false, isPublic = false
   }
   if (hasNote) {
     isExample = lyric.notes.find(note => note.isExample)
+  }
+
+  if (mineOnly && !hasMyAnnotation) {
+    isAnnotated = false
+    isSubmitted = false
   }
 
   /* Handle adding any necessary classes */
@@ -34,7 +47,7 @@ const Lyric = ({ lyric, selected = false, isSelectable = false, isPublic = false
       {lyric.lyric}
       {isExample &&
         <span><FontAwesomeIcon icon={faStar} /></span>
-      }
+      } ({weight})
     </StyledLyric>
   )
 }

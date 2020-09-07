@@ -78,6 +78,7 @@ export const AnnotationForm = ({
       <h3>Annotation</h3>
       {selectedLyrics.length > 0 &&
         <div>
+          {annotation && annotation.account.email}
           <h6 style={{ margin: "1rem 0" }}>Selected Lyrics</h6>
           {selectedLyrics.map(lyric => {
             let brokenLyrics = false;

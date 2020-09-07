@@ -1,4 +1,5 @@
-import React, { useRef } from 'react'
+import React, { useRef, useContext } from 'react'
+import { UserContext } from '../../context/UserContext'
 
 import Lyric from './Lyric'
 import { documentOffset } from '../../utilities/Position'
@@ -12,6 +13,9 @@ const AnnotateLyrics = ({
   showNote,
   hide
 }) => {
+
+  /* Context */
+  const { user } = useContext(UserContext)
 
   const lyricsRef = useRef();
 
@@ -55,10 +59,36 @@ const AnnotateLyrics = ({
           assignedLyrics.find(assignedLyric => assignedLyric.id === lyric.id) ? true : false
         let relatedName = null;
         let isAnnotated = false;
+        let weight = 0;
+        let hasMyAnnotation = false
         if (lyric.annotations && lyric.annotations.length) {
-          relatedName = lyric.annotations[0].id
-          isAnnotated = true
-          isSubmitted = lyric.annotations[0].isSubmitted
+          weight = lyric.annotations.reduce((sum, annotation) => {
+            if (annotation.account.id === user.id) hasMyAnnotation = true
+            let amount = 0
+            switch (annotation.lyrics.length) {
+              case 1:
+                amount = 1
+                break
+              case 2:
+                amount = 0.5
+                break
+              case 3:
+                amount = 0.33
+                break
+              case 4:
+                amount = 0.25
+                break
+              default:
+                amount = 0
+            }
+            return sum + amount
+          }, 0);
+          if (hasMyAnnotation) {
+            let annotation = lyric.annotations.find(annotation => annotation.account.id === user.id)
+            relatedName = annotation.id
+            isAnnotated = true
+            isSubmitted = annotation.isSubmitted
+          }
         }
         if (!relatedName && lyric.notes && lyric.notes.length) {
           relatedName = lyric.notes[0].id
@@ -68,13 +98,16 @@ const AnnotateLyrics = ({
             {nextBar && <div style={{ marginBottom: "2rem" }}></div>}
             <div>
               <Lyric
+                mineOnly={true}
+                hasMyAnnotation={hasMyAnnotation}
                 name={relatedName}
                 lyric={lyric}
                 isSelectable={isAssigned}
                 selected={isSelected}
+                weight={weight.toFixed(2)}
                 onMouseOver={(e) => {
                   if (selectedLyrics && selectedLyrics.length) return
-                  if (relatedName) {
+                  if (relatedName && hasMyAnnotation) {
                     let related = document.querySelectorAll(`div[name=${relatedName}]`);
                     related.forEach(node => {
                       node.classList.add("hovering");
@@ -88,10 +121,10 @@ const AnnotateLyrics = ({
                     const maxY = documentOffset(e.target).top - window.scrollY - 130; // How far up I can move
                     handleHover(lyric.notes[0], pos.y, maxY);
                   }
-                  if (isAnnotated) {
+                  if (isAnnotated && hasMyAnnotation) {
                     const pos = e.target.getBoundingClientRect();
                     const maxY = documentOffset(e.target).top - window.scrollY - 130; // How far up I can move
-                    handleHover(lyric.annotations[0], pos.y, maxY);
+                    handleHover(lyric.annotations.find(annotation => annotation.account.id === user.id), pos.y, maxY);
                   }
                 }}
                 onMouseOut={(e) => {
