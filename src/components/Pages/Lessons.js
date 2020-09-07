@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
 
 import { UserContext } from '../../context/UserContext'
-import { StyledContent, Heading, LargeSpace, ThreeGrid, MediumSpace, FullSection } from '../../styles/PageStyles'
+import { StyledContent, Heading, LargeSpace, ThreeGrid, MediumSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
 import Loader from '../Loader'
 import VideoThumb from '../Guide/VideoThumb'
 import { dateFormat } from '../../utilities/DateFormat'
@@ -185,18 +185,23 @@ export const Lessons = () => {
       <>
         <FullSection>
           <StyledContent>
-            <Heading>
-              <h1>Lessons</h1>
-            </Heading>
-            <MediumSpace>
-              <p>Teachers with an Educator Account can design Lessons around each of the videos on this site, and share the lessons with their class via private Student Accounts, and with other educators to adapt for their own use.</p>
+            <StyledColumns>
+              <MediumSpace>
+                <Heading>
+                  <h1>Lessons</h1>
+                  <p>Teachers with an Educator Account can design Lessons around each of the videos on this site, and share the lessons with their class via private Student Accounts, and with other educators to adapt for their own use.</p>
 
-              <p>Lesson content is only available to educators and their students at the moment. Please <Link to="/" onClick={loginWithRedirect}>Login</Link> to access this content.</p>
+                  <p>Lesson content is only available to educators and their students at the moment. Please <Link to="/" onClick={loginWithRedirect}>Login</Link> to access this content.</p>
 
-              <p>Teachers, please <Link to="/contact">contact us</Link> to request an Educator Account and get started.</p>
+                  <p>Teachers, please <Link to="/contact">contact us</Link> to request an Educator Account and get started.</p>
 
-              <p>Students, please share this site with your teacher to request a Rap Guide lesson.</p>
-            </MediumSpace>
+                  <p>Students, please share this site with your teacher to request a Rap Guide lesson.</p>
+                </Heading>
+              </MediumSpace>
+              <MediumSpace>
+                <img src="images/illustration2.svg" alt="Rap Guide | Lessons" />
+              </MediumSpace>
+            </StyledColumns>
           </StyledContent>
         </FullSection>
         <MakeARapGuide />
