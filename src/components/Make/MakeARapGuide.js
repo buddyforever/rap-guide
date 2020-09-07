@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
@@ -10,8 +10,31 @@ export const MakeARapGuide = () => {
   const [step, setStep] = useState(0)
   const [isVisible, setIsVisible] = useState(true)
 
+  // emulate URL anchor page scroll functionality
+  function scrollToHashId() {
+    // get URL hash (minus the hash mark)
+    const hash = window.location.hash.substring(1)
+
+    // if there's a hash, scroll to that ID
+    if (hash && hash.length) {
+      // setTimeout and requestAnimationFrame help ensure a true DOM repaint/reflow before we try to scroll
+      // - reference: http://stackoverflow.com/a/34999925
+      setTimeout(
+        window.requestAnimationFrame(function () {
+          const el = document.getElementById(hash)
+          el.scrollIntoView()
+        }),
+        0
+      )
+    }
+  }
+
+  useEffect(() => {
+    scrollToHashId()
+  }, [])
+
   return (
-    <Panels>
+    <Panels name="make-a-rap-guide" id="make-a-rap-guide">
       <AnimatePresence
         initial={false}
         exitBeforeEnter>
@@ -176,7 +199,7 @@ export const MakeARapGuide = () => {
                 </ul>
               </MediumSpace>
 
-              <p>Hint: Use the <a href="https://rhymewave.com/" noopener noreferrer>RhymeWave website</a> to generate interesting rhyming patterns.</p>
+              <p>Hint: Use the <a href="https://rhymewave.com/" target="_blank" rel="noopener noreferrer">RhymeWave website</a> to generate interesting rhyming patterns.</p>
 
             </StyledContent>
           </FullSection>)}
@@ -252,7 +275,7 @@ export const MakeARapGuide = () => {
             color="white"
             className="centered">
             <StyledContent>
-              <h1>Step 8 - Rehearse and Revise Over the Beat</h1>
+              <h1>Step 8 - Rehearse and Revise</h1>
 
               <p>Practice your bars and hook! Play the beat again and again and say the words out loud, changing any words in the lyrics that sound awkward or off-beat. Try out synonyms and alternate phrasing to improve the flow, keep practicing until it sounds as good you want it to sound.</p>
 
@@ -273,7 +296,7 @@ export const MakeARapGuide = () => {
             color="white"
             className="centered">
             <StyledContent>
-              <h1>Step 9 - Film Yourself</h1>
+              <h1>Step 9 - Shoot Your Video</h1>
 
               <p>Once you like how the song is sounding, put the beat on a set of speakers in the background and film yourself on your phone rapping to the camera. If you’re working in a group, take turns delivering lines and try to get through the whole song without messing up any lines. Or if you’re creating solo, either memorize the song or put the lyrics up behind the camera so you can read while still looking at it, teleprompter-style.</p>
 
