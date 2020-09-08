@@ -189,19 +189,46 @@ export const Lessons = () => {
               <MediumSpace>
                 <Heading>
                   <h1>Lessons</h1>
-                  <p>Teachers with an Educator Account can design Lessons around each of the videos on this site, and share the lessons with their class via private Student Accounts, and with other educators to adapt for their own use.</p>
 
-                  <p>Lesson content is only available to educators and their students at the moment. Please <Link to="/" onClick={loginWithRedirect}>Login</Link> to access this content.</p>
+                  <p>Teachers with an Educator Account can design Lessons around each of the videos on this site, and share these assignments privately with students, collecting responses via their Educator Dashboard.</p>
 
-                  <p>Teachers, please <Link to="/contact">contact us</Link> to request an Educator Account and get started.</p>
-
-                  <p>Students, please share this site with your teacher to request a Rap Guide lesson.</p>
+                  <p>Teachers can also share their completed lesson plans with other educators to adapt for their own use, and can browse previous lessons and templates.</p>
                 </Heading>
               </MediumSpace>
               <MediumSpace>
                 <img src="images/illustration2.svg" alt="Rap Guide | Lessons" />
               </MediumSpace>
             </StyledColumns>
+          </StyledContent>
+        </FullSection>
+        <FullSection
+          bgColor="black"
+          color="white"
+          space="5rem"
+          style={{
+            display: "flex",
+            alignItems: "center"
+          }}>
+          <StyledContent>
+            <h2>Annotations</h2>
+            <p>Lesson content on RapGuide.com is submitted via student annotations attached to the lyrics of songs. These annotations are content-agnostic, which means any existing music video about any topic can be used, and students can be assigned to provide any kind of response, from personal reflections to analysis of the scientific references to close-reading of the text.</p>
+          </StyledContent>
+        </FullSection>
+        <FullSection
+          space="5rem"
+          style={{
+            display: "flex",
+            alignItems: "center"
+          }}>
+          <StyledContent>
+            <h2>Access</h2>
+            <p>
+              Lesson content on RapGuide.com is currently only accessible to educators and students. After lessons are completed, some of the annotations may be submitted for public display on the site, subject to student and teacher consent.
+            </p>
+
+            <p><strong>Teachers</strong>, please <Link to="/" onClick={loginWithRedirect}>login</Link> and <Link to="/contact">contact us</Link> to request an Educator Account and get started.</p>
+
+            <p><strong>Students</strong>, please share this site with your teacher to request a Rap Guide lesson in your class.</p>
           </StyledContent>
         </FullSection>
         <MakeARapGuide />
@@ -242,11 +269,11 @@ export const Lessons = () => {
       <FullSection
         minHeight="0"
         bgColor="#DD3333"
-        color="white" >
+        color="white"
+        space="0.5rem">
         <StyledContent>
-          <h2>Access Code</h2>
           <FormBlock>
-            <p>If you have received an access code, enter it here:</p>
+            <h2 style={{ marginBottom: "1rem" }}>Connect with a Lesson</h2>
             <div style={{ display: "flex" }}>
               <input
                 type="text"
