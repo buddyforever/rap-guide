@@ -242,7 +242,7 @@ export const Lessons = () => {
       <FullSection space="0" style={{ paddingBottom: "10rem" }}>
         <StyledContent>
           <Heading>
-            <h1>Lessons</h1>
+            <h1>My Lessons</h1>
           </Heading>
           {data.lessons.length === 0 && <p>There are no lessons available.</p>}
           {(user.type === "student" && recentAnnotations.length > 0) &&
@@ -296,6 +296,7 @@ export const Lessons = () => {
           </FormBlock>
         </StyledContent>
       </FullSection>
+      <MakeARapGuide />
       {
         message &&
         <Message

@@ -81,6 +81,10 @@ export const LargeSpace = styled.div`
 `
 export const MediumSpace = styled.div`
   margin: 2.5rem 0;
+
+  &.faq button {
+    text-align: left;
+  }
 `
 export const SmallSpace = styled.div`
   margin: 1rem 0;
