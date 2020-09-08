@@ -11,7 +11,7 @@ export const Request = () => {
       <FullSection style={{ display: "flex", alignItems: "center", paddingBottom: "5rem" }}>
         <StyledContent>
           <StyledColumns>
-            <div>
+            <div style={{ padding: "0 2.5rem" }}>
               <Heading>
                 <h2>Contact us with any questions or comments, or to request an educator account.</h2>
               </Heading>
@@ -45,7 +45,7 @@ export const Request = () => {
                 <input type="hidden" name="form-name" defaultValue="contact" />
               </Form>
             </div>
-            <div>
+            <div style={{ backgroundColor: "black", color: "white", padding: "0 2.5rem" }}>
               <Heading>
                 <h2>Join our mailing list to hear about new features and content. You’re information will never be shared.</h2>
               </Heading>
