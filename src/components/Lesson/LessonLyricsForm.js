@@ -38,14 +38,14 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
   any lyrics that are associated with the specific annotation */
   function handleLyricClick(lyric, lyricsTop, lyricsHeight, arrowTop, maxY) {
     // Select or deselect the lyric
-    if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id) && selectedLyrics.length === 4) {
-      setMessage({
-        type: "warning",
-        title: "Too many lines",
-        text: "Please select a maximum of 4 lines"
-      })
-      return // Only allow up to 4 lines selected
-    }
+    /*    if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id) && selectedLyrics.length === 4) {
+          setMessage({
+            type: "warning",
+            title: "Too many lines",
+            text: "Please select a maximum of 4 lines"
+          })
+          return // Only allow up to 4 lines selected
+        }*/
     if (!selectedLyrics.find(selectedLyric => selectedLyric.id === lyric.id)) {
       selectLyric(lyric)
     } else {
@@ -56,22 +56,21 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
         deSelectLyric(lyric);
       }
     }
-  }
-  //let contentHeight = ref.current.getBoundingClientRect().height;
+    let contentHeight = ref.current.getBoundingClientRect().height;
+    setTop(arrowTop);
 
-  /*  If the content is shorter than the
-      available space then center it
-  setTop(arrowTop);
-  if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
-    let diff = (arrowTop - (contentHeight / 2))
-    setOffset(diff > 0 ? diff + 10 : 0) // + 10px for half the height of the arrow
-  } else if ((arrowTop + contentHeight) > lyricsHeight) {
-    setOffset(lyricsHeight - contentHeight)
-  } else {
-    let newTop = arrowTop - maxY;
-    setOffset(newTop > 0 ? newTop : 0)
+    /*  If the content is shorter than the
+        available space then center it */
+    if (contentHeight / 2 < maxY && (arrowTop + contentHeight) < lyricsHeight) {
+      let diff = (arrowTop - (contentHeight / 2))
+      setOffset(diff > 0 ? diff + 10 : 0) // + 10px for half the height of the arrow
+    } else if ((arrowTop + contentHeight) > lyricsHeight) {
+      setOffset(lyricsHeight - contentHeight)
+    } else {
+      let newTop = arrowTop - maxY;
+      setOffset(newTop > 0 ? newTop : 0)
+    }
   }
-*/
 
   function handleToggleChecked(lyric, checked) {
     if (checked) {
