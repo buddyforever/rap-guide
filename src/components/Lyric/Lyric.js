@@ -47,7 +47,7 @@ const Lyric = ({
       {lyric.lyric}
       {isExample &&
         <span><FontAwesomeIcon icon={faStar} /></span>
-      } ({weight})
+      }{/* ({weight}) */}
     </StyledLyric>
   )
 }

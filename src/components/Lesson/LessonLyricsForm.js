@@ -57,7 +57,7 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
       }
     }
   }
-  let contentHeight = ref.current.getBoundingClientRect().height;
+  //let contentHeight = ref.current.getBoundingClientRect().height;
 
   /*  If the content is shorter than the
       available space then center it
