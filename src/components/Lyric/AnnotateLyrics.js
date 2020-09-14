@@ -1,8 +1,11 @@
-import React, { useRef, useContext } from 'react'
+import React, { useRef, useContext, useState } from 'react'
 import { UserContext } from '../../context/UserContext'
 
 import Lyric from './Lyric'
 import { documentOffset } from '../../utilities/Position'
+import { Message } from '../ui/Message'
+
+const weights = [1, 0.5, 0.33, 0.25];
 
 const AnnotateLyrics = ({
   lyrics,
@@ -11,8 +14,12 @@ const AnnotateLyrics = ({
   refetch,
   onClick,
   showNote,
-  hide
+  hide,
+  maxWeight
 }) => {
+
+  /* State */
+  const [message, setMessage] = useState(null)
 
   /* Context */
   const { user } = useContext(UserContext)
@@ -93,6 +100,7 @@ const AnnotateLyrics = ({
         if (!relatedName && lyric.notes && lyric.notes.length) {
           relatedName = lyric.notes[0].id
         }
+        lyric.weight = weight
         return (
           <div key={lyric.id}>
             {nextBar && <div style={{ marginBottom: "2rem" }}></div>}
@@ -105,6 +113,7 @@ const AnnotateLyrics = ({
                 isSelectable={isAssigned}
                 selected={isSelected}
                 weight={weight.toFixed(2)}
+                maxWeight={maxWeight}
                 onMouseOver={(e) => {
                   if (selectedLyrics && selectedLyrics.length) return
                   if (relatedName && hasMyAnnotation) {
@@ -136,8 +145,17 @@ const AnnotateLyrics = ({
                   } */
                 }}
                 onClick={(e) => {
+                  let weightToAdd = weights[selectedLyrics.length]
                   if (lyric.isExample) return;
                   if (isSubmitted) return;
+                  if (weight + weightToAdd > maxWeight) {
+                    setMessage({
+                      type: "error",
+                      title: "Too many annotations!",
+                      text: "This lyric has already been used by several of your classmates, please select a different lyric or try combining it with other lyrics"
+                    })
+                    return
+                  }
                   const pos = e.target.getBoundingClientRect();
                   const maxY = documentOffset(e.target).top - window.scrollY - 130; // How far up I can move
                   handleClick(lyric, pos.y, maxY);
@@ -146,6 +164,17 @@ const AnnotateLyrics = ({
           </div>
         )
       })}
+      {
+        message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          autoDismiss={7000}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
     </div>
   )
 }

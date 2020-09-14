@@ -40,6 +40,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
   const [selectedLyrics, setSelectedLyrics] = useStateWithName([], "SelectedLyrics");
   const [assignedLyrics, setAssignedLyrics] = useStateWithName([], "AssignedLyrics");
   const [groupedLyrics, setGroupedLyrics] = useState(false);
+  const [maxWeight, setMaxWeight] = useState(1)
 
   /* Queries */
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
@@ -234,6 +235,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
 
   useEffect(() => {
     combineLyrics();
+    setMaxWeight(Math.ceil(lesson.numAnnotations * lesson.maxStudents / lesson.lyrics.length))
   }, [lesson])
 
   if (!lyrics) return <Loader />
@@ -269,6 +271,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
 
       <Heading>
         <h1>{lesson.guide.videoTitle}</h1>
+        <h2>{maxWeight} MAX ANNOTATIONS / LINE</h2>
       </Heading>
 
       <Video guide={lesson.guide} />
@@ -286,7 +289,8 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
             refetch={refetch}
             onClick={handleLyricClick}
             showNote={handleShowNote}
-            hide={handleHide} />
+            hide={handleHide}
+            maxWeight={maxWeight} />
           <StyledMovingColumn
             arrowTop={top}
             contentTop={offset}
@@ -330,7 +334,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
                   <h3 style={{ margin: "1rem 0" }}>Annotation</h3>
                   <div dangerouslySetInnerHTML={{ __html: annotation.annotation }} />
                   {annotation.isSubmitted && !annotation.isApproved &&
-                    <span className="primary">* SUBMITTED FOR REVIEW</span>
+                    <span style={{ color: "#519d37", fontWeight: "900" }}>* SUBMITTED FOR REVIEW</span>
                   }
                   {!annotation.isSubmitted && !annotation.isApproved &&
                     <span className="primary">* click to edit</span>

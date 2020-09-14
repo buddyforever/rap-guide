@@ -218,7 +218,22 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
               <Data>
                 {lesson.minLikes}
               </Data>
-              <span>Likes/Upvotes needed per student</span>
+              <span>Upvotes needed per student</span>
+            </p>
+            <p>
+              <Data>
+                {lesson.numAnnotations}
+              </Data>
+              <span>Annotations needed per student</span>
+            </p>
+            <p>
+              {/*
+                Number of annotations assigned per student * The maximum number of students / Number of assigned (annotatable) lyrics
+              */}
+              <Data>
+                {Math.ceil(lesson.numAnnotations * lesson.maxStudents / lesson.lyrics.length)}
+              </Data>
+              <span>Maximum annotations/lyric</span>
             </p>
           </div>
           <div>
@@ -277,7 +292,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
           return (
             <Student key={account.id}>
               <div><a href={`mailto:${account.email}`}>{account.email}</a></div>
-              <div><strong>{account.likes.length}</strong> liked annotations</div>
+              <div><strong>{account.likes.length}</strong> upvoted annotations</div>
               <div>
                 {(
                   !hasAnnotations ||

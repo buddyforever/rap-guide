@@ -12,6 +12,7 @@ const Lyric = ({
   weight = null,
   hasMyAnnotation = false,
   mineOnly = false,
+  maxWeight = 1,
   ...rest }) => {
 
   let isAssigned = lyric.annotations
@@ -19,11 +20,15 @@ const Lyric = ({
   let isSubmitted = false
   let isExample = false
   let hasNote = lyric.notes && lyric.notes.length ? true : false
+  let isFull = false
   if (isAnnotated) {
     isSubmitted = lyric.annotations.find(annotation => annotation.isSubmitted)
   }
   if (hasNote) {
     isExample = lyric.notes.find(note => note.isExample)
+  }
+  if (weight >= maxWeight) {
+    isFull = true
   }
 
   if (mineOnly && !hasMyAnnotation) {
@@ -40,14 +45,19 @@ const Lyric = ({
   if (selected) classes.push("selected");
   if (isPublic) classes.push("public")
   if (hasNote) classes.push("noted");
+  if (isFull) classes.push("full");
   if (isSelectable || isAssigned || isAnnotated || isSubmitted) classes.push("selectable");
 
   return (
-    <StyledLyric className={classes.length ? classes.join(" ") : ""} {...rest}>
+    <StyledLyric
+      className={classes.length ? classes.join(" ") : ""}
+      {...rest}
+      title={isFull ? "This lyric already has enough annotations, please select a different one" : ""}
+    >
       {lyric.lyric}
       {isExample &&
         <span><FontAwesomeIcon icon={faStar} /></span>
-      }{/* ({weight}) */}
+      }({weight})
     </StyledLyric>
   )
 }
@@ -129,9 +139,14 @@ const StyledLyric = styled.div`
   &.submitted,
   &.submitted:hover,
   &.submitted.hovering {
-    background-color: #742A2A!important;
+    background-color: #519d37!important;
     color: white!important;
     cursor: not-allowed!important;
     box-shadow: none!important;
+  }
+
+  &.full {
+    background-color: #a61c1c!important;
+    color: white!important;
   }
 `

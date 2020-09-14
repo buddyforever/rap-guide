@@ -21,6 +21,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
   const [lessonDescription, setLessonDescription] = useState(lesson.lessonDescription || "<p></p>")
   const [maxStudents, setMaxStudents] = useState(lesson.maxStudents || '')
   const [minLikes, setMinLikes] = useState(lesson.minLikes || '')
+  const [numAnnotations, setNumAnnotations] = useState(lesson.numAnnotations || '')
   const [topics, setTopics] = useState(lesson.topics || [])
   const [topic, setTopic] = useState("")
 
@@ -36,7 +37,8 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
     if (!lessonTitle.length) errors = ["Please enter a title", ...errors]
     if (!lessonDescription.length) errors = ["Please enter a description", ...errors]
     if (isNaN(maxStudents)) errors = ["Please enter the maximum number of students", ...errors]
-    if (isNaN(minLikes)) errors = ["Please enter the minimum number of annotation likes a student needs to complete the lesson", ...errors]
+    if (isNaN(minLikes)) errors = ["Please enter the minimum number of annotation upvotes a student needs to complete the lesson", ...errors]
+    if (isNaN(numAnnotations)) errors = ["Please enter the minimum number of annotations a student needs to write to complete the lesson", ...errors]
     if (errors.length) {
       setMessage({
         type: "error",
@@ -60,7 +62,8 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
       accounts: [{
         id: user.id
       }],
-      minLikes: parseInt(minLikes)
+      minLikes: parseInt(minLikes),
+      numAnnotations: parseInt(numAnnotations)
     });
   }
 
@@ -152,7 +155,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
 
       <FormBlock>
         <h3>Students</h3>
-        <p>Enter the maximum number of students expected to enroll in this class.</p>
+        <p>Enter the number of students expected to enroll in this class.</p>
         <input
           type="number"
           value={maxStudents}
@@ -161,8 +164,18 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
       </FormBlock>
 
       <FormBlock>
-        <h3>Likes/Upvotes</h3>
-        <p>Enter the minimum number of annotation likes a student needs to complete the lesson.</p>
+        <h3>Number of Annotations</h3>
+        <p>Enter the number of annnotations a student needs to write in order to complete the lesson.</p>
+        <input
+          type="number"
+          value={numAnnotations}
+          onChange={(e) => setNumAnnotations(e.target.value)}
+          placeholder="3..." />
+      </FormBlock>
+
+      <FormBlock>
+        <h3>Upvotes</h3>
+        <p>Enter the minimum number of upvotes a student needs to complete the lesson.</p>
         <input
           type="number"
           value={minLikes}
