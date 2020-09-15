@@ -239,7 +239,7 @@ export const Lessons = () => {
   if (!data) return null
   return (
     <>
-      <FullSection space="0" style={{ paddingBottom: "10rem" }}>
+      <FullSection space="0" style={{ minHeight: "auto", paddingBottom: "10rem" }}>
         <StyledContent>
           <Heading>
             <h1>My Lessons</h1>

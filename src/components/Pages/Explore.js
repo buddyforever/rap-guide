@@ -26,7 +26,7 @@ export const Explore = () => {
   /* Functions */
   function selectTag(tag) {
     setFilteredGuides(guides.guides.filter(guide => {
-      return guide.topics.find(topic => topic.topic === tag);
+      return guide.topics.find(topic => topic.topic === tag.text);
     }))
   }
 
@@ -66,17 +66,6 @@ export const Explore = () => {
   return (
     <FullSection space="5rem">
       <StyledContent style={{ paddingBottom: "5rem" }}>
-        <Heading>
-          <h1>Explore</h1>
-          <Search>
-            <input
-              type="text"
-              placeholder="What are you looking for?..."
-              value={searchQuery}
-              onChange={filterGuidesByTitle} />
-            <button><FontAwesomeIcon icon={faSearch} /></button>
-          </Search>
-        </Heading>
 
         <TagCloud selectTag={selectTag} tags={topics} />
 
