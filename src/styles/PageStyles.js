@@ -11,6 +11,11 @@ export const StyledContent = styled.div`
   margin: 0 auto;
   position: relative;
 
+  &#requests {
+    img {
+      max-width: 500px;
+    }
+  }
 
   p {
     margin: 1rem 0;

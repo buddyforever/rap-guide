@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
@@ -9,6 +9,7 @@ import { StyledContent, Heading, MediumSpace, LargeSpace, FullSection, StyledCol
 import { DotWave as Loader, Button, Message } from '../ui'
 import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
 import { dateFormat } from '../../utilities/DateFormat'
+import { UserContext } from '../../context/UserContext'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_REQUEST, GET_REQUESTS } from '../../queries/requests'
@@ -18,11 +19,15 @@ export const Request = () => {
   const infoRef = useRef(null)
   const requestRef = useRef(null)
 
+  /* Context */
+  const { user, setUser } = useContext(UserContext);
+
   const [message, setMessage] = useState("")
   const [rapGuideTitle, setRapGuideTitle] = useState("")
   const [rapGuideName, setRapGuideName] = useState("")
   const [rapGuideEmail, setRapGuideEmail] = useState("")
   const [rapGuideInformation, setRapGuideInformation] = useState("")
+  const [isAdmin, setIsAdmin] = useState(false)
 
   /* Queries */
   const { loading, data, refetch } = useQuery(GET_REQUESTS)
@@ -74,11 +79,19 @@ export const Request = () => {
     })
   }
 
+  useEffect(() => {
+    if (!user) return
+    if (['jessejburton@gmail.com', 'baba.brinkman@gmail.com', 'noelplanet@gmail.com'].includes(user.email)) {
+      setIsAdmin(true)
+    }
+  }, [user])
+
   if (loading) return <Loader />
+
   return (
     <>
       {/* PANEL 1 */}
-      <FullSection>
+      <FullSection style={{ minHeight: "auto" }}>
         <StyledContent style={{ width: "100%" }}>
           <Form onSubmit={handleCreateRequest}>
             <Heading style={{ paddingBottom: 0 }}>
@@ -239,18 +252,18 @@ export const Request = () => {
           <MediumSpace style={{ fontSize: "18px" }}>
             <p>Below are Rap Guides that users of this site have requested, which we hope to be able to make before too long.</p>
           </MediumSpace>
-          {data &&
+          {(data && isAdmin) &&
             <LargeSpace>
               {data.requests.map(request => (
                 <StyledRequest key={request.id}>
-                  <h2>{request.title}</h2>
+                  <h2>I Wish There Was a Rap Guide to ~ {request.title}</h2>
                   <span className="date">{dateFormat(request.updatedAt)}</span>
                   <p dangerouslySetInnerHTML={{ __html: request.information }} />
                 </StyledRequest>
               ))}
             </LargeSpace>
           }
-          {data.requests.length === 0 && <p>There are currently no requests that have been approved. Check back soon!</p>}
+          {!isAdmin && <p>There are currently no requests that have been approved. Check back soon!</p>}
         </StyledContent>
       </FullSection>
       {
@@ -270,9 +283,13 @@ export const Request = () => {
 export default Request;
 
 const StyledRequest = styled.div`
-  margin: 5rem 0;
+  padding: 20px;
+  margin-bottom: 50px;
+  background-color: #f5f5f5;
+  border-radius: 15px;
+	box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 
-  ul {
+  ul, ol {
     padding-left: 5rem;
   }
 
@@ -280,6 +297,7 @@ const StyledRequest = styled.div`
     font-size: 1.4rem;
     color: #666;
   }
+
 `
 
 const Search = styled.div`
