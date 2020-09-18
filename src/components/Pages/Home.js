@@ -61,6 +61,7 @@ export const Home = () => {
         <StyledContent
           className="small-600"
           style={{
+            maxWidth: "1400px",
             width: "100%"
           }}
         >
