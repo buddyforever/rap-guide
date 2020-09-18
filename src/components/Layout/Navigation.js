@@ -45,9 +45,10 @@ const StyledNavigation = styled(motion.div)`
   display: flex;
   flex-direction: column;
   width: 30rem;
-  margin-top: 9.9rem;
+  margin-top: 10rem;
   transition: all .4s ease-in-out;
   z-index: 5000;
+  box-shadow: 0 0 0 100vw rgba(0,0,0,0.0);
 
   @media only screen and (max-width: 400px) {
     left: 100vw;
@@ -55,6 +56,7 @@ const StyledNavigation = styled(motion.div)`
   }
 
   &.open {
+    box-shadow: 0 0 0 100vw rgba(0,0,0,0.5);
     right: 0;
     @media only screen and (max-width: 400px) {
       left: 0;
@@ -71,6 +73,9 @@ const StyledNavigation = styled(motion.div)`
     display: inline;
     transition: all .2s ease;
     text-align: center;
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 2.2rem;
+    font-weight: 400;
   }
 
   button {
@@ -78,9 +83,6 @@ const StyledNavigation = styled(motion.div)`
     border: none;
     text-transform: uppercase;
     cursor: pointer;
-    font-size: 1.6rem;
-    font-weight: 300;
-    font-family: 'Ubuntu', sans-serif;
     text-align: center;
   }
 

@@ -120,6 +120,7 @@ const StyledHeader = styled.header`
   color: white;
   z-index: 1000;
   overflow: hidden;
+  height: 10rem;
 
   .wrapper {
     max-width: 100vw;
