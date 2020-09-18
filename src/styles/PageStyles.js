@@ -101,6 +101,11 @@ export const Heading = styled.header`
   h1 {
     text-transform: uppercase;
     margin: 0;
+    font-weight: 500;
+
+    span {
+      color: #23A2D6;
+    }
   }
   h2 {
     margin: 0;
@@ -300,5 +305,23 @@ export const FullSection = styled(motion.section)`
     display: flex;
     align-items: center;
     justify-content: center;
+  }
+
+  .small {
+    display: none;
+  }
+
+  @media screen and (max-width: 1200px) {
+    .small {
+      display: block;
+    }
+
+    &.small-hide-background {
+      background-image: none!important;
+    }
+
+    .small-600 {
+      max-width: 600px;
+    }
   }
 `

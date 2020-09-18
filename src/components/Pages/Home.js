@@ -47,33 +47,51 @@ export const Home = () => {
   if (loading) return <Loader />
   return (
     <>
-      <FullSection space="5rem" style={{ display: "flex", alignItems: "center" }}>
-        <StyledContent>
-          <StyledColumns>
-            <MediumSpace style={{ fontSize: "18px" }}>
-              <Heading>
-                <h1>Informative Music Videos</h1>
-              </Heading>
-              <p>
-                A "Rap Guide" is a hip-hop song or music video about something beyond the subjective views and experiences of the artist.
+      <FullSection
+        className="small-hide-background"
+        space="5rem"
+        style={{
+          display: "flex",
+          alignItems: "center",
+          backgroundImage: "url('images/illustration1.svg')",
+          backgroundRepeat: "no-repeat",
+          backgroundSize: "40%",
+          backgroundPosition: "90% center"
+        }}>
+        <StyledContent
+          className="small-600"
+          style={{
+            width: "100%"
+          }}
+        >
+          <MediumSpace>
+            <Heading>
+              <h1><span>Informative</span> Music Videos</h1>
+            </Heading>
+            <p>
+              A "Rap Guide" is a hip-hop song or music video about something beyond the subjective views and experiences of the artist.
               </p>
-              <p>
-                Rap Guides are corroborated, citing information drawn from reliable sources, to the best of the artist's knowledge. If a song is developed in consultation with an academic expert, it can also be called a "Peer Reviewed Rap".
+            <p>
+              Rap Guides are corroborated, citing information drawn from reliable sources, to the best of the artist's knowledge. If a song is developed in consultation with an academic expert, it can also be called a "Peer Reviewed Rap".
               </p>
-              <p>
-                These songs integrate the creative and editorial perspective of the artist, but they do not knowingly communicate falsehoods.
+            <p>
+              These songs integrate the creative and editorial perspective of the artist, but they do not knowingly communicate falsehoods.
               </p>
-              <p>
-                Rap Guides make complex topics accessible and entertaining.
+            <p>
+              Rap Guides make complex topics accessible and entertaining.
               </p>
-            </MediumSpace>
-            <MediumSpace style={{ textAlign: "center", display: "flex" }}>
-              <img
-                src="images/illustration1.svg"
-                alt="Rap Guide"
-                style={{ width: "100%" }} />
-            </MediumSpace>
-          </StyledColumns>
+          </MediumSpace>
+          <div
+            className="small"
+            style={{
+              maxWidth: "600px",
+              paddingTop: "25px",
+              width: "90%",
+              margin: "0 auto",
+            }}
+          >
+            <img style={{ width: "100%" }} src="images/illustration1.svg" alt="Illustration 1" />
+          </div>
         </StyledContent>
       </FullSection>
       <FullSection
