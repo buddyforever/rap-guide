@@ -14,7 +14,7 @@ import { FormBlock } from '../../styles/FormStyles'
 import { Message } from '../ui/Message'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_LESSONS_BY_ACCOUNT, ENROLL_STUDENT } from '../../queries/lessons'
+import { GET_LESSONS_BY_ACCOUNT_SHORT, ENROLL_STUDENT } from '../../queries/lessons'
 import { GET_CODE } from '../../queries/codes'
 import { UPDATE_ACCOUNT_TYPE } from '../../queries/accounts'
 import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
@@ -35,7 +35,7 @@ export const Lessons = () => {
   const [message, setMessage] = useState(null);
 
   /* Queries */
-  const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT, {
+  const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT_SHORT, {
     variables: {
       id: user ? user.id : null
     }

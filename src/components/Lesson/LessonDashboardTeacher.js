@@ -12,6 +12,7 @@ import { LinkButton } from '../ui/LinkButton'
 import Loader from '../Loader'
 import { Message } from '../ui/Message'
 import { dateFormat } from '../../utilities/DateFormat'
+import { LessonStats } from '../Lesson/LessonStats'
 import { Modal } from "../../styles/ModalStyles"
 import ReviewAnnotation from '../Annotation/ReviewAnnotation'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
@@ -194,59 +195,13 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
         </Split>
       </Heading>
       <LargeSpace>
-        <Split>
-          <div>
-            <p>
-              <Data>
-                {students.length}/{lesson.maxStudents}
-              </Data>
-              <span>Students enrolled</span>
-            </p>
-            <p>
-              <Data>
-                {lesson.lyrics.length}/{lesson.guide.lyrics.length}
-              </Data>
-              <span>Lyrics assigned</span>
-            </p>
-            <p>
-              <Data>
-                {submittedAnnotations}
-              </Data>
-              <span>Submitted annotations</span>
-            </p>
-            <p>
-              <Data>
-                {lesson.minLikes}
-              </Data>
-              <span>Upvotes needed per student</span>
-            </p>
-            <p>
-              <Data>
-                {lesson.numAnnotations}
-              </Data>
-              <span>Annotations needed per student</span>
-            </p>
-            <p>
-              {/*
-                Number of annotations assigned per student * The maximum number of students / Number of assigned (annotatable) lyrics
-              */}
-              <Data>
-                {Math.ceil(lesson.numAnnotations * lesson.maxStudents / lesson.lyrics.length)}
-              </Data>
-              <span>Maximum annotations/lyric</span>
-            </p>
-          </div>
-          <div>
-            <p><Link to={`/annotations/${lesson.id}`}>View Annotations</Link></p>
-            {/*
-            <h2>Recent Activity</h2>
-            <ActivityList>
-              <li><a href="mailto:jessejburton@gmail.com">jessejburton@gmail.com</a> just enrolled in your course.</li>
-              <li><a href="mailto:jessejburton@gmail.com">jessejburton@gmail.com</a> just submitted an <a href="#">annotation</a>.</li>
-            </ActivityList>
-            */}
-          </div>
-        </Split>
+        <LessonStats
+          lesson={lesson}
+          students={students}
+          submittedAnnotations={submittedAnnotations} />
+        <div>
+          <p><Link to={`/annotations/${lesson.id}`}>View Annotations</Link></p>
+        </div>
       </LargeSpace>
       <LargeSpace>
         <Heading>
@@ -390,10 +345,4 @@ const Student = styled.div`
   }
 `
 
-const Data = styled.span`
-  font-size: 3rem;
-  margin-right: 1rem;
-  color: #DD3333;
-  font-weight: 700;
-`
 

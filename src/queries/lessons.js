@@ -1,5 +1,51 @@
 import gql from 'graphql-tag'
 
+export const GET_LESSONS_BY_ACCOUNT_SHORT = gql`
+  query getLessons($id: ID!) {
+    lessons(where: {accounts_some: { id: $id } }){
+      id
+      lessonTitle
+      lessonDescription
+      lessonStatus
+      maxStudents
+      dueDate
+      minLikes
+      numAnnotations
+      guide {
+        id
+        videoId
+        videoUrl
+        videoTitle
+        videoThumb
+        topics {
+          topic
+        }
+      }
+      accounts {
+        type
+      }
+      lyrics {
+        annotations {
+          isSubmitted
+        }
+      }
+    }
+  }
+`
+
+export const GET_COMMENTS_AND_LIKES = gql`
+  query getStats($id: ID!) {
+    annotations(where: {lesson: { id: $id } }){
+      comments {
+        id
+      }
+      likes {
+        id
+      }
+    }
+  }
+`
+
 export const GET_LESSONS_BY_ACCOUNT = gql`
   query getLessons($id: ID!) {
     lessons(where: {accounts_some: { id: $id } }){
