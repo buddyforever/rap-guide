@@ -1,5 +1,4 @@
 import React, { useContext } from 'react'
-import styled from 'styled-components'
 import { useParams, Link } from "react-router-dom"
 import { UserContext } from '../../context/UserContext'
 
@@ -8,11 +7,13 @@ import { Heading, StyledContent, StyledColumns } from "../../styles/PageStyles"
 import Loader from '../Loader'
 import Video from '../Guide/Video'
 import Lyrics from '../Lyric/Lyrics'
+import { SocialShare } from '../SocialShare'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_GUIDE_BY_ID } from '../../queries/guides'
 
 export const Guide = () => {
+
 
   /* Context */
   const { user } = useContext(UserContext);
@@ -29,6 +30,7 @@ export const Guide = () => {
 
   if (loading) return <Loader />;
   const { guide } = data;
+  const shareUrl = `https://www.rapguide.com/guide/${id}`
   return (
     <StyledContent>
       <Heading>
@@ -36,6 +38,11 @@ export const Guide = () => {
       </Heading>
 
       <Video guide={guide} />
+
+      <SocialShare
+        url={shareUrl}
+        title={guide.videoTitle}
+      />
 
       <StyledColumns>
         <Lyrics lyrics={guide.lyrics} refetch={refetch} />
@@ -48,7 +55,7 @@ export const Guide = () => {
           }
         </div>
       </StyledColumns>
-    </StyledContent>
+    </StyledContent >
   )
 }
 

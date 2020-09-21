@@ -4,6 +4,7 @@ import styled from 'styled-components'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import { FullSection, StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
+import { SocialShare } from '../SocialShare'
 
 export const MakeARapGuide = () => {
 
@@ -364,6 +365,18 @@ export const MakeARapGuide = () => {
             onClick={() => setStep(10)}>10</button>
         </div>
       </StyledControls>
+      <div style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        marginTop: "-25px"
+      }}>
+        <SocialShare
+          color="white"
+          hashtag="MakeARapGuide"
+          url="https://www.rapguide.com/lessons#make-a-rap-guide"
+          title="Make a Rap Guide" />
+      </div>
     </Panels >
   )
 }
