@@ -112,13 +112,10 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
 
   return (
     <>
-      <Heading>
-        <h2>Lesson Details</h2>
-        <MediumSpace>
-          <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
-          <h3>A lesson plan for <a href={`https://www.youtube.com/watch?v=${lesson.guide.videoId}`} target="_blank">{lesson.guide.videoTitle}</a></h3>
-        </MediumSpace>
-      </Heading>
+      <MediumSpace style={{ marginTop: "0" }}>
+        <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
+        <h3>A lesson plan for <a href={`https://www.youtube.com/watch?v=${lesson.guide.videoId}`} target="_blank">{lesson.guide.videoTitle}</a></h3>
+      </MediumSpace>
 
       {message && <Message type={message.type} title={message.title}>{message.text}</Message>}
 

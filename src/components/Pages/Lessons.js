@@ -70,16 +70,39 @@ export const Lessons = () => {
     }).then(response => {
       if (response.data.code) {
         switch (response.data.code.action.action) {
-          case "UPDATE_TYPE":
+          case "EDUCATOR_VIEW_MODE":
             updateAccountType({
               variables: {
                 email: user.email,
-                type: response.data.code.action.type
+                type: response.data.code.action.type,
+                isViewOnly: true
               }
             }).then(data => {
               setUser(prevState => ({
                 ...user,
-                type: response.data.code.action.type
+                type: response.data.code.action.type,
+                isViewMode: true
+              }))
+              setMessage({
+                title: "Account Upgraded",
+                type: "success",
+                text: "You now have educator view access."
+              })
+              setAccessCode("");
+            })
+            break;
+          case "UPDATE_TYPE":
+            updateAccountType({
+              variables: {
+                email: user.email,
+                type: response.data.code.action.type,
+                isViewOnly: false
+              }
+            }).then(data => {
+              setUser(prevState => ({
+                ...user,
+                type: response.data.code.action.type,
+                isViewMode: false
               }))
               setMessage({
                 title: "Account Upgraded",

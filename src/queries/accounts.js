@@ -10,17 +10,19 @@ export const GET_ACCOUNT_BY_EMAIL = gql`
       displayName
       isPublic
       twitter
+      isViewOnly
     }
   }
 `
 
 export const UPDATE_ACCOUNT_TYPE = gql`
-  mutation updateAccount($email: String!,$type: String!) {
+  mutation updateAccount($email: String!,$type: String!, $isViewOnly: Boolean! ) {
     updateAccount(
       where: { email: $email }
       data: {
       status: PUBLISHED
       type: $type
+      isViewOnly: $isViewOnly
     }) {
       id
       type

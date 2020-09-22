@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -16,6 +16,7 @@ import { LessonStats } from '../Lesson/LessonStats'
 import { Modal } from "../../styles/ModalStyles"
 import ReviewAnnotation from '../Annotation/ReviewAnnotation'
 import { faBackward } from '@fortawesome/free-solid-svg-icons'
+import { UserContext } from '../../context/UserContext'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { REVIEW_ANNOTATION } from '../../queries/annotations'
@@ -40,6 +41,8 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
   })
   const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
   const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
+
+  const { user } = useContext(UserContext)
 
   /* State */
   const [message, setMessage] = useState(false);
@@ -153,14 +156,23 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
           <div>
             <h2>{lesson.lessonTitle}</h2>
             <FormBlock space="1rem">
-              <select
-                value={lesson.lessonStatus}
-                onChange={updateLessonStatus}>
-                <option value="Draft">Draft</option>
-                <option value="In Session">In Session</option>
-                <option value="Closed">Closed</option>
-                <option value="Closed *">Closed (* allow late submissions)</option>
-              </select>
+              {user.isViewOnly &&
+                <select
+                  value={lesson.lessonStatus}
+                  onChange={updateLessonStatus}>
+                  <option value="Draft">Draft</option>
+                </select>
+              }
+              {!user.isViewOnly &&
+                <select
+                  value={lesson.lessonStatus}
+                  onChange={updateLessonStatus}>
+                  <option value="Draft">Draft</option>
+                  <option value="In Session">In Session</option>
+                  <option value="Closed">Closed</option>
+                  <option value="Closed *">Closed (* allow late submissions)</option>
+                </select>
+              }
             </FormBlock>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>

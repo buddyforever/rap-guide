@@ -48,7 +48,7 @@ export const Guide = () => {
         <Lyrics lyrics={guide.lyrics} refetch={refetch} />
         <div style={{ textAlign: "right" }}>
           {
-            user && user.type === 'educator' &&
+            user && (user.type === 'educator' || user.type === 'educator view') &&
             <Link className="button" to={'/lesson/add/' + id}>
               <Button>Create a Lesson</Button>
             </Link>

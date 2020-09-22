@@ -39,7 +39,8 @@ export const Header = () => {
         return {
           ...profile,
           id: account.id,
-          type: account.type
+          type: account.type,
+          isViewOnly: account.isViewOnly
         }
       })
     } else {
@@ -87,7 +88,7 @@ export const Header = () => {
                   </span>
                   <span>{user.name}<br />
                     {user.type !== 'public' &&
-                      <em>{user.type}</em>
+                      <em>{user.type} {user.isViewOnly && <span>(view only)</span>}</em>
                     }
                   </span>
                 </Link>
