@@ -38,7 +38,7 @@ export const Annotations = () => {
     setCurrentAnnotation(newAnnotation)
   }
 
-  if (loading) return <Loader />
+  if (loading || !data) return <Loader />
   if (!data.annotations || data.annotations.length === 0) return <StyledContent>No Annotations</StyledContent>
   return (
     <StyledContent>
