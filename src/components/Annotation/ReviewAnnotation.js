@@ -1,5 +1,7 @@
 import React, { useState, useContext } from 'react'
 import styled from 'styled-components'
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 
 import { Heading, MediumSpace, Cite, SmallSpace } from '../../styles/PageStyles'
 import { Form, ButtonBlock, FormBlock } from '../../styles/FormStyles'
@@ -50,6 +52,22 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
 
   return (
     <Form>
+      <div style={{
+        position: "sticky",
+        top: "-40px",
+        backgroundColor: "white",
+        width: "100%",
+        padding: "15px",
+        marginTop: "-40px",
+        textAlign: "right"
+      }}>
+        <LinkButton
+          style={{ fontSize: "3rem" }}
+          onClick={closeModal}
+        >
+          <FontAwesomeIcon icon={faTimesCircle} />
+        </LinkButton>
+      </div>
       <Heading>
         <h1>Annotation Review</h1>
         <Cite>Annotation submitted by <strong>{annotation.account.nameFirst} {annotation.account.nameLast}</strong> on <strong>{dateFormat(annotation.updatedAt)}</strong></Cite>
