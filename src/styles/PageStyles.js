@@ -28,24 +28,19 @@ export const StyledContent = styled.div`
   p a,
   button.showNextLink {
     color: #DD3333;
+    overflow-wrap: break-word;
+    word-break: break-word;
     text-decoration: none;
-    position: relative;
+    background-image: linear-gradient(180deg,transparent 90%,rgba(221,51,51,.4) 0);
+    transition: background-image .3s ease;
 
-    &::after {
-      content: '';
-      position: absolute;
-      bottom: -2px;
-      left: 0;
-      width: 100%;
-      height: 4px;
-      background-color: rgba(221,51,51,0.4);
-      transition: all .3s ease;
+    &:hover {
+      background-image: linear-gradient(180deg,transparent 85%,rgba(221,51,51,.4) 0);
     }
+  }
 
-    &:hover::after {
-      bottom: -4px;
-      height: 6px;
-    }
+  .shown p {
+    font-size: 18px!important;
   }
 `
 
