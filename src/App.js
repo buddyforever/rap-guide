@@ -17,6 +17,7 @@ import Annotations from './components/Private/Annotations'
 import AddLesson from './components/Lesson/AddLesson'
 import EditLesson from './components/Lesson/EditLesson.js'
 import Profile from './components/Private/Profile'
+import TempPage from './TEMP/TempPage'
 import auth from './auth/auth'
 import { UserContext } from './context/UserContext'
 import { defaultTheme } from '../src/components/themes/default'
@@ -50,7 +51,7 @@ function App() {
                 <Route exact path="/" component={Home} />
                 <Route exact path="/explore" component={Explore} />
                 <Route path="/lessons" component={Lessons} />
-                <Route path="/temp" component={Temp} />
+                <Route path="/temp" component={TempPage} />
                 <Route path="/addguide" component={AddGuide} />
                 <Route path="/updatelyrics" component={UpdateLyrics} />
                 <Route path="/request" component={Request} />

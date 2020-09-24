@@ -56,7 +56,7 @@ export const Home = () => {
           backgroundImage: "url('images/illustration1.svg')",
           backgroundRepeat: "no-repeat",
           backgroundSize: "40%",
-          backgroundPosition: "90% center"
+          backgroundPosition: "80% center"
         }}>
         <StyledContent
           className="small-600"
