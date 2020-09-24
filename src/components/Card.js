@@ -66,7 +66,7 @@ export const Card = ({
               ))}
             </div>
             <div className="cta">
-              <Link to={link}>{buttonText}</Link>
+              <span>{buttonText}</span>
             </div>
           </div>
         </motion.div>
@@ -169,7 +169,7 @@ const StyledCard = styled(motion.div)`
     transition: padding .4s ease;
   }
 
-  &:hover {
+  &:hover, &.open {
     .card {
       z-index: 100;
 
@@ -178,9 +178,9 @@ const StyledCard = styled(motion.div)`
       }
     }
 
-    .image-container {
+    /* .image-container {
       transform: scale(1.2);
-    }
+    } */
 
     .image-container::after {
       opacity: 0;
@@ -238,7 +238,7 @@ const StyledCard = styled(motion.div)`
     transition-delay: 1s;
     transition: opacity .4s ease;
 
-    a {
+    span {
       display: inline-block;
       padding: 5px 7px;
       text-decoration: none;
@@ -248,10 +248,6 @@ const StyledCard = styled(motion.div)`
       transition: transform .3s ease;
       border-radius: 3px;
       cursor: pointer;
-
-      &:hover {
-        transform: scale(1.05);
-      }
     }
   }
 
