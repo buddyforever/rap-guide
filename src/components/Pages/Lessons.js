@@ -12,12 +12,23 @@ import { Button, LinkButton } from '../ui'
 import { MakeARapGuide } from '../Make'
 import { FormBlock } from '../../styles/FormStyles'
 import { Message } from '../ui/Message'
+import { Card } from '../Card'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT_SHORT, ENROLL_STUDENT } from '../../queries/lessons'
 import { GET_CODE } from '../../queries/codes'
 import { UPDATE_ACCOUNT_TYPE } from '../../queries/accounts'
 import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
+
+function getLessonColor(status) {
+  const colors = {
+    "Draft": "#F6E05E",
+    "In Session": "#68D391",
+    "Closed": "#DD3333",
+    "Closed *": "#DD3333"
+  }
+  return colors[status]
+}
 
 export const Lessons = () => {
 
@@ -277,15 +288,36 @@ export const Lessons = () => {
             </LargeSpace>
           }
           <ThreeGrid>
-            {data.lessons.map(lesson => {
-              return (
-                <VideoThumb
-                  key={lesson.id}
-                  link={`/lesson/${lesson.id}`}
-                  lesson={lesson}
-                  guide={lesson.guide} />
-              )
-            })}
+            {data.lessons.map(lesson => (
+              <Card
+                key={lesson.id}
+                title={lesson.guide.videoTitle}
+                topics={lesson.guide.topics}
+                status="IN SESSION"
+                link={`/lesson/${lesson.id}`}
+                stats={[
+                  {
+                    label: "students",
+                    value: lesson.accounts.filter(account => account.type === "student").length
+                  },
+                  {
+                    label: "annotations",
+                    value: lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length
+                  },
+                  {
+                    label: "status",
+                    value: lesson.lessonStatus,
+                    color: getLessonColor(lesson.lessonStatus)
+                  }
+                ]}
+                image={lesson.guide.videoThumb}
+                badge={{
+                  label: lesson.lessonStatus,
+                  color: getLessonColor(lesson.lessonStatus)
+                }}
+              />
+            )
+            )}
           </ThreeGrid>
         </StyledContent>
       </FullSection>

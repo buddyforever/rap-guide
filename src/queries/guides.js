@@ -15,6 +15,16 @@ export const GET_ALL_GUIDES = gql`
           id
         }
       }
+      lessons(where: {isLive:true}) {
+        id
+        status
+        annotations(where: {isSubmitted:true}) {
+          id
+        }
+        accounts {
+          id
+        }
+      }
     }
     topics{
       id

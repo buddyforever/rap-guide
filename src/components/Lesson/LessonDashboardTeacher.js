@@ -134,7 +134,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
   return (
     <StyledContent className="dashboard">
       <Heading>
-        <h1>Lesson Dashboard</h1>
+        <h1>Lesson Dashboard fjasdfjsdlk</h1>
         <MediumSpace>
           <LinkButton
             iconLeft={faBackward}
@@ -156,27 +156,26 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
           <div>
             <h2>{lesson.lessonTitle}</h2>
             <FormBlock space="1rem">
-              {user.isViewOnly &&
-                <select
-                  value={lesson.lessonStatus}
-                  onChange={updateLessonStatus}>
-                  <option value="Draft">Draft</option>
-                </select>
-              }
-              {!user.isViewOnly &&
-                <select
-                  value={lesson.lessonStatus}
-                  onChange={updateLessonStatus}>
-                  <option value="Draft">Draft</option>
-                  <option value="In Session">In Session</option>
-                  <option value="Closed">Closed</option>
-                  <option value="Closed *">Closed (* allow late submissions)</option>
-                </select>
-              }
+              <select
+                value={lesson.lessonStatus}
+                onChange={updateLessonStatus}>
+                <option value="Draft">Draft</option>
+                <option value="In Session">In Session</option>
+                <option value="Closed">Closed</option>
+                <option value="Closed *">Closed (* allow late submissions)</option>
+              </select>
             </FormBlock>
           </div>
           <div style={{ display: "flex", "justifyContent": "flex-end" }}>
-            {lesson.lessonStatus === "In Session" &&
+            {(lesson.lessonStatus === "In Session" && user.isViewOnly) &&
+              <Button
+                title="Click to copy the access code to your clipboard"
+                style={{ marginRight: "1rem" }}
+                onClick={() => setMessage({ text: `This feature is only available to a full educator account, please contact us for more information.` })}>
+                <FontAwesomeIcon icon={faCopy} /> Copy Access Code (UPGRADE REQUIRED)
+              </Button>
+            }
+            {(lesson.lessonStatus === "In Session" && !user.isViewOnly) &&
               <CopyToClipboard
                 text={lessonSignupUrl}
                 onCopy={() => setMessage({ title: "The following link has been copied to your clipboard.", text: lessonSignupUrl })}>
@@ -191,7 +190,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
                     style={{ marginRight: "1rem" }}
                     onClick={(e) => e.preventDefault()}>
                     <FontAwesomeIcon icon={faCopy} /> Copy Access Code
-                    </Button>
+                  </Button>
                 </div>
               </CopyToClipboard>
             }
@@ -211,9 +210,6 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
           lesson={lesson}
           students={students}
           submittedAnnotations={submittedAnnotations} />
-        <div>
-          <p><Link to={`/annotations/${lesson.id}`}>View Annotations</Link></p>
-        </div>
       </LargeSpace>
       <LargeSpace>
         <Heading>
@@ -225,23 +221,33 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
             <div>
               <p>If you haven't already done so, you can send the signup link to your students to enable them to enroll.</p>
               <FormBlock style={{ margin: "5rem 0" }}>
-                <CopyToClipboard
-                  text={lessonSignupUrl}
-                  onCopy={() => setMessage({ text: `The following code has been copied to your clipboard <strong>${lessonSignupUrl}</strong>. Send this code to your students to use to access this lesson.` })}>
-                  <div style={{ display: "flex" }}>
-                    <input
-                      type="text"
-                      readOnly
-                      value={lessonSignupUrl}
-                    />
-                    <Button
-                      title="Click to copy the access code to your clipboard"
-                      style={{ marginLeft: "1rem", width: "200px" }}
-                      onClick={(e) => e.preventDefault()}>
-                      <FontAwesomeIcon icon={faCopy} /> Copy Access Code
-                </Button>
-                  </div>
-                </CopyToClipboard>
+                {user.isViewOnly &&
+                  <Button
+                    title="Click to copy the access code to your clipboard"
+                    style={{ marginLeft: "1rem", width: "200px" }}
+                    onClick={() => setMessage({ text: `This feature is only available to a full educator account, please contact us for more information.` })}>
+                    <FontAwesomeIcon icon={faCopy} /> Copy Access Code (DEMO)
+                  </Button>
+                }
+                {!user.isViewOnly &&
+                  <CopyToClipboard
+                    text={lessonSignupUrl}
+                    onCopy={() => setMessage({ text: `The following code has been copied to your clipboard <strong>${lessonSignupUrl}</strong>. Send this code to your students to use to access this lesson.` })}>
+                    <div style={{ display: "flex" }}>
+                      <input
+                        type="text"
+                        readOnly
+                        value={lessonSignupUrl}
+                      />
+                      <Button
+                        title="Click to copy the access code to your clipboard"
+                        style={{ marginLeft: "1rem", width: "200px" }}
+                        onClick={(e) => e.preventDefault()}>
+                        <FontAwesomeIcon icon={faCopy} /> Copy Access Code
+                      </Button>
+                    </div>
+                  </CopyToClipboard>
+                }
               </FormBlock>
             </div>
           }

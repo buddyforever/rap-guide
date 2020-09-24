@@ -3,8 +3,9 @@ import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
 
-import { StyledContent, Heading, ThreeGrid, FullSection } from '../../styles/PageStyles'
+import { StyledContent, Heading, ThreeGrid, FullSection, MediumSpace } from '../../styles/PageStyles'
 import VideoThumb from '../Guide/VideoThumb'
+import { Card } from '../Card'
 import TagCloud from '../Guide/TagCloud'
 import Loader from '../Loader'
 import { DotWave } from '../ui/Loader'
@@ -22,11 +23,13 @@ export const Explore = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [topics, setTopics] = useState([]);
   const [filteredGuides, setFilteredGuides] = useState([]);
+  const [hoveredVideo, setHoveredVideo] = useState(null)
 
   /* Functions */
   function selectTag(tag) {
+    console.log(tag)
     setFilteredGuides(guides.guides.filter(guide => {
-      return guide.topics.find(topic => topic.topic === tag.text);
+      return guide.topics.find(topic => topic.topic === tag);
     }))
   }
 
@@ -60,27 +63,65 @@ export const Explore = () => {
     })
     setTopics(topicsArr);
     setFilteredGuides(guides.guides);
+    console.log(guides)
   }, [guides])
 
   if (loading) return <Loader />
   return (
-    <FullSection space="5rem">
+    <FullSection space="5rem" style={{ background: "radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(28,28,28,1) 50%, rgba(0,0,0,1) 100%)" }}>
       <StyledContent style={{ paddingBottom: "5rem" }}>
 
-        <TagCloud selectTag={selectTag} tags={topics} />
-
-        <Heading>
+        <Heading style={{ color: "white" }}>
           <h1>Videos</h1>
         </Heading>
 
-        <ThreeGrid>
+        <TagCloud selectTag={selectTag} tags={topics} />
+
+        <ThreeGrid style={{ marginTop: "50px" }}>
           {filteredGuides.map(guide => {
-            return (<VideoThumb
-              key={guide.id}
-              guide={guide} />)
+            const numLessons = guide.lessons.length
+            const numStudents = guide.lessons.reduce((sum, lesson) => lesson.accounts.length, 0)
+            const numAnnotations = guide.lessons.reduce((sum, lesson) => lesson.annotations.length, 0)
+            const isHovered = guide.id === hoveredVideo
+            let badge = null
+            if (numLessons > 0) {
+              badge = {
+                label: "In Session",
+                color: "#249FD7"
+              }
+            }
+            return (
+              <Card
+                key={guide.id}
+                title={guide.videoTitle}
+                topics={guide.topics}
+                link={`/guide/${guide.id}`}
+                onMouseOver={() => setHoveredVideo(guide.id)}
+                onMouseOut={() => setHoveredVideo(null)}
+                classes={hoveredVideo ? !isHovered ? "dimmed" : "" : ""}
+                stats={[
+                  {
+                    label: "lessons",
+                    value: numLessons,
+                    color: numLessons > 0 ? "#249FD7" : null
+                  },
+                  {
+                    label: "annotations",
+                    value: numAnnotations
+                  },
+                  {
+                    label: "students",
+                    value: numStudents
+                  }
+                ]}
+                image={guide.videoThumb}
+                color="#DD3333"
+                buttonText="More..."
+                badge={badge}
+              />
+            )
           })}
         </ThreeGrid>
-
       </StyledContent>
     </FullSection>
   )

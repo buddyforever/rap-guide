@@ -88,7 +88,7 @@ export const Header = () => {
                   </span>
                   <span>{user.name}<br />
                     {user.type !== 'public' &&
-                      <em>{user.type} {user.isViewOnly && <span>(view only)</span>}</em>
+                      <em>{user.type} {user.isViewOnly && <span>(DEMO)</span>}</em>
                     }
                   </span>
                 </Link>

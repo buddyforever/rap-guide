@@ -18,7 +18,6 @@ export const LessonStats = ({ lesson, students, submittedAnnotations }) => {
 
 
   if (loading) return <DotWave />
-  console.log(data)
   const lyricsWithAnnotations = lesson.lyrics.filter(lyric => lyric.annotations.length)
   const annotationsWithComments = data.annotations.filter(annotation => annotation.comments.length)
   const annotationsWithLikes = data.annotations.filter(annotation => annotation.likes.length)
@@ -30,23 +29,27 @@ export const LessonStats = ({ lesson, students, submittedAnnotations }) => {
         <StyledStats>
           <div>
             Number of Students
-        </div>
+          </div>
           <Data>{lesson.maxStudents}</Data>
           <div>
             Number annotations required per student
-        </div>
+          </div>
           <Data>{lesson.numAnnotations}</Data>
           <div>
             Number annotatable lyrics
-        </div>
+          </div>
           <Data>{lesson.lyrics.length}</Data>
           <div>
+            Max Annotations per Lyric
+          </div>
+          <Data>{Math.ceil(lesson.numAnnotations * lesson.maxStudents / lesson.lyrics.length)}</Data>
+          <div>
             Number upvotes required / student
-        </div>
+          </div>
           <Data>{lesson.minLikes}</Data>
           <div>
             Number comments required
-        </div>
+          </div>
           <Data>0</Data>
         </StyledStats>
       </div>
@@ -65,10 +68,6 @@ export const LessonStats = ({ lesson, students, submittedAnnotations }) => {
             Number of Lyrics Annotated
           </div>
           <Data>{lyricsWithAnnotations.length}</Data>
-          <div>
-            Max Annotations per Lyric
-          </div>
-          <Data>{Math.ceil(lesson.numAnnotations * lesson.maxStudents / lesson.lyrics.length)}</Data>
           <div>
             Number of Upvotes Submitted
           </div>

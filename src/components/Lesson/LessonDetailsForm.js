@@ -131,7 +131,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
 
       <FormBlock>
         <h3>Lesson Plan</h3>
-        <p>This is placeholder text that will describe what this rich text editor is for.</p>
+        <p>Enter your lesson plan here, provide instructions for your students about what the objectives are for this lesson.</p>
         <Editor
           initialValue={lessonDescription}
           apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"

@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { Tag } from '../../styles/TagStyles'
 
-const minFontSize = 2;
-const maxFontSize = 3;
+const minFontSize = 1.4;
+const maxFontSize = 4;
 
 const TagCloud = ({ selectTag, tags }) => {
 

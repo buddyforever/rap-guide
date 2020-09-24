@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useContext } from 'react'
 import styled from 'styled-components'
 
-import { StyledContent, Heading } from '../styles/PageStyles'
+import { StyledContent, Heading, MediumSpace } from '../styles/PageStyles'
 import { UserContext } from '../context/UserContext'
 import Loader from '../components/Loader'
 import { Grid } from '../components/Grid'
@@ -23,36 +23,38 @@ const TempPage = () => {
   });
 
   if (loading || !data) return <Loader />
-  console.log(data)
   return (
     <StyledContent>
       <Heading>
         <h1>Lesson Templates</h1>
-        <Grid>
-          {data.lessons.map(lesson => (
-            <Card
-              key={lesson.id}
-              title={lesson.guide.videoTitle}
-              topics={lesson.guide.topics}
-              status="IN SESSION"
-              stats={[
-                {
-                  label: "students",
-                  value: 30
-                },
-                {
-                  label: "annotations",
-                  value: 295
-                },
-                {
-                  label: "lessons",
-                  value: 3
-                }
-              ]}
-              image={lesson.guide.videoUrl}
-            />
-          ))}
-        </Grid>
+        <MediumSpace>
+          <Grid>
+            {data.lessons.map(lesson => (
+              <Card
+                key={lesson.id}
+                title={lesson.guide.videoTitle}
+                topics={lesson.guide.topics}
+                status="IN SESSION"
+                link={`/lesson/${lesson.id}`}
+                stats={[
+                  {
+                    label: "students",
+                    value: 30
+                  },
+                  {
+                    label: "annotations",
+                    value: 295
+                  },
+                  {
+                    label: "lessons",
+                    value: 3
+                  }
+                ]}
+                image={lesson.guide.videoThumb}
+              />
+            ))}
+          </Grid>
+        </MediumSpace>
       </Heading>
     </StyledContent>
   )
