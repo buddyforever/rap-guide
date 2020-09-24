@@ -75,7 +75,7 @@ export const Card = ({
   )
 }
 
-const StyledCard = styled.div`
+const StyledCard = styled(motion.div)`
   width: 100%;
   height: 200px;
   color: white;

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faSearch } from '@fortawesome/free-solid-svg-icons'
+import { AnimatePresence } from 'framer-motion'
 
 import { StyledContent, Heading, ThreeGrid, FullSection, MediumSpace } from '../../styles/PageStyles'
 import VideoThumb from '../Guide/VideoThumb'
@@ -78,49 +79,63 @@ export const Explore = () => {
         <TagCloud selectTag={selectTag} tags={topics} />
 
         <ThreeGrid style={{ marginTop: "50px" }}>
-          {filteredGuides.map(guide => {
-            const numLessons = guide.lessons.length
-            const numStudents = guide.lessons.reduce((sum, lesson) => lesson.accounts.length, 0)
-            const numAnnotations = guide.lessons.reduce((sum, lesson) => lesson.annotations.length, 0)
-            const isHovered = guide.id === hoveredVideo
-            let badge = null
-            if (numLessons > 0) {
-              badge = {
-                label: "In Session",
-                color: "#249FD7"
+          <AnimatePresence exitBeforeEnter>
+            {filteredGuides.map(guide => {
+              const numLessons = guide.lessons.length
+              const numStudents = guide.lessons.reduce((sum, lesson) => lesson.accounts.length, 0)
+              const numAnnotations = guide.lessons.reduce((sum, lesson) => lesson.annotations.length, 0)
+              const isHovered = guide.id === hoveredVideo
+              let badge = null
+              if (numLessons > 0) {
+                badge = {
+                  label: "In Session",
+                  color: "#249FD7"
+                }
               }
-            }
-            return (
-              <Card
-                key={guide.id}
-                title={guide.videoTitle}
-                topics={guide.topics}
-                link={`/guide/${guide.id}`}
-                onMouseOver={() => setHoveredVideo(guide.id)}
-                onMouseOut={() => setHoveredVideo(null)}
-                classes={hoveredVideo ? !isHovered ? "dimmed" : "" : ""}
-                stats={[
-                  {
-                    label: "lessons",
-                    value: numLessons,
-                    color: numLessons > 0 ? "#249FD7" : null
-                  },
-                  {
-                    label: "annotations",
-                    value: numAnnotations
-                  },
-                  {
-                    label: "students",
-                    value: numStudents
-                  }
-                ]}
-                image={guide.videoThumb}
-                color="#DD3333"
-                buttonText="More..."
-                badge={badge}
-              />
-            )
-          })}
+              return (
+                <Card
+                  initial={{
+                    opacity: 0,
+                    y: 100
+                  }}
+                  animate={{
+                    opacity: 1,
+                    y: 0
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: -50
+                  }}
+                  key={guide.id}
+                  title={guide.videoTitle}
+                  topics={guide.topics}
+                  link={`/guide/${guide.id}`}
+                  onMouseOver={() => setHoveredVideo(guide.id)}
+                  onMouseOut={() => setHoveredVideo(null)}
+                  classes={hoveredVideo ? !isHovered ? "dimmed" : "" : ""}
+                  stats={[
+                    {
+                      label: "lessons",
+                      value: numLessons,
+                      color: numLessons > 0 ? "#249FD7" : null
+                    },
+                    {
+                      label: "annotations",
+                      value: numAnnotations
+                    },
+                    {
+                      label: "students",
+                      value: numStudents
+                    }
+                  ]}
+                  image={guide.videoThumb}
+                  color="#DD3333"
+                  buttonText="More..."
+                  badge={badge}
+                />
+              )
+            })}
+          </AnimatePresence>
         </ThreeGrid>
       </StyledContent>
     </FullSection>
