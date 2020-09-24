@@ -82,9 +82,10 @@ const StyledCard = styled(motion.div)`
   position: relative;
   box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
   transition: opacity .1s ease;
+  background-color: black;
 
   &.dimmed {
-    opacity: 0.4;
+    opacity: 0.4!important;
   }
 
   .card {
@@ -92,6 +93,8 @@ const StyledCard = styled(motion.div)`
     position: absolute;
     height: 200px;
     width: 100%;
+    backface-visibility: hidden;
+    overflow: hidden;
 
     &::after {
       content: '';
@@ -121,6 +124,10 @@ const StyledCard = styled(motion.div)`
     backface-visibility: hidden;
     position: relative;
     overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 10s linear;
 
     .image-transition {
       backface-visibility: hidden;
@@ -133,10 +140,9 @@ const StyledCard = styled(motion.div)`
     }
 
     img {
-      width: 100%;
-      height: 200px;
+      width: 99%;
+      height: 99%;
       object-fit: cover;
-      transition: transform 5s linear;
     }
 
     &::after {
@@ -172,8 +178,8 @@ const StyledCard = styled(motion.div)`
       }
     }
 
-    .image-container img {
-      transform: scale(1.25);
+    .image-container {
+      transform: scale(1.2);
     }
 
     .image-container::after {
@@ -182,6 +188,7 @@ const StyledCard = styled(motion.div)`
 
     .image-transition {
       background: linear-gradient(to top, #000 0%, #000 25%, rgba(0,0,0,0) 50%);
+      transform: translateY(5px);
     }
 
     .content {
