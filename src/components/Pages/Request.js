@@ -229,7 +229,7 @@ export const Request = () => {
               </Heading>
               <p>We can make videos for existing songs, either lyric videos or music videos, with a combination of animation, motion graphics, and green screen. <Link to="/contact">contact us</Link> to inquire about making a video for an existing song and adding it to this site.</p>
 
-              <p>Not sure where to start? Here are 40 songs with science content that Baba Brinkman has released as audio tracks but which have no video produced as yet. <Link to="/">[currently the link is a PDF, but it should be a pop-up window]</Link>
+              <p>Not sure where to start? Here are 40 songs with science content that Baba Brinkman has released as audio tracks but which have no video produced as yet.
               </p>
             </MediumSpace>
             <MediumSpace style={{ textAlign: "center" }}>
