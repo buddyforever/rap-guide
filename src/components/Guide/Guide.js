@@ -33,7 +33,7 @@ export const Guide = () => {
   const shareUrl = `https://www.rapguide.com/guide/${id}`
   return (
     <StyledContent>
-      <Heading>
+      <Heading style={{ paddingTop: "25px" }}>
         <h1>{guide.videoTitle}</h1>
       </Heading>
 

@@ -143,6 +143,7 @@ const PublicLyrics = ({ guideID }) => {
   }
 
   function handleClick(lyric, top, maxY) {
+    console.log("handleClick Fired")
     showAnnotation(
       lyric.annotations,
       0,
@@ -186,6 +187,10 @@ const PublicLyrics = ({ guideID }) => {
   }
 
   function showAnnotation(annotations, index, lyricsHeight, arrowTop, maxY) {
+    console.log("showAnnotation Fired")
+    console.log(annotations)
+    console.log(isMobile)
+
     if (!annotations || !annotations.length) return
     setSelectedAnnotations(annotations)
     setCurrentAnnotation(index)
