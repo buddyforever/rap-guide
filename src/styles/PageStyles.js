@@ -7,7 +7,7 @@ export const StyledMainContent = styled.main`
 
 export const StyledContent = styled.div`
   max-width: 1100px;
-  padding: 0 50px 50px 0;
+  padding: 0 50px 50px 50px;
   margin: 0 auto;
   position: relative;
 
