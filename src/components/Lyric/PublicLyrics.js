@@ -1,7 +1,7 @@
 import React, { useRef, useContext, useEffect, useState } from 'react'
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faThumbsUp } from '@fortawesome/free-solid-svg-icons'
+import { faThumbsUp, faTimesCircle } from '@fortawesome/free-solid-svg-icons'
 import { motion, AnimatePresence } from 'framer-motion'
 
 import Lyric from './Lyric'
@@ -288,6 +288,9 @@ const PublicLyrics = ({ guideID }) => {
         arrowTop={top}
         contentTop={offset}
         className={hidden ? "hidden annotation-display" : "annotation-display"}>
+        <div className="mobile-close">
+          <button onClick={handleHide}><FontAwesomeIcon icon={faTimesCircle} /></button>
+        </div>
         <div className="arrow"></div>
         <div className="content view" ref={annotationRef}>
           {selectedAnnotations && (
@@ -299,7 +302,7 @@ const PublicLyrics = ({ guideID }) => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: .2 }}
               >
-                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                <div className="annotation-nav" style={{ display: "flex", justifyContent: "space-between" }}>
                   <small>({currentAnnotation + 1} / {selectedAnnotations.length} annotations)</small>
                   {selectedAnnotations.length > 1 &&
                     <div>

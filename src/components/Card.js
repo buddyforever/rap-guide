@@ -36,13 +36,13 @@ export const Card = ({
   const [windowSize, setWindowSize] = useState(getWindowSize())
 
   function updateWindowSize() {
-    const windowSize = getWindowSize()
-    if (windowSize.width < 750) {
+    const size = getWindowSize()
+    if (size.width < 750) {
       setIsMobile(true)
     } else {
       setIsMobile(false)
     }
-    setWindowSize(windowSize)
+    setWindowSize(size)
   }
 
   useEffect(() => {
@@ -352,6 +352,7 @@ const StyledCard = styled(motion.div)`
   @media screen and (max-width: 750px){
     height: 400px;
     margin-bottom: 25px;
+    z-index: 0;
 
     .card {
       height: 400px;

@@ -245,7 +245,7 @@ export const StyledColumns = styled.div`
   }
 `;
 
-export const StyledMovingColumn = styled.div`
+export const StyledMovingColumn = styled(motion.div)`
   position: relative;
   opacity: 1;
 
@@ -297,6 +297,10 @@ export const StyledMovingColumn = styled.div`
       padding-bottom: 2rem;
       border-bottom: 1px solid black;
     }
+  }
+
+  .mobile-close {
+    display: none;
   }
 `
 
