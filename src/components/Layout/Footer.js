@@ -74,4 +74,12 @@ const StyledFooter = styled.footer`
     line-height: 2.4rem;
     list-style: none;
   }
+
+  @media screen and (max-width: 750px){
+    padding: 25px;
+
+    .content-container{
+      grid-template-columns: 1fr;
+    }
+  }
 `;

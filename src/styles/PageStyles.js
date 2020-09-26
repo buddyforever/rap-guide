@@ -110,6 +110,10 @@ export const Heading = styled.header`
   h2 {
     margin: 0;
   }
+
+  @media screen and (max-width: 750px){
+    padding: 0 0 2.5rem 0
+  }
 `
 
 export const Centered = styled.div`
