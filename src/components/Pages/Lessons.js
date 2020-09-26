@@ -294,9 +294,12 @@ export const Lessons = () => {
               return (
                 <Card
                   key={lesson.id}
-                  title={lesson.guide.videoTitle}
+                  title={lesson.lessonTitle}
+                  headingSize="2.6rem"
                   topics={lesson.guide.topics}
                   status="IN SESSION"
+                  showTags={false}
+                  lesson={lesson}
                   link={`/lesson/${lesson.id}`}
                   onMouseOver={() => setHoveredVideo(lesson.id)}
                   onMouseOut={() => setHoveredVideo(null)}

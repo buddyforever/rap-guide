@@ -16,9 +16,12 @@ export const Card = ({
   stats,
   image,
   link,
+  lesson = null,
+  headingSize = "2.4rem",
   badge = null,
   color = "#249FD7",
   classes,
+  showTags = true,
   buttonText = "View More...",
   ...rest
 }) => {
@@ -31,6 +34,7 @@ export const Card = ({
         color={color}
         badgeColor={badge && badge.color ? badge.color : color}
         className={classes ? classes : ""}
+        headingSize={headingSize}
         {...rest}
       >
         <motion.div
@@ -60,11 +64,20 @@ export const Card = ({
                 ><span>{stat.value}</span>{stat.label}</div>
               ))}
             </div>
-            <div className="topics">
-              {topics.map(topic => (
-                <span key={topic.topic}>{topic.topic}</span>
-              ))}
-            </div>
+            {showTags &&
+              <div className="topics">
+                {topics.map(topic => (
+                  <span key={topic.topic}>{topic.topic}</span>
+                ))}
+              </div>
+            }
+            {lesson &&
+              <div className="lesson-details">
+                <span className="highlight">{lesson.className}</span>
+                <span>{lesson.instructorName}</span>
+                <span>{lesson.institutionName}</span>
+              </div>
+            }
             <div className="cta">
               <span>{buttonText}</span>
             </div>
@@ -213,7 +226,7 @@ const StyledCard = styled(motion.div)`
 
   h2 {
     padding: 15px 30px 15px 15px;
-    font-size: 3.6rem;
+    font-size: ${props => props.headingSize};
     text-transform: uppercase;
     z-index: 50;
     text-shadow: 2px 2px 5px rgba(0,0,0,0.8);
@@ -272,6 +285,18 @@ const StyledCard = styled(motion.div)`
         font-size: 18px;
         font-weight: bold;
       }
+    }
+  }
+
+  .lesson-details {
+    padding: 15px;
+
+    span {
+      display: block;
+    }
+
+    span.highlight {
+      color: ${props => props.color}
     }
   }
 

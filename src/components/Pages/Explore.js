@@ -108,6 +108,7 @@ export const Explore = () => {
                   title={guide.videoTitle}
                   topics={guide.topics}
                   link={`/guide/${guide.id}`}
+                  headingSize="3rem"
                   onMouseOver={() => setHoveredVideo(guide.id)}
                   onMouseOut={() => setHoveredVideo(null)}
                   classes={hoveredVideo ? !isHovered ? "dimmed" : "" : ""}
@@ -129,7 +130,6 @@ export const Explore = () => {
                   image={guide.videoThumb}
                   color="#DD3333"
                   buttonText="More..."
-                  badge={badge}
                 />
               )
             })}

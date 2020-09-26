@@ -12,6 +12,9 @@ export const GET_LESSONS_BY_ACCOUNT_SHORT = gql`
       minLikes
       numAnnotations
       minComments
+      className
+      instructorName
+      institutionName
       guide {
         id
         videoId
