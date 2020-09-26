@@ -13,6 +13,7 @@ const Lyric = ({
   hasMyAnnotation = false,
   mineOnly = false,
   maxWeight = 1,
+  onClick,
   ...rest }) => {
 
   let isAssigned = lyric.annotations && !isPublic
@@ -53,6 +54,7 @@ const Lyric = ({
       className={classes.length ? classes.join(" ") : ""}
       {...rest}
       title={isFull ? "This lyric already has enough annotations, please select a different one" : ""}
+      onClick={onClick}
     >
       {lyric.lyric}
       {isExample &&
