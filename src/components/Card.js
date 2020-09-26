@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
 import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
@@ -7,6 +7,10 @@ import { Button } from './ui/Button'
 
 function splitFirstWord(string) {
   return [string.split(" ")[0], string.indexOf(' ') > 0 ? string.substr(string.indexOf(' ')) : '']
+}
+
+function getWindowSize() {
+  return { width: window.innerWidth, height: window.innerHeight }
 }
 
 export const Card = ({
@@ -28,6 +32,24 @@ export const Card = ({
 
   const [titleA, titleB] = splitFirstWord(title)
 
+  const [isMobile, setIsMobile] = useState(false)
+  const [windowSize, setWindowSize] = useState(getWindowSize())
+
+  function updateWindowSize() {
+    const windowSize = getWindowSize()
+    if (windowSize.width < 750) {
+      setIsMobile(true)
+    } else {
+      setIsMobile(false)
+    }
+    setWindowSize(windowSize)
+  }
+
+  useEffect(() => {
+    updateWindowSize()
+    window.addEventListener("resize", updateWindowSize);
+  }, [])
+
   return (
     <Link to={link}>
       <StyledCard
@@ -39,7 +61,7 @@ export const Card = ({
       >
         <motion.div
           className="card"
-          whileHover={{
+          whileHover={!isMobile && {
             height: "450px",
             y: "-125px",
             scale: 1.05,
@@ -326,4 +348,45 @@ const StyledCard = styled(motion.div)`
       }
     }
   }
+
+  @media screen and (max-width: 750px){
+    height: 400px;
+    margin-bottom: 25px;
+
+    .card {
+      height: 400px;
+
+      &::after {
+        opacity: 0;
+      }
+    }
+
+    .image-container::after {
+      opacity: 0;
+    }
+
+    .content {
+      justify-content: flex-end;
+    }
+
+    .cta {
+      opacity: 1;
+      height: 50px;
+    }
+
+    .stats {
+      height: 75px;
+      opacity: 1;
+      padding: 15px;
+
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+    }
+
+    h2 {
+      font-size: 3.3rem;
+    }
+  }
+
 `

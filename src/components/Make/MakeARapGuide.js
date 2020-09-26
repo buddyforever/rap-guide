@@ -369,7 +369,7 @@ export const MakeARapGuide = () => {
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        marginTop: "-25px"
+        paddingBottom: "50px"
       }}>
         <SocialShare
           color="white"

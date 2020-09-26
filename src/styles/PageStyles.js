@@ -42,6 +42,11 @@ export const StyledContent = styled.div`
   .shown p {
     font-size: 18px!important;
   }
+
+  @media screen and (max-width: 750px){
+    padding-left: 25px;
+    padding-right: 25px;
+  }
 `
 
 export const Cite = styled.p`
@@ -230,6 +235,10 @@ export const StyledColumns = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   column-gap: 5rem;
+
+  @media screen and (max-width: 750px){
+    grid-template-columns: 1fr;
+  }
 `;
 
 export const StyledMovingColumn = styled.div`
