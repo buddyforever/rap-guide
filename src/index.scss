@@ -69,8 +69,8 @@ main h1 {
 
 @media only screen and (max-width: 715px){
   .annotation-display {
-    position: fixed;
-    height: 100vh;
+    position: fixed!important;
+    height: 100vh!important;
     width: 75vw;
     transform: translateX(0);
     right: 0;
@@ -87,12 +87,12 @@ main h1 {
     }
 
     .arrow {
-      display: none;
+      display: none!important;
     }
 
     .content {
       top: 0!important;
-      border: none;
+      border: none!important;
       padding-top: 60px!important;
     }
 
@@ -102,8 +102,8 @@ main h1 {
     }
 
     .mobile-close {
-      position: fixed;
-      display: block;
+      position: fixed!important;
+      display: block!important;
       top: 0;
       left: 0;
       width: 100%;
