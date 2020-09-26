@@ -30,6 +30,23 @@ const PublicLyrics = ({ guideID }) => {
   const [selectedLyrics, setSelectedLyrics] = useState(null)
   const [annotationHeight, setAnnotationHeight] = useState(0)
   const [comment, setComment] = useState("")
+  const [isMobile, setIsMobile] = useState(false)
+  const [windowSize, setWindowSize] = useState(getWindowSize())
+
+  function updateWindowSize() {
+    const size = getWindowSize()
+    if (size.width < 750) {
+      setIsMobile(true)
+    } else {
+      setIsMobile(false)
+    }
+    setWindowSize(size)
+  }
+
+  useEffect(() => {
+    updateWindowSize()
+    window.addEventListener("resize", updateWindowSize);
+  }, [])
 
   /* Context */
   const { user } = useContext(UserContext);
@@ -40,8 +57,6 @@ const PublicLyrics = ({ guideID }) => {
       guideID: guideID
     }
   });
-
-  console.log(error)
 
   const [createLike] = useMutation(CREATE_LIKE)
   const [deleteLike] = useMutation(DELETE_LIKE)
@@ -176,10 +191,18 @@ const PublicLyrics = ({ guideID }) => {
     setCurrentAnnotation(index)
     highlightLyrics(annotations[index].lyrics)
 
-    // Need to wait a bit for the state to finish updating
-    setTimeout(() => {
-      moveWindow(lyricsHeight, arrowTop, maxY)
-    }, 50)
+    if (!isMobile) {
+      // Need to wait a bit for the state to finish updating
+      setTimeout(() => {
+        moveWindow(lyricsHeight, arrowTop, maxY)
+      }, 50)
+    } else {
+      setHidden(false);
+    }
+  }
+
+  function getWindowSize() {
+    return { width: window.innerWidth, height: window.innerHeight }
   }
 
   function handleHide() {
