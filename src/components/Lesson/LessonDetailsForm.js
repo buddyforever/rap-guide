@@ -21,6 +21,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
   const [lessonDescription, setLessonDescription] = useState(lesson.lessonDescription || "<p></p>")
   const [maxStudents, setMaxStudents] = useState(lesson.maxStudents || '')
   const [minLikes, setMinLikes] = useState(lesson.minLikes || '')
+  const [minComments, setMinComments] = useState(lesson.minComments || '')
   const [numAnnotations, setNumAnnotations] = useState(lesson.numAnnotations || '')
   const [topics, setTopics] = useState(lesson.topics || [])
   const [topic, setTopic] = useState("")
@@ -36,16 +37,16 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
     let errors = []
     if (!lessonTitle.length) errors = ["Please enter a title", ...errors]
     if (!lessonDescription.length) errors = ["Please enter a description", ...errors]
-    if (isNaN(maxStudents)) errors = ["Please enter the maximum number of students", ...errors]
-    if (isNaN(minLikes)) errors = ["Please enter the minimum number of annotation upvotes a student needs to complete the lesson", ...errors]
-    if (isNaN(numAnnotations)) errors = ["Please enter the minimum number of annotations a student needs to write to complete the lesson", ...errors]
+    if (isNaN(parseInt(maxStudents))) errors = ["Please enter the maximum number of students", ...errors]
+    if (isNaN(parseInt(minLikes))) errors = ["Please enter the minimum number of annotation upvotes a student needs to complete the lesson", ...errors]
+    if (isNaN(parseInt(minComments))) errors = ["Please enter the minimum number of comments a student needs to write to complete the lesson", ...errors]
+    if (isNaN(parseInt(numAnnotations))) errors = ["Please enter the minimum number of annotations a student needs to write to complete the lesson", ...errors]
     if (errors.length) {
       setMessage({
+        autoDismiss: 60000,
         type: "error",
         title: "Please fix the following errors",
-        text: errors.map((error, index) => {
-          return <p key={index}>{error}</p>
-        })
+        text: errors.toString()
       })
       return false
     }
@@ -63,7 +64,8 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
         id: user.id
       }],
       minLikes: parseInt(minLikes),
-      numAnnotations: parseInt(numAnnotations)
+      numAnnotations: parseInt(numAnnotations),
+      minComments: parseInt(minComments)
     });
   }
 
@@ -117,7 +119,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
         <h3>A lesson plan for <a href={`https://www.youtube.com/watch?v=${lesson.guide.videoId}`} target="_blank">{lesson.guide.videoTitle}</a></h3>
       </MediumSpace>
 
-      {message && <Message type={message.type} title={message.title}>{message.text}</Message>}
+      {message && <Message {...message}>{message.text}</Message>}
 
       <FormBlock>
         <h3>Lesson Name</h3>
@@ -178,6 +180,16 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
           value={minLikes}
           onChange={(e) => setMinLikes(e.target.value)}
           placeholder="3..." />
+      </FormBlock>
+
+      <FormBlock>
+        <h3>Comments</h3>
+        <p>Enter the minimum number of comments a student needs to complete the lesson.</p>
+        <input
+          type="number"
+          value={minComments}
+          onChange={(e) => setMinComments(e.target.value)}
+          placeholder="2..." />
       </FormBlock>
 
       <FormBlock style={{ display: "none" }}>

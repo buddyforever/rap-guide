@@ -6,7 +6,7 @@ import { Button } from "../ui/Button"
 import { Heading, StyledContent, StyledColumns } from "../../styles/PageStyles"
 import Loader from '../Loader'
 import Video from '../Guide/Video'
-import Lyrics from '../Lyric/Lyrics'
+import PublicLyrics from '../Lyric/PublicLyrics'
 import { SocialShare } from '../SocialShare'
 
 import { useQuery } from '@apollo/react-hooks'
@@ -39,13 +39,11 @@ export const Guide = () => {
 
       <Video guide={guide} />
 
-      <SocialShare
-        url={shareUrl}
-        title={guide.videoTitle}
-      />
-
-      <StyledColumns>
-        <Lyrics lyrics={guide.lyrics} refetch={refetch} />
+      <StyledColumns style={{ margin: "25px 0" }}>
+        <SocialShare
+          url={shareUrl}
+          title={guide.videoTitle}
+        />
         <div style={{ textAlign: "right" }}>
           {
             user && (user.type === 'educator' || user.type === 'educator view') &&
@@ -55,7 +53,9 @@ export const Guide = () => {
           }
         </div>
       </StyledColumns>
-    </StyledContent >
+
+      <PublicLyrics guideID={guide.id} />
+    </StyledContent>
   )
 }
 

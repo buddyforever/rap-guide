@@ -28,7 +28,6 @@ export const Explore = () => {
 
   /* Functions */
   function selectTag(tag) {
-    console.log(tag)
     setFilteredGuides(guides.guides.filter(guide => {
       return guide.topics.find(topic => topic.topic === tag);
     }))
@@ -64,7 +63,6 @@ export const Explore = () => {
     })
     setTopics(topicsArr);
     setFilteredGuides(guides.guides);
-    console.log(guides)
   }, [guides])
 
   if (loading) return <Loader />

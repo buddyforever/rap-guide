@@ -43,6 +43,7 @@ const Message = ({
   }
 
   useEffect(() => {
+    console.log(autoDismiss)
     if (isOpen && autoDismiss) {
       setTimeout(handleClose, autoDismiss)
     }

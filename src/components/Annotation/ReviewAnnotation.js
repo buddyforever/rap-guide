@@ -69,7 +69,12 @@ const ReviewAnnotation = ({ annotation, closeModal, rejectAnnotation, approveAnn
         </LinkButton>
       </div>
       <Heading>
-        <h1>Annotation Review</h1>
+        <h1>
+          Annotation Review
+          {['jessejburton@gmail.com', 'baba.brinkman@gmail.com'].includes(user.email) &&
+            <span style={{ fontSize: "18px", marginLeft: "15px" }}>({annotation.id})</span>
+          }
+        </h1>
         <Cite>Annotation submitted by <strong>{annotation.account.nameFirst} {annotation.account.nameLast}</strong> on <strong>{dateFormat(annotation.updatedAt)}</strong></Cite>
       </Heading>
       <MediumSpace>

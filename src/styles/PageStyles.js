@@ -7,7 +7,7 @@ export const StyledMainContent = styled.main`
 
 export const StyledContent = styled.div`
   max-width: 1100px;
-  padding: 0 50px;
+  padding: 0 50px 50px 0;
   margin: 0 auto;
   position: relative;
 
@@ -131,7 +131,7 @@ export const ThreeGrid = styled.div`
     grid-template-columns: 1fr 1fr;
   }
 
-  @media screen and (max-width: 926px) {
+  @media screen and (max-width: 750px) {
     grid-template-columns: 1fr;
   }
 `

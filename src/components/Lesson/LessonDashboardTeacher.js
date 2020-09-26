@@ -134,7 +134,7 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
   return (
     <StyledContent className="dashboard">
       <Heading>
-        <h1>Lesson Dashboard fjasdfjsdlk</h1>
+        <h1>Lesson Dashboard</h1>
         <MediumSpace>
           <LinkButton
             iconLeft={faBackward}

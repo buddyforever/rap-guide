@@ -15,11 +15,11 @@ import { dateFormat } from '../../utilities/DateFormat'
 import { Comment } from '../Comment/Comment'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_LESSON_LYRICS_BY_GUIDE_ID } from '../../queries/lyric'
+import { GET_PUBLIC_LYRICS_BY_GUIDE_ID } from '../../queries/lyric'
 import { CREATE_LIKE, DELETE_LIKE } from '../../queries/likes'
 import { CREATE_COMMENT } from '../../queries/comments'
 
-const LessonLyrics = ({ guideID, lessonID }) => {
+const PublicLyrics = ({ guideID }) => {
 
   /* State */
   const [hidden, setHidden] = useState(true);
@@ -35,12 +35,14 @@ const LessonLyrics = ({ guideID, lessonID }) => {
   const { user } = useContext(UserContext);
 
   /* Queries */
-  const { loading, data, refetch } = useQuery(GET_LESSON_LYRICS_BY_GUIDE_ID, {
+  const { loading, data, refetch, error } = useQuery(GET_PUBLIC_LYRICS_BY_GUIDE_ID, {
     variables: {
-      guideID,
-      lessonID
+      guideID: guideID
     }
   });
+
+  console.log(error)
+
   const [createLike] = useMutation(CREATE_LIKE)
   const [deleteLike] = useMutation(DELETE_LIKE)
   const [createComment] = useMutation(CREATE_COMMENT)
@@ -195,7 +197,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
   }
 
   function prevAnnotation() {
-    if (currentAnnotation - 1 > 0) {
+    if (currentAnnotation > 0) {
       setSelectedLyrics(sortLyrics(selectedAnnotations[currentAnnotation - 1].lyrics))
       setCurrentAnnotation(currentAnnotation - 1)
     } else {
@@ -297,9 +299,6 @@ const LessonLyrics = ({ guideID, lessonID }) => {
                 exit={{ opacity: 0, x: -20 }}
                 transition={{ duration: .2 }}
               >
-                {['jessejburton@gmail.com', 'baba.brinkman@gmail.com'].includes(user.email) &&
-                  <h3 style={{ fontSize: "18px" }}>({selectedAnnotations[currentAnnotation].id})</h3>
-                }
                 <div style={{ display: "flex", justifyContent: "space-between" }}>
                   <small>({currentAnnotation + 1} / {selectedAnnotations.length} annotations)</small>
                   {selectedAnnotations.length > 1 &&
@@ -329,8 +328,10 @@ const LessonLyrics = ({ guideID, lessonID }) => {
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: selectedAnnotations[currentAnnotation].annotation.replace(/(\b(https?|ftp|file):\/\/[\-A-Z0-9+&@#\/%?=~_|!:,.;]*[\-A-Z09+&@#\/%=~_|])/, '<a href="$1">$1</a>') }} />
                 <div className="author">
-                  by {selectedAnnotations[currentAnnotation].account.displayName || 'anonymous'} at {dateFormat(selectedAnnotations[currentAnnotation].createdAt)}
+                  by {selectedAnnotations[currentAnnotation].account.displayName || 'animal-1234'} at {dateFormat(selectedAnnotations[currentAnnotation].createdAt)}
                 </div>
+                {/*
+                  Disabled until we ensure the load works without this engagement piece
                 <div className="likes">
                   <span
                     onClick={toggleLike}
@@ -359,6 +360,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
                     })}
                   </FormBlock>
                 }
+                */}
               </StyledAnnotation>
             </AnimatePresence>
           )}
@@ -368,7 +370,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
   )
 }
 
-export default LessonLyrics
+export default PublicLyrics
 
 const StyledAnnotation = styled(motion.div)`
   p {

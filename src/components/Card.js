@@ -80,7 +80,7 @@ const StyledCard = styled(motion.div)`
   height: 200px;
   color: white;
   position: relative;
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.2), 0 1px 2px 0 rgba(0, 0, 0, 0.1);
   transition: opacity .1s ease;
   background-color: black;
 
@@ -94,7 +94,6 @@ const StyledCard = styled(motion.div)`
     height: 200px;
     width: 100%;
     backface-visibility: hidden;
-    overflow: hidden;
 
     &::after {
       content: '';
@@ -104,7 +103,7 @@ const StyledCard = styled(motion.div)`
       left: 0;
       right: 0;
       bottom: 0;
-      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.4), 0 4px 6px -2px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.6), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
       transition: opacity .4s ease;
     }
   }
@@ -115,13 +114,14 @@ const StyledCard = styled(motion.div)`
     right: 10px;
     padding: 3px 5px;
     z-index: 100;
-    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+    box-shadow: 2px 2px 5px rgba(0, 0, 0, 0.4);
     border-radius: 5px;
     background-color: ${props => props.badgeColor};
   }
 
   .image-container {
     backface-visibility: hidden;
+    background-color: black;
     position: relative;
     overflow: hidden;
     display: flex;
@@ -132,16 +132,16 @@ const StyledCard = styled(motion.div)`
     .image-transition {
       backface-visibility: hidden;
       position: absolute;
-      bottom: -3px;
-      left: -3px;
-      width: 105%;
-      height: 103%;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      height: 200px;
       background: linear-gradient(to top, #000 0%, #000 25%, rgba(0,0,0,0) 50%, rgba(0,0,0,0) 60%, rgba(0,0,0,0) 70%, #000 100%);
     }
 
     img {
-      width: 99%;
-      height: 99%;
+      width: 100%;
+      height: 200px;
       object-fit: cover;
     }
 
@@ -169,18 +169,14 @@ const StyledCard = styled(motion.div)`
     transition: padding .4s ease;
   }
 
-  &:hover, &.open {
+  &:hover {
     .card {
-      z-index: 100;
+      z-index: 1000;
 
       &::after {
         opacity: 1;
       }
     }
-
-    /* .image-container {
-      transform: scale(1.2);
-    } */
 
     .image-container::after {
       opacity: 0;

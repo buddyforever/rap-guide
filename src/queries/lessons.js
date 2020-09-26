@@ -11,6 +11,7 @@ export const GET_LESSONS_BY_ACCOUNT_SHORT = gql`
       dueDate
       minLikes
       numAnnotations
+      minComments
       guide {
         id
         videoId
@@ -57,6 +58,7 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
       dueDate
       minLikes
       numAnnotations
+      minComments
       accounts {
         id
         image
@@ -135,6 +137,7 @@ export const GET_LESSON_BY_ID = gql`
       dueDate
       minLikes
       numAnnotations
+      minComments
       accounts {
         id
         image
@@ -344,7 +347,8 @@ export const UPDATE_LESSON_DETAILS = gql`
     $lessonDescription:String!,
     $maxStudents: Int!,
     $minLikes: Int!,
-    $numAnnotations: Int!
+    $numAnnotations: Int!,
+    $minComments: Int!
   ) {
     updateLesson(
       where: { id: $id }
@@ -355,6 +359,7 @@ export const UPDATE_LESSON_DETAILS = gql`
         maxStudents: $maxStudents
         minLikes: $minLikes
         numAnnotations: $numAnnotations
+        minComments: $minComments
       }){
     id
     }

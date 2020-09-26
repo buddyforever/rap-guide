@@ -94,3 +94,58 @@ export const UNASSIGN_LYRIC = gql`
     }
   }
 `
+
+export const GET_PUBLIC_LYRICS_BY_GUIDE_ID = gql`
+  query getLyrics(
+    $guideID: ID!
+  ) {
+    lyrics(
+      where: {
+        guide: {
+          id: $guideID
+        }
+      }
+      orderBy: order_ASC
+    ){
+      id
+      lyric
+      order
+      bar
+      annotations(
+        orderBy: order_ASC
+        where: {isPublic: true}) {
+        id
+        annotation
+        lyrics {
+          id
+          lyric
+          order
+        }
+        comments {
+          id
+          updatedAt
+          comment
+          account {
+            id
+            displayName
+            nameFirst
+            isPublic
+            twitter
+          }
+        }
+        updatedAt
+        createdAt
+        account {
+          id
+          displayName
+        }
+        likes {
+          id
+          account {
+            id
+          }
+        }
+      }
+    }
+  }
+`

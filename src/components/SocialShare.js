@@ -44,8 +44,6 @@ export const SocialShare = ({
 }
 
 const StyledShareIcons = styled.div`
-  margin: 25px 0;
-
   p {
     font-size: 3rem!important;
   }

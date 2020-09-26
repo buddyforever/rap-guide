@@ -15,7 +15,7 @@ const Lyric = ({
   maxWeight = 1,
   ...rest }) => {
 
-  let isAssigned = lyric.annotations
+  let isAssigned = lyric.annotations && !isPublic
   let isAnnotated = lyric.annotations && lyric.annotations.length > 0
   let isSubmitted = false
   let isExample = false

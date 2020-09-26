@@ -41,6 +41,7 @@ export const Lessons = () => {
   /* State */
   const [recentAnnotations, setRecentAnnotations] = useState([]);
   const [accessCode, setAccessCode] = useState("");
+  const [hoveredVideo, setHoveredVideo] = useState(null)
 
   /* Helpers */
   const [message, setMessage] = useState(null);
@@ -288,36 +289,41 @@ export const Lessons = () => {
             </LargeSpace>
           }
           <ThreeGrid>
-            {data.lessons.map(lesson => (
-              <Card
-                key={lesson.id}
-                title={lesson.guide.videoTitle}
-                topics={lesson.guide.topics}
-                status="IN SESSION"
-                link={`/lesson/${lesson.id}`}
-                stats={[
-                  {
-                    label: "students",
-                    value: lesson.accounts.filter(account => account.type === "student").length
-                  },
-                  {
-                    label: "annotations",
-                    value: lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length
-                  },
-                  {
-                    label: "status",
-                    value: lesson.lessonStatus,
+            {data.lessons.map(lesson => {
+              const isHovered = lesson.id === hoveredVideo
+              return (
+                <Card
+                  key={lesson.id}
+                  title={lesson.guide.videoTitle}
+                  topics={lesson.guide.topics}
+                  status="IN SESSION"
+                  link={`/lesson/${lesson.id}`}
+                  onMouseOver={() => setHoveredVideo(lesson.id)}
+                  onMouseOut={() => setHoveredVideo(null)}
+                  classes={hoveredVideo ? !isHovered ? "dimmed" : "" : ""}
+                  stats={[
+                    {
+                      label: "students",
+                      value: lesson.accounts.filter(account => account.type === "student").length
+                    },
+                    {
+                      label: "annotations",
+                      value: lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length
+                    },
+                    {
+                      label: "status",
+                      value: lesson.lessonStatus,
+                      color: getLessonColor(lesson.lessonStatus)
+                    }
+                  ]}
+                  image={lesson.guide.videoThumb}
+                  badge={{
+                    label: lesson.lessonStatus,
                     color: getLessonColor(lesson.lessonStatus)
-                  }
-                ]}
-                image={lesson.guide.videoThumb}
-                badge={{
-                  label: lesson.lessonStatus,
-                  color: getLessonColor(lesson.lessonStatus)
-                }}
-              />
-            )
-            )}
+                  }}
+                />
+              )
+            })}
           </ThreeGrid>
         </StyledContent>
       </FullSection>
