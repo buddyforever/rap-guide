@@ -39,11 +39,6 @@ export const Playlist = () => {
     fetch(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist.playlistId}&part=snippet&pageToken=${nextPageToken}&maxResults=6&key=AIzaSyD_b1o8tKgFuUlYJrzmrUI8lVEHk_2Sukk`)
       .then(response => response.json())
       .then(data => {
-        if (!data.nextPageToken || !data.nextPageToken.length){
-          setNextPageToken(null)
-          setIsLoaded(true)
-          return
-        }
         const newVideos = data.items.map(video => ({
           title: video.snippet.title,
           videoId: video.snippet.resourceId.videoId
@@ -58,6 +53,10 @@ export const Playlist = () => {
           ...newVideos
         ])
         setIsFetching(false)
+        if (!data.nextPageToken || !data.nextPageToken.length){
+          setNextPageToken(null)
+          setIsLoaded(true)
+        }
       })
   }
   useEffect(() => {
