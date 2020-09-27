@@ -2,6 +2,7 @@ import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
 import styled from 'styled-components'
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { Link } from 'react-router-dom'
 
 import { StyledContent, Heading, FullSection, MediumSpace, ThreeGrid } from '../../styles/PageStyles'
 import Loader from '../Loader'
@@ -71,6 +72,7 @@ export const Playlist = () => {
       <StyledContent style={{ width: "100%" }}>
         <Heading>
           <h1>{playlist.title}</h1>
+          <h3>Please <Link to="/contact">contact</Link> us if you would like to build a lesson around one of these videos</h3>
         </Heading>
         <MediumSpace>
           <InfiniteScroll
