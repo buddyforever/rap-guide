@@ -26,7 +26,8 @@ export const StyledContent = styled.div`
   }
 
   p a,
-  button.showNextLink {
+  button.showNextLink,
+  p a:visited {
     color: #DD3333;
     overflow-wrap: break-word;
     word-break: break-word;
