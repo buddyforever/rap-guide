@@ -48,7 +48,6 @@ export const Explore = () => {
     }))
   }
 
-  /* Effects */
   useEffect(() => {
     if (!guides) return
     let topicsArr = []

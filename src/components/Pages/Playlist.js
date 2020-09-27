@@ -1,16 +1,21 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useState } from 'react'
 import { useParams } from "react-router-dom"
 import styled from 'styled-components'
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 import { StyledContent, Heading, FullSection, MediumSpace, ThreeGrid } from '../../styles/PageStyles'
 import Loader from '../Loader'
+import { DotWave } from '../ui/Loader'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_PLAYLIST_BY_SLUG } from '../../queries/playlist'
-
 export const Playlist = () => {
 
   const [videos, setVideos] = useState([])
+  const [usedTokens, setUsedTokens] = useState([])
+  const [nextPageToken, setNextPageToken] = useState("")
+  const [isFetching, setIsFetching] = useState(false)
+  const [isLoaded, setIsLoaded] = useState(false)
 
   let { slug } = useParams();
 
@@ -20,17 +25,45 @@ export const Playlist = () => {
     }
   });
 
-  useEffect(() => {
-    if (data) {
-      fetch(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist.playlistId}&part=snippet&key=AIzaSyD_b1o8tKgFuUlYJrzmrUI8lVEHk_2Sukk`)
-        .then(response => response.json())
-        .then(data => setVideos(data.items.map(video => ({
+  function checkLoadMore() {
+    if(nextPageToken && !isFetching) {
+      getVideos()
+    } else {
+      setIsLoaded(true)
+    }
+  }
+  function getVideos() {
+    if(usedTokens.includes(data.nextPageToken)) return
+    setIsFetching(true)
+    fetch(`https://www.googleapis.com/youtube/v3/playlistItems?playlistId=${data.playlist.playlistId}&part=snippet&pageToken=${nextPageToken}&maxResults=6&key=AIzaSyD_b1o8tKgFuUlYJrzmrUI8lVEHk_2Sukk`)
+      .then(response => response.json())
+      .then(data => {
+        if (!data.nextPageToken || !data.nextPageToken.length){
+          setNextPageToken(null)
+          setIsLoaded(true)
+          return
+        }
+        const newVideos = data.items.map(video => ({
           title: video.snippet.title,
           videoId: video.snippet.resourceId.videoId
-        }))))
+        }))
+        setNextPageToken(data.nextPageToken)
+        setUsedTokens([
+          data.nextPageToken,
+          ...usedTokens
+        ])
+        setVideos([
+          ...videos,
+          ...newVideos
+        ])
+        setIsFetching(false)
+      })
+  }
+  useEffect(() => {
+    if (data) {
+      getVideos()
     }
   }, [data])
-
   if (loading) return <Loader />
   const { playlist } = data
   return (
@@ -40,23 +73,31 @@ export const Playlist = () => {
           <h1>{playlist.title}</h1>
         </Heading>
         <MediumSpace>
-          <ThreeGrid>
-            {videos.map(video => {
-              return (
-                <StyledYouTube key={video.videoId}>
-                  <div className="youtube-container">
-                    <iframe
-                      title={video.title}
-                      src={`https://www.youtube.com/embed/${video.videoId}`}
-                      frameBorder='0'
-                      allowFullScreen
-                    ></iframe>
-                  </div>
-                  <h3>{video.title}</h3>
-                </StyledYouTube>
-              )
-            })}
-          </ThreeGrid>
+          <InfiniteScroll
+              dataLength={videos.length}
+              next={checkLoadMore}
+              hasMore={!isLoaded}
+              loader={<Loader />}
+            >
+              <ThreeGrid>
+                {
+                videos.map(video => (
+                  <StyledYouTube key={video.videoId}>
+                    <div className="youtube-container">
+                      <div className="loading"><DotWave /></div>
+                      <iframe
+                        title={video.title}
+                        src={`https://www.youtube.com/embed/${video.videoId}`}
+                        frameBorder='0'
+                        allowFullScreen
+                      ></iframe>
+                    </div>
+                    <h3>{video.title}</h3>
+                  </StyledYouTube>
+                ))
+                }
+              </ThreeGrid>
+            </InfiniteScroll>
         </MediumSpace>
       </StyledContent>
     </FullSection>
@@ -72,6 +113,24 @@ const StyledYouTube = styled.div`
     height: 0;
     overflow: hidden;
     max-width: 100%;
+    animation: fadeIn 3s linear forwards;
+
+    .loading {
+      padding-top: 25%;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      background-color: rgba(0,0,0,0);
+    }
+    100% {
+      background-color: rgba(0,0,0,1);
+    }
   }
 
   .youtube-container iframe,

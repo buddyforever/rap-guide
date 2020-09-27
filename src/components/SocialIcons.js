@@ -23,13 +23,13 @@ const SocialIcons = () => {
         rel="noopener noreferrer">
         <FontAwesomeIcon icon={faYoutube} />
       </a>
-      <a
+      {/*       <a
         href="https://instagram.com/rapguidemedia"
         target="_blank"
         className="instagram"
         rel="noopener noreferrer">
         <FontAwesomeIcon icon={faInstagram} />
-      </a>
+      </a> */}
       <a
         href="https://twitter.com/rapguide"
         target="_blank"
