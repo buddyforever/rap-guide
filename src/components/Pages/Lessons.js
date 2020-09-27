@@ -279,7 +279,7 @@ export const Lessons = () => {
           <Heading>
             <h1>My Lessons</h1>
           </Heading>
-          {data.lessons.length === 0 && <p>There are no lessons available.</p>}
+          {data.lessons.length === 0 && <p>You have not connected with any lessons yet.</p>}
           {(user.type === "student" && recentAnnotations.length > 0) &&
             <LargeSpace>
               <h3>Recent Activity</h3>
@@ -330,37 +330,103 @@ export const Lessons = () => {
           </ThreeGrid>
         </StyledContent>
       </FullSection>
+      {data.lessons.length === 0 &&
+        <FullSection
+          minHeight="0"
+          bgColor="#DD3333"
+          color="white"
+          space="0.5rem">
+          <StyledContent>
+            <FormBlock>
+              <h2 style={{ marginBottom: "1rem" }}>Connect with a Lesson</h2>
+              <div style={{ display: "flex" }}>
+                <input
+                  type="text"
+                  value={accessCode}
+                  onChange={(e) => setAccessCode(e.target.value)}
+                  placeholder="enter access code..." />
+                <Button
+                  secondary
+                  style={{
+                    marginLeft: "1rem",
+                    width: "150px",
+                    height: "auto",
+                    backgroundColor: "transparent",
+                    color: "white",
+                    border: "2px solid white"
+                  }}
+                  onClick={(e) => { e.preventDefault(); confirmAccessCode(e.target.value) }}
+                  iconLeft={faPlus}>SUBMIT</Button>
+              </div>
+            </FormBlock>
+          </StyledContent>
+        </FullSection>
+      }
       <FullSection
-        minHeight="0"
-        bgColor="#DD3333"
+        bgColor="black"
         color="white"
-        space="0.5rem">
+      >
         <StyledContent>
-          <FormBlock>
-            <h2 style={{ marginBottom: "1rem" }}>Connect with a Lesson</h2>
-            <div style={{ display: "flex" }}>
-              <input
-                type="text"
-                value={accessCode}
-                onChange={(e) => setAccessCode(e.target.value)}
-                placeholder="enter access code..." />
-              <Button
-                secondary
-                style={{
-                  marginLeft: "1rem",
-                  width: "150px",
-                  height: "auto",
-                  backgroundColor: "transparent",
-                  color: "white",
-                  border: "2px solid white"
-                }}
-                onClick={(e) => { e.preventDefault(); confirmAccessCode(e.target.value) }}
-                iconLeft={faPlus}>SUBMIT</Button>
-            </div>
-          </FormBlock>
+          <StyledColumns>
+            <MediumSpace>
+              <Heading>
+                <h1>Lessons</h1>
+
+                <p>Teachers with an Educator Account can design Lessons around each of the videos on this site, and share these assignments privately with students, collecting responses via their Educator Dashboard.</p>
+
+                <p>Teachers can also share their completed lesson plans with other educators to adapt for their own use, and can browse previous lessons and templates.</p>
+              </Heading>
+            </MediumSpace>
+            <MediumSpace>
+              <img src="images/illustration2.svg" alt="Rap Guide | Lessons" />
+            </MediumSpace>
+          </StyledColumns>
+        </StyledContent>
+      </FullSection>
+      <FullSection
+        space="5rem"
+        style={{
+          display: "flex",
+          alignItems: "center"
+        }}>
+        <StyledContent>
+          <h2>Annotations</h2>
+          <p>Lesson content on RapGuide.com is submitted via student annotations attached to the lyrics of songs. These annotations are content-agnostic, which means any existing music video about any topic can be used, and students can be assigned to provide any kind of response, from personal reflections to analysis of the scientific references to close-reading of the text.</p>
         </StyledContent>
       </FullSection>
       <MakeARapGuide />
+      {data.lessons.length > 0 &&
+        <FullSection
+          minHeight="0"
+          bgColor="#DD3333"
+          color="white"
+          space="0.5rem">
+          <StyledContent>
+            <FormBlock>
+              <h2 style={{ marginBottom: "1rem" }}>Connect with a Lesson</h2>
+              <div style={{ display: "flex" }}>
+                <input
+                  type="text"
+                  value={accessCode}
+                  onChange={(e) => setAccessCode(e.target.value)}
+                  placeholder="enter access code..." />
+                <Button
+                  secondary
+                  style={{
+                    marginLeft: "1rem",
+                    width: "150px",
+                    height: "auto",
+                    backgroundColor: "transparent",
+                    color: "white",
+                    border: "2px solid white"
+                  }}
+                  onClick={(e) => { e.preventDefault(); confirmAccessCode(e.target.value) }}
+                  iconLeft={faPlus}>SUBMIT</Button>
+              </div>
+            </FormBlock>
+          </StyledContent>
+        </FullSection>
+      }
       {
         message &&
         <Message
