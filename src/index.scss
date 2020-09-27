@@ -67,6 +67,23 @@ main h1 {
   transform: scale(1.1);
 }
 
+a.link {
+  font-size: 2.4rem;
+  background-color: #DD3333;
+  color: white;
+  border-radius: 5px;
+  padding: 1rem 1.2rem;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform .2s ease;
+
+  &:hover {
+    transform: scale(1.05);
+  }
+}
+
 @media only screen and (max-width: 715px){
   .annotation-display {
     position: fixed!important;

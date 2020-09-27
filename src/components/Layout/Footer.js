@@ -10,6 +10,10 @@ export const Footer = () => {
         <div>
           <h3>CONTACT</h3>
           <SocialIcons />
+          <p className="developer">
+            <span>developed by</span>
+            <a href="https://www.burtonmediainc.com" target="_blank" rel="noopener noreferrer"><img src="https://www.burtonmediainc.com/images/burtonmedia_white_small.png" alt="Burton Media" /></a>
+          </p>
         </div>
         <div>
           <h3>RECENT</h3>
@@ -73,6 +77,25 @@ const StyledFooter = styled.footer`
   ul {
     line-height: 2.4rem;
     list-style: none;
+  }
+
+  .developer {
+    margin-top: 50px;
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    justify-content: left;
+    display: none;
+
+    span {
+      padding-left: 52px;
+      display: block;
+      font-size: 14px;
+    }
+
+    img {
+      max-width: 170px;
+    }
   }
 
   @media screen and (max-width: 750px){

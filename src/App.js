@@ -18,6 +18,7 @@ import AddLesson from './components/Lesson/AddLesson'
 import EditLesson from './components/Lesson/EditLesson.js'
 import Profile from './components/Private/Profile'
 import TempPage from './TEMP/TempPage'
+import Playlist from './components/Pages/Playlist'
 import auth from './auth/auth'
 import { UserContext } from './context/UserContext'
 import { defaultTheme } from '../src/components/themes/default'
@@ -60,6 +61,7 @@ function App() {
                 <Route path="/contact" component={Contact} />
                 <Route path="/privacy" component={Privacy} />
                 <Route path="/guide/:id" component={Guide} />
+                <Route path="/playlist/:slug" component={Playlist} />
                 <Route path="/lesson/signup/:id" component={LessonSignup} />
                 <PrivateRoute
                   path="/lesson/add/:id"

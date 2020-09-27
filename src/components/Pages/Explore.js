@@ -5,6 +5,7 @@ import { faSearch } from '@fortawesome/free-solid-svg-icons'
 import { AnimatePresence } from 'framer-motion'
 
 import { StyledContent, Heading, ThreeGrid, FullSection, MediumSpace } from '../../styles/PageStyles'
+import { Link } from 'react-router-dom'
 import VideoThumb from '../Guide/VideoThumb'
 import { Card } from '../Card'
 import TagCloud from '../Guide/TagCloud'
@@ -67,7 +68,7 @@ export const Explore = () => {
 
   if (loading) return <Loader />
   return (
-    <FullSection space="5rem" style={{ background: "radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(28,28,28,1) 50%, rgba(0,0,0,1) 100%)" }}>
+    <FullSection className="explore" space="5rem" style={{ background: "radial-gradient(circle, rgba(0,0,0,1) 0%, rgba(28,28,28,1) 50%, rgba(0,0,0,1) 100%)" }}>
       <StyledContent style={{ paddingBottom: "5rem" }}>
 
         <Heading style={{ color: "white" }}>
@@ -134,6 +135,11 @@ export const Explore = () => {
               )
             })}
           </AnimatePresence>
+        </ThreeGrid>
+        <ThreeGrid style={{ textAlign: 'center', marginTop: "100px" }}>
+          <Link to="/playlist/videos-by-baba-brinkman" className="link">More Baba Brinkman Videos</Link>
+          <Link to="/playlist/more-songs-by-baba-brinkman" className="link">More Baba Brinkman Songs</Link>
+          <Link to="/playlist/videos-by-other-artists" className="link">Other Artist Videos</Link>
         </ThreeGrid>
       </StyledContent>
     </FullSection>
