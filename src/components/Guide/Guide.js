@@ -1,7 +1,8 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState, useRef } from 'react'
 import { useParams, Link } from "react-router-dom"
 import { UserContext } from '../../context/UserContext'
 import styled from 'styled-components'
+import { motion } from 'framer-motion'
 
 import { Button } from "../ui/Button"
 import { Heading, StyledContent, StyledColumns } from "../../styles/PageStyles"
@@ -16,6 +17,8 @@ import { GET_GUIDE_BY_ID } from '../../queries/guides'
 
 export const Guide = () => {
 
+  const videoRef = useRef(null)
+
   /* Context */
   const { user } = useContext(UserContext);
 
@@ -25,6 +28,7 @@ export const Guide = () => {
   /* State */
   const [isScrolled, setIsScrolled] = useState(false)
   const [annotationIsShown, setAnnotationIsShown] = useState(false)
+  const [videoHeight, setVideoHeight] = useState(0)
 
   /* Queries */
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
@@ -37,6 +41,9 @@ export const Guide = () => {
     if (window.scrollY >= 700) {
       setIsScrolled(true)
     } else {
+      if (videoHeight === 0) {
+        setVideoHeight(videoRef.current.getBoundingClientRect().height)
+      }
       setIsScrolled(false)
     }
   }
@@ -55,14 +62,45 @@ export const Guide = () => {
   return (
     <StyledContent>
       <Heading style={{ paddingTop: "75px" }}>
-        <h1><span style={{ color: "#DD3333" }}>{titleA}</span>{titleB}</h1>
+        <motion.h1
+          initial={{
+            opacity: 0,
+            y: -20
+          }}
+          animate={{
+            opacity: 1,
+            y: 0
+          }}
+          transition={{
+            delay: 0.2,
+            duration: 0.2
+          }}
+        >
+          <span style={{ color: "#DD3333" }}>{titleA}</span>{titleB}
+        </motion.h1>
       </Heading>
 
       <StyledVideoContainer
+        initial={{
+          opacity: 0,
+          y: 50
+        }}
+        animate={{
+          opacity: 1,
+          y: 0
+        }}
+        transition={{
+          delay: 0.4,
+          duration: 0.3
+        }}
+        ref={videoRef}
         className={isScrolled ? `${annotationIsShown ? 'hidden' : ''} scrolled` : ''}
       >
         <Video guide={guide} />
       </StyledVideoContainer>
+      {isScrolled &&
+        <StyledVideoSpacer height={videoHeight} />
+      }
 
       <StyledColumns style={{ margin: "25px 0" }}>
         <SocialShare
@@ -86,7 +124,7 @@ export const Guide = () => {
 
 export default Guide;
 
-const StyledVideoContainer = styled.div`
+const StyledVideoContainer = styled(motion.div)`
   z-index: 5000;
 
   &.scrolled:not(.hidden) {
@@ -119,4 +157,10 @@ const StyledVideoContainer = styled.div`
       opacity: 1
     }
   }
+`
+
+const StyledVideoSpacer = styled.div`
+  position: relative;
+  width: 100%;
+  height: ${props => props.height}px
 `
