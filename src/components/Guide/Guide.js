@@ -24,6 +24,7 @@ export const Guide = () => {
 
   /* State */
   const [isScrolled, setIsScrolled] = useState(false)
+  const [annotationIsShown, setAnnotationIsShown] = useState(false)
 
   /* Queries */
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
@@ -57,7 +58,9 @@ export const Guide = () => {
         <h1><span style={{ color: "#DD3333" }}>{titleA}</span>{titleB}</h1>
       </Heading>
 
-      <StyledVideoContainer className={isScrolled ? 'scrolled' : ''}>
+      <StyledVideoContainer
+        className={isScrolled ? `${annotationIsShown ? 'hidden' : ''} scrolled` : ''}
+      >
         <Video guide={guide} />
       </StyledVideoContainer>
 
@@ -76,7 +79,7 @@ export const Guide = () => {
         </div>
       </StyledColumns>
 
-      <PublicLyrics guideID={guide.id} />
+      <PublicLyrics annotationIsShown={setAnnotationIsShown} guideID={guide.id} />
     </StyledContent>
   )
 }
@@ -84,13 +87,27 @@ export const Guide = () => {
 export default Guide;
 
 const StyledVideoContainer = styled.div`
+  z-index: 5000;
+
+  &.scrolled:not(.hidden) {
+    animation: fadeIn .5s ease;
+  }
+
+  @media screen and (min-width: 850px){
+    &.scrolled {
+      position: fixed;
+      top: 15rem;
+      right: 10rem;
+      width: 300px;
+    }
+  }
+
   @media screen and (min-width: 1100px){
     &.scrolled {
       position: fixed;
       top: 15rem;
       right: 10rem;
       width: 500px;
-      animation: fadeIn .5s ease;
     }
   }
 

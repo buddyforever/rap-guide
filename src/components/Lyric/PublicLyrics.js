@@ -19,7 +19,7 @@ import { GET_PUBLIC_LYRICS_BY_GUIDE_ID } from '../../queries/lyric'
 import { CREATE_LIKE, DELETE_LIKE } from '../../queries/likes'
 import { CREATE_COMMENT } from '../../queries/comments'
 
-const PublicLyrics = ({ guideID }) => {
+const PublicLyrics = ({ guideID, annotationIsShown }) => {
 
   /* State */
   const [hidden, setHidden] = useState(true);
@@ -143,7 +143,7 @@ const PublicLyrics = ({ guideID }) => {
   }
 
   function handleClick(lyric, top, maxY) {
-    console.log("handleClick Fired")
+    annotationIsShown(true)
     showAnnotation(
       lyric.annotations,
       0,
