@@ -86,7 +86,7 @@ export default Guide;
 const StyledVideoContainer = styled.div`
   &.scrolled {
     position: fixed;
-    bottom: 2rem;
+    top: 12rem;
     right: 5rem;
     width: 500px;
     animation: fadeIn .5s ease;
