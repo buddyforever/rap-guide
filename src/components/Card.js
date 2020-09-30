@@ -4,10 +4,7 @@ import { motion } from 'framer-motion'
 import { Link } from 'react-router-dom'
 
 import { Button } from './ui/Button'
-
-function splitFirstWord(string) {
-  return [string.split(" ")[0], string.indexOf(' ') > 0 ? string.substr(string.indexOf(' ')) : '']
-}
+import { splitFirstWord } from '../utilities/text'
 
 function getWindowSize() {
   return { width: window.innerWidth, height: window.innerHeight }

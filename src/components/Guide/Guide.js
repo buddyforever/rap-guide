@@ -1,6 +1,7 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useParams, Link } from "react-router-dom"
 import { UserContext } from '../../context/UserContext'
+import styled from 'styled-components'
 
 import { Button } from "../ui/Button"
 import { Heading, StyledContent, StyledColumns } from "../../styles/PageStyles"
@@ -8,18 +9,21 @@ import Loader from '../Loader'
 import Video from '../Guide/Video'
 import PublicLyrics from '../Lyric/PublicLyrics'
 import { SocialShare } from '../SocialShare'
+import { splitFirstWord } from '../../utilities/text'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_GUIDE_BY_ID } from '../../queries/guides'
 
 export const Guide = () => {
 
-
   /* Context */
   const { user } = useContext(UserContext);
 
   /* Paramaters */
   let { id } = useParams();
+
+  /* State */
+  const [isScrolled, setIsScrolled] = useState(false)
 
   /* Queries */
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
@@ -28,16 +32,34 @@ export const Guide = () => {
     }
   });
 
+  function handleScroll(e) {
+    if (window.scrollY >= 700 && window.innerWidth >= 1075) {
+      setIsScrolled(true)
+    } else {
+      setIsScrolled(false)
+    }
+  }
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll)
+
+    return () => {
+      window.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
   if (loading) return <Loader />;
   const { guide } = data;
   const shareUrl = `https://www.rapguide.com/guide/${id}`
+  const [titleA, titleB] = splitFirstWord(guide.videoTitle)
   return (
     <StyledContent>
-      <Heading style={{ paddingTop: "25px" }}>
-        <h1>{guide.videoTitle}</h1>
+      <Heading style={{ paddingTop: "75px" }}>
+        <h1><span style={{ color: "#DD3333" }}>{titleA}</span>{titleB}</h1>
       </Heading>
 
-      <Video guide={guide} />
+      <StyledVideoContainer className={isScrolled ? 'scrolled' : ''}>
+        <Video guide={guide} />
+      </StyledVideoContainer>
 
       <StyledColumns style={{ margin: "25px 0" }}>
         <SocialShare
@@ -61,3 +83,21 @@ export const Guide = () => {
 
 export default Guide;
 
+const StyledVideoContainer = styled.div`
+  &.scrolled {
+    position: fixed;
+    bottom: 2rem;
+    right: 5rem;
+    width: 500px;
+    animation: fadeIn .5s ease;
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0
+    }
+    100% {
+      opacity: 1
+    }
+  }
+`
