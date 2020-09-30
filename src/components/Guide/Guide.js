@@ -33,7 +33,7 @@ export const Guide = () => {
   });
 
   function handleScroll(e) {
-    if (window.scrollY >= 700 && window.innerWidth >= 1075) {
+    if (window.scrollY >= 700) {
       setIsScrolled(true)
     } else {
       setIsScrolled(false)
@@ -84,12 +84,14 @@ export const Guide = () => {
 export default Guide;
 
 const StyledVideoContainer = styled.div`
-  &.scrolled {
-    position: fixed;
-    top: 12rem;
-    right: 5rem;
-    width: 500px;
-    animation: fadeIn .5s ease;
+  @media screen and (min-width: 1100px){
+    &.scrolled {
+      position: fixed;
+      top: 15rem;
+      right: 10rem;
+      width: 500px;
+      animation: fadeIn .5s ease;
+    }
   }
 
   @keyframes fadeIn {
