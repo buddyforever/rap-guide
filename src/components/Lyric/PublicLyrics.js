@@ -187,10 +187,6 @@ const PublicLyrics = ({ guideID }) => {
   }
 
   function showAnnotation(annotations, index, lyricsHeight, arrowTop, maxY) {
-    console.log("showAnnotation Fired")
-    console.log(annotations)
-    console.log(isMobile)
-
     if (!annotations || !annotations.length) return
     setSelectedAnnotations(annotations)
     setCurrentAnnotation(index)
@@ -274,7 +270,7 @@ const PublicLyrics = ({ guideID }) => {
 
   if (loading || !data) return <Loader />
   return (
-    <StyledColumns style={{ marginBottom: "5rem" }}>
+    <StyledColumns className="lyrics" style={{ marginBottom: "5rem" }}>
       <div ref={lyricsRef}>
         {data.lyrics.map(lyric => {
           nextBar = (currentBar !== lyric.bar);

@@ -67,9 +67,9 @@ const Lyric = ({
 export default Lyric
 
 const StyledLyric = styled.div`
-  font-size: 1.8rem;
+  font-size: 2rem;
   line-height: 2.75rem;
-  margin-bottom: 2px;
+  margin-bottom: 4px;
   padding: 0 .5rem;
   transition: background-color .3s ease;
 

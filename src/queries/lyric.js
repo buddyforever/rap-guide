@@ -17,6 +17,7 @@ export const GET_LESSON_LYRICS_BY_GUIDE_ID = gql`
       lyric
       order
       bar
+      isGap
       annotations(
         orderBy: order_ASC
         where: {
@@ -111,6 +112,7 @@ export const GET_PUBLIC_LYRICS_BY_GUIDE_ID = gql`
       lyric
       order
       bar
+      isGap
       annotations(
         orderBy: order_ASC
         where: {isPublic: true}) {
