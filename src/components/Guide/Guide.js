@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState, useRef } from 'react'
 import { useParams, Link } from "react-router-dom"
 import { UserContext } from '../../context/UserContext'
 import styled from 'styled-components'
-import { motion } from 'framer-motion'
+import { motion, AnimateSharedLayout } from 'framer-motion'
 
 import { Button } from "../ui/Button"
 import { Heading, StyledContent, StyledColumns } from "../../styles/PageStyles"
@@ -38,10 +38,10 @@ export const Guide = () => {
   });
 
   function handleScroll(e) {
-    if (window.scrollY >= 700) {
+    if (window.scrollY >= 750 && !annotationIsShown) {
       setIsScrolled(true)
     } else {
-      if (videoHeight === 0) {
+      if (videoHeight === 0 && videoRef.current) {
         setVideoHeight(videoRef.current.getBoundingClientRect().height)
       }
       setIsScrolled(false)
@@ -80,24 +80,27 @@ export const Guide = () => {
         </motion.h1>
       </Heading>
 
-      <StyledVideoContainer
-        initial={{
-          opacity: 0,
-          y: 50
-        }}
-        animate={{
-          opacity: 1,
-          y: 0
-        }}
-        transition={{
-          delay: 0.4,
-          duration: 0.3
-        }}
-        ref={videoRef}
-        className={isScrolled ? `${annotationIsShown ? 'hidden' : ''} scrolled` : ''}
-      >
-        <Video guide={guide} />
-      </StyledVideoContainer>
+      <AnimateSharedLayout>
+        <StyledVideoContainer
+          layout
+          initial={{
+            opacity: 0,
+            y: 50
+          }}
+          animate={{
+            opacity: 1,
+            y: 0
+          }}
+          transition={{
+            delay: 0.2,
+            duration: 0.3
+          }}
+          ref={videoRef}
+          className={isScrolled ? `${annotationIsShown ? 'hidden' : ''} scrolled` : ''}
+        >
+          <Video guide={guide} />
+        </StyledVideoContainer>
+      </AnimateSharedLayout>
       {isScrolled &&
         <StyledVideoSpacer height={videoHeight} />
       }
@@ -125,10 +128,9 @@ export const Guide = () => {
 export default Guide;
 
 const StyledVideoContainer = styled(motion.div)`
-  z-index: 5000;
-
-  &.scrolled:not(.hidden) {
-    animation: fadeIn .5s ease;
+  &.hidden {
+    opacity: 0!important;
+    pointer-events: none;
   }
 
   @media screen and (min-width: 850px){
