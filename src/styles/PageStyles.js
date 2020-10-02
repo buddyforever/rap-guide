@@ -68,17 +68,23 @@ export const CenteredContent = styled.div`
 export const HtmlContent = styled.div`
   max-width: 80ch;
   margin: 0 auto;
+  font-size: 2rem;
 
   p {
     margin: 1rem 0;
     line-height: 1.5em;
   }
-  ul {
+  ul, ol {
     margin: 2rem 0;
     padding-left: 3rem;
   }
-  p+h2, ul+h2 {
+  p+h2, ul+h2, ol+h2,
+  p+h3, ul+h3, ol+h3 {
     margin-top: 2.5rem;
+  }
+  h2+p, h2+ul, h2+ol,
+  h3+p, h3+ul, h3+ol {
+    margin-bottom: 2.5rem;
   }
 `
 
