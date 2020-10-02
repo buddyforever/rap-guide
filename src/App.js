@@ -15,8 +15,10 @@ import PrivateRoute from './auth/PrivateRoute'
 import Lesson from './components/Private/Lesson'
 import Annotations from './components/Private/Annotations'
 import AddLesson from './components/Lesson/AddLesson'
+import AddLessonFromTemplate from './components/Lesson/AddLessonFromTemplate'
 import EditLesson from './components/Lesson/EditLesson.js'
 import Profile from './components/Private/Profile'
+import Template from './components/Private/Template'
 import TempPage from './TEMP/TempPage'
 import Playlist from './components/Pages/Playlist'
 import auth from './auth/auth'
@@ -64,6 +66,13 @@ function App() {
                 <Route path="/playlist/:slug" component={Playlist} />
                 <Route path="/lesson/signup/:id" component={LessonSignup} />
                 <PrivateRoute
+                  path="/lesson/add/template/:id"
+                  component={AddLessonFromTemplate}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404" />
+                <PrivateRoute
                   path="/lesson/add/:id"
                   component={AddLesson}
                   authenticationPath="/login"
@@ -87,6 +96,13 @@ function App() {
                 <PrivateRoute
                   path="/lesson/:id"
                   component={Lesson}
+                  authenticationPath="/login"
+                  isAuthenticated={auth.isAuthenticated()}
+                  isAllowed={auth.isAuthenticated()}
+                  restrictedPath="/404" />
+                <PrivateRoute
+                  path="/template/:id"
+                  component={Template}
                   authenticationPath="/login"
                   isAuthenticated={auth.isAuthenticated()}
                   isAllowed={auth.isAuthenticated()}

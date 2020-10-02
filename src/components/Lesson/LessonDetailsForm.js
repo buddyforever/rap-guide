@@ -25,6 +25,10 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
   const [numAnnotations, setNumAnnotations] = useState(lesson.numAnnotations || '')
   const [topics, setTopics] = useState(lesson.topics || [])
   const [topic, setTopic] = useState("")
+  const [className, setClassName] = useState(lesson.className || "")
+  const [instructorName, setInstructorName] = useState(lesson.instructorName || "")
+  const [institutionName, setInstitutionName] = useState(lesson.institutionName || "")
+  const [isTemplate, setIsTemplate] = useState(lesson.isTemplate || false)
 
   /* Message */
   const [message, setMessage] = useState(null);
@@ -37,6 +41,9 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
     let errors = []
     if (!lessonTitle.length) errors = ["Please enter a title", ...errors]
     if (!lessonDescription.length) errors = ["Please enter a description", ...errors]
+    if (!lesson.className.length) errors = ["Please enter the name of your class", ...errors]
+    if (!lesson.instructorName.length) errors = ["Please enter the name of the instructor", ...errors]
+    if (!lesson.institutionName.length) errors = ["Please enter the name of the institution", ...errors]
     if (isNaN(parseInt(maxStudents))) errors = ["Please enter the maximum number of students", ...errors]
     if (isNaN(parseInt(minLikes))) errors = ["Please enter the minimum number of annotation upvotes a student needs to complete the lesson", ...errors]
     if (isNaN(parseInt(minComments))) errors = ["Please enter the minimum number of comments a student needs to write to complete the lesson", ...errors]
@@ -65,7 +72,11 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
       }],
       minLikes: parseInt(minLikes),
       numAnnotations: parseInt(numAnnotations),
-      minComments: parseInt(minComments)
+      minComments: parseInt(minComments),
+      className,
+      instructorName,
+      institutionName,
+      isTemplate
     });
   }
 
@@ -216,6 +227,37 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
               animate={{ scale: 1 }}>{topic}</Tag>
           ))}
         </MediumSpace>
+      </FormBlock>
+      <FormBlock>
+        <h3>Class Information</h3>
+        <p>Instructor Name & Credentials</p>
+        <input
+          type="text"
+          value={instructorName}
+          onChange={(e) => setInstructorName(e.target.value)}
+          placeholder="Your Name and Credentials" />
+        <p>Class Name</p>
+        <input
+          type="text"
+          value={className}
+          onChange={(e) => setClassName(e.target.value)}
+          placeholder="Biology 101..." />
+        <p>Institution Name</p>
+        <input
+          type="text"
+          value={institutionName}
+          onChange={(e) => setInstitutionName(e.target.value)}
+          placeholder="University of..." />
+      </FormBlock>
+      <FormBlock>
+        <label>
+          <input
+            style={{ transform: "scale(1.25)", padding: "1rem", marginRight: "1rem" }}
+            type="checkbox"
+            checked={isTemplate}
+            onChange={(e) => setIsTemplate(e.target.checked)} />
+          Allow this lesson to be used as a template for future educators
+        </label>
       </FormBlock>
       <ButtonBlock>
         <Link to="/lessons">Back to lessons</Link>

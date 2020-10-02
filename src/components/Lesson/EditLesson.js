@@ -47,7 +47,7 @@ const EditLesson = () => {
   }
 
   function updateLessonLyrics(lyrics) {
-    console.log(lyrics);
+    //console.log(lyrics);
   }
 
   useEffect(() => {

@@ -13,6 +13,7 @@ import { MakeARapGuide } from '../Make'
 import { FormBlock } from '../../styles/FormStyles'
 import { Message } from '../ui/Message'
 import { Card } from '../Card'
+import { LessonTemplates } from '../Lesson/LessonTemplates'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_LESSONS_BY_ACCOUNT_SHORT, ENROLL_STUDENT } from '../../queries/lessons'
@@ -307,11 +308,11 @@ export const Lessons = () => {
                   stats={[
                     {
                       label: "students",
-                      value: lesson.accounts.filter(account => account.type === "student").length
+                      value: lesson.accounts.length
                     },
                     {
                       label: "annotations",
-                      value: lesson.lyrics.filter(lyric => lyric.annotations.find(annotation => annotation.isSubmitted)).length
+                      value: lesson.annotations.length
                     },
                     {
                       label: "status",
@@ -328,6 +329,7 @@ export const Lessons = () => {
               )
             })}
           </ThreeGrid>
+          <LessonTemplates />
         </StyledContent>
       </FullSection>
       {data.lessons.length === 0 &&

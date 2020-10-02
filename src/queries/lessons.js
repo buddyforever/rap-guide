@@ -1,5 +1,45 @@
 import gql from 'graphql-tag'
 
+export const GET_LESSON_TEMPLATE_BY_ID = gql`
+  query getLesson($id: ID!){
+    lesson(where: {id: $id}) {
+      id
+      lessonTitle
+      lessonDescription
+      className
+      instructorName
+      institutionName
+      numAnnotations
+      minLikes
+      maxStudents
+      minComments
+      lyrics {
+        id
+      }
+      annotations(where: { isSubmitted: true }){
+        id
+        likes {
+          id
+        }
+        comments {
+          id
+        }
+      }
+      guide {
+        videoThumb,
+        videoTitle,
+        videoUrl,
+        videoId,
+        id,
+        videoSlug
+      }
+      accounts(where: { type: "student" }) {
+        id
+      }
+    }
+  }
+`
+
 export const GET_LESSONS_BY_ACCOUNT_SHORT = gql`
   query getLessons($id: ID!) {
     lessons(where: {accounts_some: { id: $id } }){
@@ -25,13 +65,11 @@ export const GET_LESSONS_BY_ACCOUNT_SHORT = gql`
           topic
         }
       }
-      accounts {
+      accounts(where: { type: "student"}) {
         type
       }
-      lyrics {
-        annotations {
-          isSubmitted
-        }
+      annotations(where: { isSubmitted: true}) {
+        id
       }
     }
   }
@@ -62,6 +100,7 @@ export const GET_LESSONS_BY_ACCOUNT = gql`
       minLikes
       numAnnotations
       minComments
+      templateId
       accounts {
         id
         image
@@ -141,6 +180,11 @@ export const GET_LESSON_BY_ID = gql`
       minLikes
       numAnnotations
       minComments
+      className
+      instructorName
+      institutionName
+      isTemplate
+      templateId
       accounts {
         id
         image
@@ -322,10 +366,16 @@ export const CREATE_LESSON = gql`
     $lessonTitle:String!,
     $lessonDescription:String!,
     $maxStudents: Int!,
+    $templateId: String!,
     $guide: GuideWhereUniqueInput!,
     $accounts: [AccountWhereUniqueInput!],
     $minLikes: Int!,
-    $numAnnotations: Int!
+    $numAnnotations: Int!,
+    $minComments: Int!,
+    $className: String!,
+    $instructorName: String!,
+    $institutionName: String!,
+    $isTemplate: Boolean!
   ) {
     createLesson(data: {
       status: PUBLISHED
@@ -333,12 +383,18 @@ export const CREATE_LESSON = gql`
       lessonDescription: $lessonDescription
       lessonStatus: "Draft"
       maxStudents: $maxStudents
+      templateId: $templateId
       guide: { connect: $guide }
       accounts: { connect: $accounts }
       minLikes: $minLikes
       numAnnotations: $numAnnotations
+      minComments: $minComments
+      className: $className
+      instructorName: $instructorName
+      institutionName: $institutionName
+      isTemplate: $isTemplate
     }){
-    id
+      id
     }
   }
 `
@@ -351,7 +407,11 @@ export const UPDATE_LESSON_DETAILS = gql`
     $maxStudents: Int!,
     $minLikes: Int!,
     $numAnnotations: Int!,
-    $minComments: Int!
+    $minComments: Int!,
+    $className: String!,
+    $instructorName: String!,
+    $institutionName: String!,
+    $isTemplate: Boolean!
   ) {
     updateLesson(
       where: { id: $id }
@@ -363,6 +423,10 @@ export const UPDATE_LESSON_DETAILS = gql`
         minLikes: $minLikes
         numAnnotations: $numAnnotations
         minComments: $minComments
+        className: $className
+        instructorName: $instructorName
+        institutionName: $institutionName
+        isTemplate: $isTemplate
       }){
     id
     }
@@ -404,3 +468,39 @@ export const ENROLL_STUDENT = gql`
     }
   }
 `;
+
+
+export const GET_LESSON_TEMPLATES = gql`
+  query getLessons {
+    lessons(where: { isTemplate: true }){
+      id
+      lessonTitle
+      lessonDescription
+      lessonStatus
+      maxStudents
+      dueDate
+      minLikes
+      numAnnotations
+      minComments
+      className
+      instructorName
+      institutionName
+      guide {
+        id
+        videoId
+        videoUrl
+        videoTitle
+        videoThumb
+        topics {
+          topic
+        }
+      }
+      accounts(where: { type: "student" }) {
+        type
+      }
+      annotations(where: { isSubmitted: true }) {
+        isSubmitted
+      }
+    }
+  }
+`
