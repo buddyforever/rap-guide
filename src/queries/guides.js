@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const GET_ALL_GUIDES = gql`
   query getGuides {
-    guides {
+    guides(where: { isLive: true }) {
       id
       videoId
       videoUrl
