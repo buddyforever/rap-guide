@@ -299,6 +299,16 @@ export const GET_LESSON_BY_ID = gql`
   }
 `
 
+export const GET_TEMPLATE_LESSON_BY_ID = gql`
+  query getLesson($id: ID!) {
+    lesson(where: { id: $id }) {
+      className
+      instructorName
+      institutionName
+    }
+  }
+`
+
 export const GET_LESSON_STUDENTS = gql`
 query getAccounts($id: ID!) {
     accounts(where: {
@@ -408,6 +418,7 @@ export const UPDATE_LESSON_DETAILS = gql`
     $minLikes: Int!,
     $numAnnotations: Int!,
     $minComments: Int!,
+    $guideId: ID!,
     $className: String!,
     $instructorName: String!,
     $institutionName: String!,
@@ -423,6 +434,9 @@ export const UPDATE_LESSON_DETAILS = gql`
         minLikes: $minLikes
         numAnnotations: $numAnnotations
         minComments: $minComments
+        guide: {
+          connect: { id: $guideId }
+        }
         className: $className
         instructorName: $instructorName
         institutionName: $institutionName

@@ -61,15 +61,13 @@ export const Guide = () => {
   const [titleA, titleB] = splitFirstWord(guide.videoTitle)
   return (
     <StyledContent>
-      <Heading style={{ paddingTop: "75px" }}>
+      <Heading className="video-heading" style={{ paddingTop: "75px" }}>
         <motion.h1
           initial={{
             opacity: 0,
-            y: -20
           }}
           animate={{
             opacity: 1,
-            y: 0
           }}
           transition={{
             delay: 0.2,
@@ -85,20 +83,20 @@ export const Guide = () => {
           layout
           initial={{
             opacity: 0,
-            y: 50
+            scale: 1.1
           }}
           animate={{
             opacity: 1,
-            y: 0
+            scale: 1
           }}
           transition={{
             delay: 0.2,
-            duration: 0.3
+            duration: 0.2
           }}
           ref={videoRef}
           className={isScrolled ? `${annotationIsShown ? 'hidden' : ''} scrolled` : ''}
         >
-          <Video guide={guide} />
+          <Video videoTitle={guide.videoTitle} videoUrl={guide.videoUrl} />
         </StyledVideoContainer>
       </AnimateSharedLayout>
       {isScrolled &&

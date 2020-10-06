@@ -1,5 +1,16 @@
 import gql from 'graphql-tag'
 
+export const GET_GUIDE_FOR_LESSON = gql`
+  query getGuides {
+    guides(where: { isLive: true }) {
+      id
+      videoId
+      videoUrl
+      videoTitle
+    }
+  }
+`
+
 export const GET_ALL_GUIDES = gql`
   query getGuides {
     guides(where: { isLive: true }) {
@@ -34,7 +45,6 @@ export const GET_ALL_GUIDES = gql`
       }
     }
   }
-
 `
 
 export const GET_GUIDE_BY_ID = gql`

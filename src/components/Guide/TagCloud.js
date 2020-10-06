@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import styled from 'styled-components'
+
 import { Tag } from '../../styles/TagStyles'
 
 const minFontSize = 1.4;
@@ -34,8 +35,7 @@ const TagCloud = ({ selectTag, tags }) => {
           onClick={() => handleTagClick(tag.topic)}
           size={getFontSize(tag.count)}
         >{tag.topic}</Tag>
-      ))
-      }
+      ))}
     </StyledTagCloud >
   )
 }

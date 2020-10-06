@@ -114,7 +114,7 @@ export const Header = () => {
 export default Header;
 
 const StyledHeader = styled.header`
-  position: sticky;
+  position: fixed;
   top: 0;
   width: 100vw;
   background-color: #0A0405;

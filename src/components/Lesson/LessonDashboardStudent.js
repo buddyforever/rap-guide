@@ -274,7 +274,7 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
         <h2>{maxWeight} MAX ANNOTATIONS / LINE</h2>
       </Heading>
 
-      <Video guide={lesson.guide} />
+      <Video videoTitle={lesson.guide.videoTitle} videoUrl={lesson.guide.videoUrl} />
 
       {/*
         Made it so that teachers ALWAYS see the annotated lyrics

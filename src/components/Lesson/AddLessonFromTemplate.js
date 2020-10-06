@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams, Redirect } from "react-router-dom"
 
 import LessonDetailsForm from './LessonDetailsForm'
@@ -17,6 +17,8 @@ const AddLessonFromTemplate = () => {
 
   /* State */
   const [redirect, setRedirect] = useState(null);
+  const [template, setTemplate] = useState(null);
+  const [lesson, setLesson] = useState(null);
 
   /* Queries */
   const { loading, data } = useQuery(GET_LESSON_TEMPLATE_BY_ID, {
@@ -38,17 +40,28 @@ const AddLessonFromTemplate = () => {
     });
   }
 
-  if (loading) return <Loader />
-  const { lesson } = data
-  // Each lesson will be different for these
-  lesson.maxStudents = null
-  lesson.className = ""
-  lesson.instructorName = ""
-  lesson.institutionName = ""
-  lesson.isTemplate = false
+  useEffect(() => {
+    if (!data) return
+    /* Extract the lesson adaptation
+       information and clear the fields */
+    setTemplate({
+      lessonTitle: data.lesson.lessonTitle,
+      className: data.lesson.className,
+      instructorName: data.lesson.instructorName,
+      institutionName: data.lesson.institutionName
+    })
+    data.lesson.maxStudents = null
+    data.lesson.className = ""
+    data.lesson.instructorName = ""
+    data.lesson.institutionName = ""
+    data.lesson.isTemplate = false
+    setLesson(data.lesson)
+  }, [data])
+
+  if (loading || !lesson) return <Loader />
   return (
     <StyledContent style={{ marginBottom: "5rem" }}>
-      <Heading>
+      <Heading style={{ paddingBottom: 0 }}>
         <h1>Lesson Editor</h1>
         <MediumSpace>
           <LinkButton className="active">Lesson Details</LinkButton>
@@ -56,7 +69,7 @@ const AddLessonFromTemplate = () => {
           <LinkButton disabled>Lesson Dashboard</LinkButton>
         </MediumSpace>
       </Heading>
-      <LessonDetailsForm lesson={lesson} onSubmit={addLesson} />
+      <LessonDetailsForm template={template} lesson={lesson} onSubmit={addLesson} />
       {redirect && <Redirect to={redirect} />}
     </StyledContent>
   )

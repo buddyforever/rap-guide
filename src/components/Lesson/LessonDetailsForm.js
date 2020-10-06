@@ -1,17 +1,34 @@
 import React, { useContext, useState, useEffect } from 'react'
 import { Link } from "react-router-dom"
+import styled from 'styled-components'
+import Select from 'react-select'
+import { motion, AnimatePresence } from 'framer-motion'
 
-import { ButtonBlock, FormBlock, FormPage } from '../../styles/FormStyles'
-import { MediumSpace, Heading, StyledContent } from '../../styles/PageStyles'
+import { ButtonBlock, FormBlock } from '../../styles/FormStyles'
+import { MediumSpace } from '../../styles/PageStyles'
 import { Tag } from '../../styles/TagStyles'
 import { Editor } from '@tinymce/tinymce-react';
 import { Button } from '../ui/Button'
+import Loader from '../Loader'
 import { UserContext } from '../../context/UserContext'
 import { Message } from '../ui/Message'
 import { faPlus } from '@fortawesome/free-solid-svg-icons'
-import { EditorPropTypes } from '@tinymce/tinymce-react/lib/cjs/main/ts/components/EditorPropTypes'
+import Video from '../Guide/Video'
 
-const LessonDetailsForm = ({ lesson, onSubmit }) => {
+import { useQuery } from '@apollo/react-hooks'
+import { GET_GUIDE_FOR_LESSON } from '../../queries/guides'
+import { GET_TEMPLATE_LESSON_BY_ID } from '../../queries/lessons'
+
+const LessonDetailsForm = ({ template = null, lesson, onSubmit }) => {
+
+  /* Get Available Videos */
+  const { data, loading } = useQuery(GET_GUIDE_FOR_LESSON)
+  const { loading: templateLoading, data: templateData, refetch, error }
+    = useQuery(GET_TEMPLATE_LESSON_BY_ID, {
+      variables: {
+        id: lesson.templateId
+      }
+    })
 
   /* Context */
   const { user } = useContext(UserContext)
@@ -19,12 +36,15 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
   /* Fields */
   const [lessonTitle, setLessonTitle] = useState(lesson.lessonTitle || "")
   const [lessonDescription, setLessonDescription] = useState(lesson.lessonDescription || "<p></p>")
+  const [videos, setVideos] = useState([])
+  const [changeVideo, setChangeVideo] = useState(false)
   const [maxStudents, setMaxStudents] = useState(lesson.maxStudents || '')
   const [minLikes, setMinLikes] = useState(lesson.minLikes || '')
   const [minComments, setMinComments] = useState(lesson.minComments || '')
   const [numAnnotations, setNumAnnotations] = useState(lesson.numAnnotations || '')
   const [topics, setTopics] = useState(lesson.topics || [])
   const [topic, setTopic] = useState("")
+  const [guide, setGuide] = useState(lesson.guide)
   const [className, setClassName] = useState(lesson.className || "")
   const [instructorName, setInstructorName] = useState(lesson.instructorName || "")
   const [institutionName, setInstitutionName] = useState(lesson.institutionName || "")
@@ -64,9 +84,7 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
       lessonDescription,
       maxStudents: parseInt(maxStudents),
       topics,
-      guide: {
-        id: lesson.guide.id
-      },
+      guideId: guide.id,
       accounts: [{
         id: user.id
       }],
@@ -123,12 +141,76 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
     window.scrollTo(0, 0)
   }, [message]);
 
+  useEffect(() => {
+    if (!data) return
+    setVideos(data.guides.map(guide => {
+      return {
+        value: guide.id,
+        label: guide.videoTitle,
+        videoUrl: guide.videoUrl
+      }
+    }))
+  }, [data])
+
+  if (loading || !videos || templateLoading) return <Loader />
+  console.log(templateData)
+  if (templateData) {
+    template = {
+      className: templateData.lesson.className,
+      instructorName: templateData.lesson.instructorName,
+      institutionName: templateData.lesson.institutionName
+    }
+  }
   return (
     <>
-      <MediumSpace style={{ marginTop: "0" }}>
-        <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
-        <h3>A lesson plan for <a href={`https://www.youtube.com/watch?v=${lesson.guide.videoId}`} target="_blank">{lesson.guide.videoTitle}</a></h3>
-      </MediumSpace>
+      <StyledLessonTitle>
+        <div>
+          <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
+          <h3>
+            <span>A lesson plan for </span>
+            <span style={{ color: "#DD3333", marginLeft: "10px" }}>{guide.videoTitle}</span>
+            <button onClick={(() => setChangeVideo(!changeVideo))}>change</button>
+          </h3>
+          <AnimatePresence exitBeforeEnter>
+            {changeVideo &&
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="select-container">
+                <h4>Change Video</h4>
+                <p>only available until lyrics are selected.</p>
+                <Select
+                  placeholder="Choose a different video..."
+                  style={{ color: "#DD3333!important" }}
+                  options={[...videos]}
+                  defaultValue={lesson.guide.videoTitle}
+                  onChange={(selected) => {
+                    setGuide({
+                      id: selected.value,
+                      videoTitle: selected.label,
+                      videoUrl: videos.find(video => video.value === selected.value).videoUrl
+                    })
+                  }}
+                />
+              </motion.div>
+            }
+          </AnimatePresence>
+          {template &&
+            <StyledAdaptation>
+              <h4>Adapted from</h4>
+              <strong>{template.lessonTitle}</strong>
+              <span>{template.instructorName}</span>
+              <span>{template.className}</span>
+              <span>{template.institutionName}</span>
+            </StyledAdaptation>
+          }
+        </div>
+        <div>
+          <Video videoTitle={guide.videoTitle} videoUrl={guide.videoUrl} />
+          <button onClick={(() => setChangeVideo(!changeVideo))}>change</button>
+        </div>
+      </StyledLessonTitle>
 
       {message && <Message {...message}>{message.text}</Message>}
 
@@ -268,3 +350,66 @@ const LessonDetailsForm = ({ lesson, onSubmit }) => {
 }
 
 export default LessonDetailsForm
+
+const StyledAdaptation = styled.div`
+  padding: 25px 0;
+  font-size: 2rem;
+
+  h4 {
+    color: #23A2D5;
+    font-weight: 700;
+  }
+
+  strong,
+  span {
+    display: block;
+  }
+  span {
+    font-size: 1.8rem;
+    font-weight: 400;
+  }
+`
+
+const StyledLessonTitle = styled.div`
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 5rem;
+
+  h2 {
+    font-size: 2.4rem;
+  }
+
+  h3 {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  button {
+    background: none;
+    border: none;
+    color: #DD3333;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-left: 10px;
+    text-decoration: underline;
+    cursor: pointer;
+  }
+
+  .select-container {
+    margin-top: 25px;
+    padding: 0;
+
+    h4 {
+      font-size: 2.4rem;
+      margin-bottom: 0;
+
+      & + p {
+        margin-top: 0;
+      }
+    }
+    p {
+      font-size: 1.8rem;
+    }
+  }
+`

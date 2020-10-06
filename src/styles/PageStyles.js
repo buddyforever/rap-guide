@@ -2,7 +2,7 @@ import styled from 'styled-components'
 import { motion } from 'framer-motion'
 
 export const StyledMainContent = styled.main`
-
+  padding-top: 10rem; // To adjust for the floating header
 `;
 
 export const StyledContent = styled.div`
@@ -27,7 +27,8 @@ export const StyledContent = styled.div`
 
   p a,
   button.showNextLink,
-  p a:visited {
+  p a:visited,
+  h3 a {
     color: #DD3333;
     overflow-wrap: break-word;
     word-break: break-word;
@@ -42,6 +43,13 @@ export const StyledContent = styled.div`
 
   .shown p {
     font-size: 18px!important;
+  }
+
+  .video-heading {
+    h1 {
+      font-size: 5.5rem;
+      text-align: center;
+    }
   }
 
   @media screen and (max-width: 750px){
@@ -187,27 +195,6 @@ export const Thumbnail = styled.div`
     width: 100%;
     max-height: 200px;
     object-fit: contain;
-  }
-`
-
-export const StyledVideo = styled.div`
-  margin-bottom: 5rem;
-
-  .video {
-    position: relative;
-    padding-bottom: 56.25%;
-    padding-top: 30px; height: 0; overflow: hidden;
-    background-color: black;
-  }
-
-  .video iframe,
-  .video object,
-  .video embed {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
   }
 `
 
