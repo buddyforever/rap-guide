@@ -84,7 +84,9 @@ const LessonDetailsForm = ({ template = null, lesson, onSubmit }) => {
       lessonDescription,
       maxStudents: parseInt(maxStudents),
       topics,
-      guideId: guide.id,
+      guide: {
+        id: guide.id
+      },
       accounts: [{
         id: user.id
       }],
@@ -153,8 +155,7 @@ const LessonDetailsForm = ({ template = null, lesson, onSubmit }) => {
   }, [data])
 
   if (loading || !videos || templateLoading) return <Loader />
-  console.log(templateData)
-  if (templateData) {
+  if (templateData && templateData.lesson) {
     template = {
       className: templateData.lesson.className,
       instructorName: templateData.lesson.instructorName,
@@ -163,13 +164,25 @@ const LessonDetailsForm = ({ template = null, lesson, onSubmit }) => {
   }
   return (
     <>
+      <FormBlock>
+        <h3>Lesson Name</h3>
+        <input
+          style={{ width: "100%" }}
+          type="text"
+          value={lessonTitle}
+          onChange={(e) => setLessonTitle(e.target.value)}
+          placeholder="Give this lesson a name..." />
+      </FormBlock>
+      {message && <Message {...message}>{message.text}</Message>}
       <StyledLessonTitle>
         <div>
           <h2>{lessonTitle.length ? lessonTitle : "Lesson Name..."}</h2>
           <h3>
             <span>A lesson plan for </span>
             <span style={{ color: "#DD3333", marginLeft: "10px" }}>{guide.videoTitle}</span>
-            <button onClick={(() => setChangeVideo(!changeVideo))}>change</button>
+            {(lesson.lyrics && !lesson.lyrics.length) &&
+              <button onClick={(() => setChangeVideo(!changeVideo))}>change</button>
+            }
           </h3>
           <AnimatePresence exitBeforeEnter>
             {changeVideo &&
@@ -208,21 +221,11 @@ const LessonDetailsForm = ({ template = null, lesson, onSubmit }) => {
         </div>
         <div>
           <Video videoTitle={guide.videoTitle} videoUrl={guide.videoUrl} />
-          <button onClick={(() => setChangeVideo(!changeVideo))}>change</button>
+          {(lesson.lyrics && !lesson.lyrics.length) &&
+            <button onClick={(() => setChangeVideo(!changeVideo))}>change</button>
+          }
         </div>
       </StyledLessonTitle>
-
-      {message && <Message {...message}>{message.text}</Message>}
-
-      <FormBlock>
-        <h3>Lesson Name</h3>
-        <input
-          style={{ width: "100%" }}
-          type="text"
-          value={lessonTitle}
-          onChange={(e) => setLessonTitle(e.target.value)}
-          placeholder="Give this lesson a name..." />
-      </FormBlock>
 
       <FormBlock>
         <h3>Lesson Plan</h3>

@@ -19,10 +19,10 @@ export const StyledVideo = styled.div`
   margin-bottom: 5rem;
   border-radius: 5px;
   background-color: black;
-  box-shadow: 0 0 40px 0 rgba(0,0,0,0.2),
-              0 0 20px 0 rgba(0,0,0,0.5),
-              0 0 10px 0 rgba(0,0,0,0.5),
-              0 0 5px 0 rgba(0,0,0,1);
+  box-shadow: 0 0 40px 0 rgba(0,0,0,0.1),
+              0 0 20px 0 rgba(0,0,0,0.2),
+              0 0 10px 0 rgba(0,0,0,0.2),
+              0 0 5px 0 rgba(0,0,0,0.4);
 
   .video {
     position: relative;

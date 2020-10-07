@@ -30,6 +30,19 @@ export const UPDATE_ACCOUNT_TYPE = gql`
   }
 `
 
+export const UPDATE_DISPLAY_NAME = gql`
+  mutation updateAccount($id: ID!, $displayName: String!) {
+    updateAccount(
+      where: { id: $id }
+      data: {
+        displayName: $displayName
+    }) {
+      id
+      displayName
+    }
+  }
+`
+
 export const CREATE_ACCOUNT = gql`
   mutation createAccount(
     $email: String!,

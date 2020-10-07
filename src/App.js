@@ -54,7 +54,7 @@ function App() {
                 <Route exact path="/" component={Home} />
                 <Route exact path="/explore" component={Explore} />
                 <Route path="/lessons" component={Lessons} />
-                <Route path="/temp" component={TempPage} />
+                <Route path="/temp" component={Temp} />
                 <Route path="/addguide" component={AddGuide} />
                 <Route path="/updatelyrics" component={UpdateLyrics} />
                 <Route path="/request" component={Request} />
