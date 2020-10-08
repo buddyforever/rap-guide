@@ -31,6 +31,7 @@ export const Header = ({ showModal }) => {
     setMenuIsOpen(!menuIsOpen);
   }
 
+  // TODO - Test the display name animal chooser once more before pushing
   async function getUserDetails(email) {
     const { data: { account } } = await refetch({ email: email });
 

@@ -418,7 +418,7 @@ export const UPDATE_LESSON_DETAILS = gql`
     $minLikes: Int!,
     $numAnnotations: Int!,
     $minComments: Int!,
-    $guideId: ID!,
+    $guide: GuideWhereUniqueInput!,
     $className: String!,
     $instructorName: String!,
     $institutionName: String!,
@@ -434,9 +434,7 @@ export const UPDATE_LESSON_DETAILS = gql`
         minLikes: $minLikes
         numAnnotations: $numAnnotations
         minComments: $minComments
-        guide: {
-          connect: { id: $guideId }
-        }
+        guide: { connect: $guide }
         className: $className
         instructorName: $instructorName
         institutionName: $institutionName
