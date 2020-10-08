@@ -8,9 +8,14 @@ export const GET_ACCOUNT_BY_EMAIL = gql`
       id
       type
       displayName
+      image
+      nameFirst
+      nameLast
       isPublic
       twitter
       isViewOnly
+      instructorName
+      institutionName
     }
   }
 `
@@ -31,9 +36,9 @@ export const UPDATE_ACCOUNT_TYPE = gql`
 `
 
 export const UPDATE_DISPLAY_NAME = gql`
-  mutation updateAccount($id: ID!, $displayName: String!) {
+  mutation updateAccount($email: String!, $displayName: String!) {
     updateAccount(
-      where: { id: $id }
+      where: { email: $email }
       data: {
         displayName: $displayName
     }) {

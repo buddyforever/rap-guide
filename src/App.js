@@ -5,6 +5,7 @@ import { HttpLink } from "apollo-link-http";
 import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloProvider } from "react-apollo";
 import { ThemeProvider } from 'styled-components'
+import { useAuth0 } from "./react-auth0-spa";
 
 import Guide from './components/Guide/Guide'
 import Layout from './components/Layout/Layout'
@@ -17,7 +18,7 @@ import Annotations from './components/Private/Annotations'
 import AddLesson from './components/Lesson/AddLesson'
 import AddLessonFromTemplate from './components/Lesson/AddLessonFromTemplate'
 import EditLesson from './components/Lesson/EditLesson.js'
-import Profile from './components/Private/Profile'
+import { Profile } from './components/Private/Profile'
 import Template from './components/Private/Template'
 import TempPage from './TEMP/TempPage'
 import Playlist from './components/Pages/Playlist'
@@ -25,8 +26,10 @@ import auth from './auth/auth'
 import { UserContext } from './context/UserContext'
 import { defaultTheme } from '../src/components/themes/default'
 import RouteChange from './utilities/RouteChange'
+import Loader from './components/Loader'
 
-import { useAuth0 } from "./react-auth0-spa";
+import { useQuery } from '@apollo/react-hooks'
+import { GET_ACCOUNT_BY_EMAIL } from './queries/accounts';
 
 const GRAPHCMS_API =
   "https://api-euwest.graphcms.com/v1/ck56vnvt50t7301gifvv37btb/master";
@@ -43,6 +46,7 @@ function App() {
   const [user, setUser] = useState(isAuthenticated ? profile : null);
   const [theme, setTheme] = useState(defaultTheme)
 
+  if (loading) return <Loader />
   return (
     <ThemeProvider theme={theme}>
       <ApolloProvider client={client}>

@@ -138,3 +138,25 @@ a.link {
     }
   }
 }
+
+.profile-image {
+  border-radius: 50%;
+  overflow: hidden;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
+}
+
+.blue {
+  color: #1CA0D3;
+}
+.red {
+  color: #DD3333;
+}
+
+.modal-open {
+  filter: blur(2px);
+}

@@ -11,7 +11,7 @@ import { useAuth0 } from "../../react-auth0-spa";
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_ACCOUNT_BY_EMAIL, CREATE_ACCOUNT } from '../../queries/accounts'
 
-export const Header = () => {
+export const Header = ({ showModal }) => {
 
   /* Auth */
   const { loading, isAuthenticated, user: profile } = useAuth0();
@@ -40,7 +40,8 @@ export const Header = () => {
           ...profile,
           id: account.id,
           type: account.type,
-          isViewOnly: account.isViewOnly
+          isViewOnly: account.isViewOnly,
+          displayName: account.displayName
         }
       })
     } else {
@@ -68,6 +69,10 @@ export const Header = () => {
       getUserDetails(profile.email);
     }
   }, [profile])
+
+  useEffect(() => {
+    if (user && user.displayName === "") showModal(true)
+  }, [user])
 
   if (loading) return null;
   return (

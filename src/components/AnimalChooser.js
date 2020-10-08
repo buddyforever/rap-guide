@@ -1,13 +1,20 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { useHistory } from 'react-router-dom'
 import { motion, AnimatePresence } from 'framer-motion'
 import styled from 'styled-components'
+import { Link } from 'react-router-dom'
 
 import { animals } from '../data/animals'
 import { ConfirmButton, Button, Message } from './ui'
 import { FormBlock, ButtonBlock } from '../styles/FormStyles'
+import { MediumSpace } from '../styles/PageStyles'
 import { DotWave } from '../components/ui'
+import { UserContext } from '../context/UserContext'
 
-export const AnimalChooser = ({ selectAnimal }) => {
+import { useMutation } from '@apollo/react-hooks'
+import { UPDATE_DISPLAY_NAME } from '../queries/accounts'
+
+export const AnimalChooser = ({ closeModal }) => {
 
   const [message, setMessage] = useState(null)
   const [animal, setAnimal] = useState(null)
@@ -16,9 +23,32 @@ export const AnimalChooser = ({ selectAnimal }) => {
   const [filteredAnimals, setFilteredAnimals] = useState([])
   const [active, setActive] = useState(-1)
 
+  /* Context */
+  const { user, setUser } = useContext(UserContext)
+
+  /* Router */
+  const history = useHistory();
+
+  /* Queries */
+  const [updateDisplayname] = useMutation(UPDATE_DISPLAY_NAME)
+
   function handleSelectAnimal() {
     if (animals.includes(selectedAnimal)) {
-      selectAnimal(selectedAnimal)
+      let num = (Math.floor(Math.random() * 10000) + 10000).toString().substring(1);
+      let displayName = selectedAnimal.replace(/\s+/g, '-').toLowerCase() + "-" + num;
+      setUser({
+        ...user,
+        displayName
+      })
+      closeModal()
+      updateDisplayname({
+        variables: {
+          email: user.email,
+          displayName
+        }
+      }).then(response => {
+        history.push("/profile")
+      })
     } else {
       setMessage({
         type: 'error',
@@ -105,8 +135,10 @@ export const AnimalChooser = ({ selectAnimal }) => {
     <motion.div
       initial={{ height: 0 }}
       animate={{ height: "auto" }}>
-      <FormBlock style={{ display: "flex", alignItems: "center" }}>
-        <div style={{ maxWidth: "600px", marginRight: "5rem" }}>
+      <FormBlock style={{ margin: 0, fontSize: '1.2em' }}>
+        <h1><span className="red">Choose</span> an Animal Name</h1>
+        <p style={{ marginTop: "2rem" }}>On <Link to="/">RapGuide.com</Link> we use animal names to keep your real name private until you choose otherwise. Search for an animal name or allow us to choose one for you at random!</p>
+        <MediumSpace style={{ marginTop: "50px" }}>
           <label>Find an Animal</label>
           <div style={{
             display: "flex",
@@ -144,7 +176,7 @@ export const AnimalChooser = ({ selectAnimal }) => {
               </StyledAutocomplete>
             }
           </div>
-        </div>
+        </MediumSpace>
         {!random &&
           <div>
             <label style={{ display: "block" }}>examples:</label>
@@ -179,7 +211,7 @@ export const AnimalChooser = ({ selectAnimal }) => {
           </em>
         }
       </FormBlock>
-      <ButtonBlock>
+      <ButtonBlock style={{ justifyContent: "space-around", marginTop: "2.5rem" }}>
         <ConfirmButton
           preClick={() => {
             setFilteredAnimals([])

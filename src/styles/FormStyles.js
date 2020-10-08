@@ -43,6 +43,19 @@ export const FormBlock = styled.div`
     outline: none;
   }
 
+  input[type=text]:focus,
+  input[type=number]:focus,
+  input[type=email]:focus,
+  input[type=password]:focus,
+  input[type=search]:focus,
+  select:focus,
+  textarea:focus {
+    box-shadow: 0 0 10px 0 rgba(28, 160, 211,0.1),
+                  0 0 8px 0 rgba(28, 160, 211,0.2),
+                  0 0 4px 0 rgba(28, 160, 211,0.2),
+                  0 0 2px 0 rgba(28, 160, 211,0.4);
+  }
+
   textarea {
     min-height: 15rem;
   }

@@ -60,7 +60,7 @@ Dot.defaultProps = {
   size: 1,
   theme: {
     colors: {
-      primary: "#5A67D8"
+      primary: "#DD3333"
     }
   }
 }
