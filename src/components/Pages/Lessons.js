@@ -50,7 +50,7 @@ export const Lessons = () => {
   /* Queries */
   const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT_SHORT, {
     variables: {
-      id: user ? user.id : null
+      id: 'ckg6shaeax49e0911yh1666k7' //user ? user.id : null
     }
   });
   const { refetch: refetchCode } = useQuery(GET_CODE, {
@@ -329,7 +329,9 @@ export const Lessons = () => {
               )
             })}
           </ThreeGrid>
-          <LessonTemplates />
+          {['administrator', 'educator'].includes(user.type) &&
+            <LessonTemplates />
+          }
         </StyledContent>
       </FullSection>
       {data.lessons.length === 0 &&
@@ -374,9 +376,9 @@ export const Lessons = () => {
               <Heading>
                 <h1>Lessons</h1>
 
-                <p>Teachers with an Educator Account can design Lessons around each of the videos on this site, and share these assignments privately with students, collecting responses via their Educator Dashboard.</p>
+                <p className="paragraph-top">Teachers with an Educator Account can design Lessons around each of the videos on this site, and share these assignments privately with students, collecting responses via their Educator Dashboard.</p>
 
-                <p>Teachers can also share their completed lesson plans with other educators to adapt for their own use, and can browse previous lessons and templates.</p>
+                <p className="paragraph-bottom">Teachers can also share their completed lesson plans with other educators to adapt for their own use, and can browse previous lessons and templates.</p>
               </Heading>
             </MediumSpace>
             <MediumSpace>

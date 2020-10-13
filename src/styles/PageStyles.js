@@ -52,6 +52,18 @@ export const StyledContent = styled.div`
     }
   }
 
+  .paragraph-top {
+    marginBottom: '25px';
+    lineHeight: '1.5em';
+    fontWeight: 700;
+    letterSpacing: '3px';
+    fontFamily: 'Barlow';
+  }
+  .paragraph-bottom {
+    fontFamily: 'Barlow';
+    fontWeight: 100;
+  }
+
   @media screen and (max-width: 750px){
     padding-left: 25px;
     padding-right: 25px;

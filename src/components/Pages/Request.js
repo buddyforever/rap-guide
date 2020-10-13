@@ -205,15 +205,15 @@ export const Request = () => {
         <StyledContent>
           <StyledColumns>
             <MediumSpace style={{ fontSize: "18px" }}>
-              <Heading>
-                <h1>Request a Video for an Existing Song</h1>
+              <Heading style={{ marginTop: "25px", paddingBottom: "20px" }}>
+                <h1>Request an Existing Song or Video</h1>
               </Heading>
-              <p>We can add any existing music video or song to this teaching platform, along with annotatable lyrics for lesson-building. Teachers, if you would like to use an existing song or video for a class assignment, please <Link to="/contact">contact us</Link> to request it.</p>
+              <p className="paragraph-top">We can add any existing song or music video to this teaching platform, along with annotatable lyrics for lesson-building. Teachers, if you would like to use an existing song or video for a class assignment, please <Link to="/contact">contact us</Link> to request it.</p>
 
-              <p>Not sure where to start? Check out Baba’s existing collection of <Link to="/playlist/videos-by-baba-brinkman">informative rap music videos</Link> and <Link to="/playlist/more-songs-by-baba-brinkman">Rap Guide songs</Link> without a video yet, any of which can be added to the site.</p>
+              <p className="paragraph-bottom">Not sure where to start? Check out Baba’s collection of <Link to="/playlist/videos-by-baba-brinkman">Rap Guide videos</Link> and <Link to="/playlist/more-songs-by-baba-brinkman">informative songs</Link> without a video yet, any of which can be added to the site. We can also add <Link to="/playlist/more-songs-by-baba-brinkman">videos by other artists</Link> with annotatable lyrics, subject to permission.</p>
             </MediumSpace>
             <MediumSpace style={{ textAlign: "center" }}>
-              <img src="images/illustration5.png" alt="Rap Guide | Requests" style={{ maxHeight: "600px" }} />
+              <img src="images/illustration5.svg" alt="Rap Guide | Requests" style={{ maxHeight: "600px" }} />
             </MediumSpace>
           </StyledColumns>
         </StyledContent>
