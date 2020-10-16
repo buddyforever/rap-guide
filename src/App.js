@@ -6,6 +6,7 @@ import { InMemoryCache } from "apollo-cache-inmemory";
 import { ApolloProvider } from "react-apollo";
 import { ThemeProvider } from 'styled-components'
 import { useAuth0 } from "./react-auth0-spa";
+import LogRocket from 'logrocket';
 
 import Guide from './components/Guide/Guide'
 import Layout from './components/Layout/Layout'
@@ -42,6 +43,8 @@ function App() {
 
   const [user, setUser] = useState(isAuthenticated ? profile : null);
   const [theme, setTheme] = useState(defaultTheme)
+
+  LogRocket.init('kpneaw/rap-guide');
 
   if (loading) return <Loader />
   return (

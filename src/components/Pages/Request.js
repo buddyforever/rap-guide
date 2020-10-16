@@ -1,23 +1,28 @@
 import React, { useState, useRef, useContext, useEffect } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { motion } from 'framer-motion'
+import { motion, AnimatePresence } from 'framer-motion'
 import { Editor } from '@tinymce/tinymce-react';
 
-import { StyledContent, Heading, MediumSpace, LargeSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
+import { ThreeGrid, StyledContent, Heading, MediumSpace, LargeSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
+import { Card } from '../Card'
 import { Button, Message } from '../ui'
 import Loader from "../Loader"
 import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
 import { dateFormat } from '../../utilities/DateFormat'
 import { UserContext } from '../../context/UserContext'
+import { useAuth0 } from "../../react-auth0-spa";
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_REQUEST, GET_REQUESTS } from '../../queries/requests'
+import { SEARCH_VIDEOS } from '../../queries/guides'
 
 export const Request = () => {
 
   const infoRef = useRef(null)
   const requestRef = useRef(null)
+
+  const { isAuthenticated, loginWithRedirect } = useAuth0();
 
   /* Context */
   const { user, setUser } = useContext(UserContext);
@@ -28,9 +33,21 @@ export const Request = () => {
   const [rapGuideEmail, setRapGuideEmail] = useState("")
   const [rapGuideInformation, setRapGuideInformation] = useState("")
   const [isAdmin, setIsAdmin] = useState(false)
+  const [videosToShow, setVideosToShow] = useState([])
+  const [lessonsToShow, setLessonsToShow] = useState([])
+  const [searching, setSearching] = useState(false)
 
   /* Queries */
-  const { loading, data, refetch } = useQuery(GET_REQUESTS)
+  const { loading, data, refetch: refetchRequests } = useQuery(GET_REQUESTS)
+  const {
+    loading: loadingGuides,
+    data: dataGuides,
+    refetch: refetchGuides
+  } = useQuery(SEARCH_VIDEOS, {
+    variables: {
+      term: '-------'
+    }
+  })
   const [createRequest] = useMutation(CREATE_REQUEST)
 
   function handleRapGuideInformation(content, editor) {
@@ -86,6 +103,40 @@ export const Request = () => {
     }
   }, [user])
 
+  function searchVideos(term) {
+    refetchGuides({
+      term: term
+    }).then(response => {
+      const { data } = response
+      if (!data) return
+
+      let videos = []
+      if (data && data.topics.length > 0) {
+        data.topics.map(topic => {
+          videos = [
+            ...videos,
+            ...topic.guides
+          ]
+        })
+      }
+      if (data && data.guides.length > 0) {
+        videos = [
+          ...videos,
+          ...data.guides
+        ]
+      }
+      setVideosToShow(videos)
+      setLessonsToShow(data.lessons)
+      setSearching(false)
+    })
+  }
+
+  useEffect(() => {
+    if (!rapGuideTitle || rapGuideTitle.length < 3 || searching) return
+    setSearching(true)
+    searchVideos(rapGuideTitle)
+  }, [rapGuideTitle])
+
   if (loading) return <Loader />
   return (
     <>
@@ -109,53 +160,127 @@ export const Request = () => {
                 value={rapGuideTitle}
                 onChange={(e) => setRapGuideTitle(e.target.value)} />
             </FormBlock>
-            {rapGuideTitle &&
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-              >
-                <p style={{ fontSize: "1.4rem" }}>* Your name and email will not be published</p>
-                <FormBlock>
-                  <h3>Your Name</h3>
-                  <input
-                    type="text"
-                    placeholder="Your Name"
-                    value={rapGuideName}
-                    onChange={(e) => setRapGuideName(e.target.value)} />
-                </FormBlock>
-                <FormBlock>
-                  <h3>Your Email</h3>
-                  <input
-                    type="email"
-                    placeholder="Your Email"
-                    value={rapGuideEmail}
-                    onChange={(e) => setRapGuideEmail(e.target.value)} />
-                </FormBlock>
-                <FormBlock>
-                  <h3>About Your Idea</h3>
-                  <Editor
-                    initialValue={rapGuideInformation}
-                    apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
-                    init={{
-                      height: 300,
-                      menubar: false,
-                      plugins: [
-                        'advlist autolink lists link image charmap print preview anchor',
-                        'searchreplace visualblocks code fullscreen',
-                        'insertdatetime media table paste code help wordcount'
-                      ],
-                      toolbar:
-                        'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                    }}
-                    onEditorChange={handleRapGuideInformation}
-                  />
-                </FormBlock>
-                <ButtonBlock>
-                  <span></span>
-                  <Button>REQUEST</Button>
-                </ButtonBlock>
-              </motion.div>
-            }
+            {loadingGuides && <Loader />}
+            <AnimatePresence exitBeforeEnter>
+              {(rapGuideTitle && !loadingGuides && dataGuides) &&
+                <motion.div
+                  key="existing-guides"
+                  initial={{ opacity: 0, scaleY: 0, height: 0 }}
+                  animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
+                >
+                  <h3><span>Existing Videos</span> and Lessons</h3>
+                  <h2>Is one of these what you're looking for?</h2>
+                  <MediumSpace>
+                    <ThreeGrid>
+                      {videosToShow.map(video => {
+                        return (
+                          <Card
+                            initial={{
+                              opacity: 0,
+                              y: 100
+                            }}
+                            animate={{
+                              opacity: 1,
+                              y: 0
+                            }}
+                            exit={{
+                              opacity: 0,
+                              y: -50
+                            }}
+                            key={video.id}
+                            title={video.videoTitle}
+                            topics={video.topics}
+                            link={`/video/${video.id}`}
+                            headingSize="3rem"
+                            image={video.videoThumb}
+                            color="#DD3333"
+                            buttonText="View Video"
+                          />
+                        )
+                      })}
+                    </ThreeGrid>
+                  </MediumSpace>
+                  {['educator'].includes(user.type) && lessonsToShow.length > 0 &&
+                    <MediumSpace>
+                      <h2>Or maybe one of these Lesson Templates?</h2>
+                      <ThreeGrid>
+                        {lessonsToShow.map(lesson => {
+                          return (
+                            <Card
+                              initial={{
+                                opacity: 0,
+                                y: 100
+                              }}
+                              animate={{
+                                opacity: 1,
+                                y: 0
+                              }}
+                              exit={{
+                                opacity: 0,
+                                y: -50
+                              }}
+                              key={lesson.guide.id}
+                              title={lesson.lessonTitle}
+                              topics={lesson.guide.topics}
+                              link={`/video/${lesson.guide.id}`}
+                              headingSize="3rem"
+                              image={lesson.guide.videoThumb}
+                              color="blue"
+                              buttonText="View Template"
+                            />
+                          )
+                        })}
+                      </ThreeGrid>
+                    </MediumSpace>
+                  }
+                </motion.div>
+              }
+              {(rapGuideTitle && !isAuthenticated) &&
+                <motion.div
+                  key="please-signup"
+                  initial={{ opacity: 0, scaleY: 0, height: 0 }}
+                  animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
+                  exit={{ opacity: 0, scaleY: 0, height: 0 }}
+                >
+                  <p><strong className="red">GREAT IDEA!</strong> Thank you, for your willingness to share it!</p>
+                  <p>Please <a href="/profile" onClick={loginWithRedirect} alt="Sign Up">create an account</a> first so that we know who to get in touch with if the request gets created.</p>
+                </motion.div>
+              }
+              {(rapGuideTitle && isAuthenticated) &&
+                <motion.div
+                  key="request-submit"
+                  initial={{ opacity: 0, scaleY: 0, height: 0 }}
+                  animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
+                  exit={{ opacity: 0, scaleY: 0, height: 0 }}
+                >
+                  <FormBlock>
+                    <h2><span>No luck?</span> didn't find what you're looking for?</h2>
+                    <h3>Tell us more about your idea!</h3>
+                    <Editor
+                      initialValue={rapGuideInformation}
+                      apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
+                      init={{
+                        height: 300,
+                        menubar: false,
+                        plugins: [
+                          'advlist autolink lists link image charmap print preview anchor',
+                          'searchreplace visualblocks code fullscreen',
+                          'insertdatetime media table paste code help wordcount'
+                        ],
+                        toolbar:
+                          'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                      }}
+                      onEditorChange={handleRapGuideInformation}
+                      placeHolder="About your idea..."
+                    />
+                  </FormBlock>
+                  <ButtonBlock>
+                    <span></span>
+                    <Button>REQUEST</Button>
+                  </ButtonBlock>
+                </motion.div>
+              }
+            </AnimatePresence>
           </Form>
         </StyledContent>
       </FullSection>

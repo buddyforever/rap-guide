@@ -89,3 +89,54 @@ export const CREATE_GUIDE = gql`
     }
   }
 `
+
+export const SEARCH_VIDEOS = gql`
+  query searchVideos($term:String!) {
+    guides(where: { _search: $term }) {
+      id
+			videoTitle,
+      videoThumb,
+      videoUrl,
+      videoId,
+      topics {
+        id
+        topic
+      }
+  	}
+    topics(where: { _search: $term }) {
+      id
+      topic
+      guides {
+        id
+				videoTitle,
+      	videoThumb,
+      	videoUrl,
+      	videoId,
+        topics {
+          id
+          topic
+        }
+      }
+  	}
+    lessons(
+      where: {
+        _search: $term,
+        isTemplate: true
+      }
+    ) {
+      id
+      lessonTitle
+      guide {
+        id
+				videoTitle,
+      	videoThumb,
+      	videoUrl,
+      	videoId,
+        topics {
+          id
+          topic
+        }
+      }
+  	}
+  }
+`

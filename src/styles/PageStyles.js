@@ -64,6 +64,13 @@ export const StyledContent = styled.div`
     fontWeight: 100;
   }
 
+  h2 span,
+  h3 span,
+  h4 span {
+    color: #DD3333;
+  }
+
+
   @media screen and (max-width: 750px){
     padding-left: 25px;
     padding-right: 25px;

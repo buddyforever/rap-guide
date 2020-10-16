@@ -76,7 +76,7 @@ export const Card = ({
           <div className="content">
             <h2><span>{titleA}</span>{titleB}</h2>
             <div className="stats">
-              {stats.map((stat, index) => (
+              {stats && stats.map((stat, index) => (
                 <div
                   key={index}
                   style={{ backgroundColor: stat.color || "#34343d" }}
