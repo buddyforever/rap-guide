@@ -231,7 +231,7 @@ export const Request = () => {
           <MediumSpace style={{ fontSize: "18px" }}>
             <p>Below are Rap Guides that users of this site have requested, which we hope to be able to make before too long.</p>
           </MediumSpace>
-          {(data && isAdmin) &&
+          {data && data.requests.length > 0 &&
             <LargeSpace>
               {data.requests.map(request => (
                 <StyledRequest key={request.id}>
@@ -242,7 +242,7 @@ export const Request = () => {
               ))}
             </LargeSpace>
           }
-          {!isAdmin && <p>There are currently no requests that have been approved. Check back soon!</p>}
+          {data.requests.length === 0 && <p>There are currently no requests that have been approved. Check back soon!</p>}
         </StyledContent>
       </FullSection>
       {

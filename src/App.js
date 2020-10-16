@@ -28,9 +28,6 @@ import { defaultTheme } from '../src/components/themes/default'
 import RouteChange from './utilities/RouteChange'
 import Loader from './components/Loader'
 
-import { useQuery } from '@apollo/react-hooks'
-import { GET_ACCOUNT_BY_EMAIL } from './queries/accounts';
-
 const GRAPHCMS_API =
   "https://api-euwest.graphcms.com/v1/ck56vnvt50t7301gifvv37btb/master";
 

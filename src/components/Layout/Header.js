@@ -47,6 +47,7 @@ export const Header = ({ showModal }) => {
       })
     } else {
       // Create public account
+      // TODO - Add image and name when creating account
       await createAccount({
         variables: {
           email: profile.email,
