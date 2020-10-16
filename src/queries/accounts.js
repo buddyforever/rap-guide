@@ -7,6 +7,7 @@ export const GET_ACCOUNT_BY_EMAIL = gql`
     }){
       id
       type
+      email
       displayName
       image
       nameFirst
@@ -48,17 +49,45 @@ export const UPDATE_DISPLAY_NAME = gql`
   }
 `
 
+export const UPDATE_NAME_AND_PICTURE = gql`
+  mutation updateAccount(
+    $email: String!,
+    $nameFirst: String!,
+    $nameLast: String!,
+    $image: String!
+  ) {
+    updateAccount(
+      where: { email: $email }
+      data: {
+        nameFirst: $nameFirst
+        nameLast: $nameLast
+        image: $image
+    }) {
+      id
+    }
+  }
+`
+
 export const CREATE_ACCOUNT = gql`
   mutation createAccount(
     $email: String!,
+    $nameFirst: String!,
+    $nameLast: String!,
+    $image: String!,
     $type: String!) {
     createAccount(data: {
       status: PUBLISHED
       email: $email
+      nameFirst: $nameFirst
+      nameLast: $nameLast
+      image: $image
       type: $type
     }) {
       id
       email
+      nameFirst
+      nameLast
+      image
       type
     }
   }

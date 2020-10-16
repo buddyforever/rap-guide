@@ -7,9 +7,14 @@ import Navigation from './Navigation'
 import Logo from './Logo'
 import { UserContext } from '../../context/UserContext'
 import { useAuth0 } from "../../react-auth0-spa";
+import LogRocket from 'logrocket';
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_ACCOUNT_BY_EMAIL, CREATE_ACCOUNT } from '../../queries/accounts'
+import {
+  GET_ACCOUNT_BY_EMAIL,
+  CREATE_ACCOUNT,
+  UPDATE_NAME_AND_PICTURE
+} from '../../queries/accounts'
 
 export const Header = ({ showModal }) => {
 
@@ -21,7 +26,8 @@ export const Header = ({ showModal }) => {
 
   /* Queries */
   const { refetch } = useQuery(GET_ACCOUNT_BY_EMAIL, { variables: { email: "" } });
-  const [createAccount] = useMutation(CREATE_ACCOUNT);
+  const [createAccount] = useMutation(CREATE_ACCOUNT)
+  const [updateAccount] = useMutation(UPDATE_NAME_AND_PICTURE)
 
   /* Context */
   const { user, setUser } = useContext(UserContext);
@@ -36,14 +42,34 @@ export const Header = ({ showModal }) => {
     const { data: { account } } = await refetch({ email: email });
 
     if (account) {
+      // Update the photo and name if needed
+      if (profile.picture.length > 0 && (!account.image || !account.image.length)) {
+        updateAccount({
+          variables: {
+            email: account.email,
+            nameFirst: profile.given_name || '',
+            nameLast: profile.family_name || '',
+            image: profile.picture || ''
+          }
+        })
+      }
       setUser(prevState => {
         return {
           ...profile,
           id: account.id,
           type: account.type,
+          nameFirst: account.nameFirst,
+          nameLast: account.nameLast,
+          email: email,
+          image: account.image,
           isViewOnly: account.isViewOnly,
           displayName: account.displayName
         }
+      })
+      LogRocket.identify(account.id, {
+        name: account.nameFirst + ' ' + account.nameLast,
+        email: account.email,
+        type: account.type
       })
     } else {
       // Create public account
@@ -51,6 +77,9 @@ export const Header = ({ showModal }) => {
       await createAccount({
         variables: {
           email: profile.email,
+          nameFirst: profile.given_name || '',
+          nameLast: profile.family_name || '',
+          image: profile.picture || '',
           type: "public"
         }
       }).then(({ data: { createAccount } }) => {
@@ -60,6 +89,11 @@ export const Header = ({ showModal }) => {
             id: createAccount.id,
             type: createAccount.type
           }
+        })
+        LogRocket.identify(createAccount.id, {
+          name: createAccount.firstName,
+          email: createAccount.email,
+          type: createAccount.type
         })
       });
     }

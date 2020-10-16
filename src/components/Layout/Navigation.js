@@ -13,6 +13,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
   const { user } = useContext(UserContext)
 
   if (isAuthenticated && !user) return null;
+  console.log(user)
   return (
     <StyledNavigation animate className={isOpen ? 'open' : ''}>
       <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Home</NavLink>
@@ -29,7 +30,7 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
         isAuthenticated && user &&
         <>
           <NavLink to="/profile" activeClassName="active" onClick={toggleMenu}>Profile</NavLink>
-          {['jessejburton@gmail.com', 'bababrinkman.com'].includes(user.email) &&
+          {['jessejburton@gmail.com', 'jesse@burtonmediainc.com', 'baba.brinkman@gmail.com'].includes(user.email) &&
             <a href="https://rap-guide-v2.vercel.app/">Admin</a>
           }
           <button onClick={logout}>Logout</button>
