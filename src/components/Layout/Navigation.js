@@ -1,15 +1,18 @@
-import React, { UseContext, useEffect } from 'react'
+import React, { useContext, useEffect } from 'react'
 import styled from 'styled-components';
 import { NavLink } from 'react-router-dom';
 import { motion } from 'framer-motion'
 
 import { useAuth0 } from "../../react-auth0-spa";
+import { UserContext } from '../../context/UserContext'
 
 export const Navigation = ({ isOpen, toggleMenu }) => {
 
   const { isAuthenticated, loginWithRedirect, logout } = useAuth0();
 
-  //if (isAuthenticated && !user) return null;
+  const { user } = useContext(UserContext)
+
+  if (isAuthenticated && !user) return null;
   return (
     <StyledNavigation animate className={isOpen ? 'open' : ''}>
       <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Home</NavLink>
@@ -23,9 +26,12 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
         <button onClick={loginWithRedirect}>Login/Signup</button>
       }
       {
-        isAuthenticated &&
+        isAuthenticated && user &&
         <>
           <NavLink to="/profile" activeClassName="active" onClick={toggleMenu}>Profile</NavLink>
+          {['jessejburton@gmail.com', 'bababrinkman.com'].includes(user.email) &&
+            <a href="https://rap-guide-v2.vercel.app/">Admin</a>
+          }
           <button onClick={logout}>Logout</button>
         </>
       }

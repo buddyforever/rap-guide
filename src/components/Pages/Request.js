@@ -3,7 +3,6 @@ import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import { Editor } from '@tinymce/tinymce-react';
-import AnchorLink from 'react-anchor-link-smooth-scroll'
 
 import { StyledContent, Heading, MediumSpace, LargeSpace, FullSection, StyledColumns } from '../../styles/PageStyles'
 import { Button, Message } from '../ui'

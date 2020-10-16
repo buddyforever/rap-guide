@@ -50,7 +50,7 @@ export const Lessons = () => {
   /* Queries */
   const { loading: loadingLessons, data } = useQuery(GET_LESSONS_BY_ACCOUNT_SHORT, {
     variables: {
-      id: 'ckg6shaeax49e0911yh1666k7' //user ? user.id : null
+      id: user ? user.id : null
     }
   });
   const { refetch: refetchCode } = useQuery(GET_CODE, {
