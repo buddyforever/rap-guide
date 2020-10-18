@@ -372,7 +372,7 @@ export const MakeARapGuide = () => {
         paddingBottom: "50px"
       }}>
         <SocialShare
-          color="white"
+          mode="dark"
           hashtag="MakeARapGuide"
           url="https://www.rapguide.com/lessons#make-a-rap-guide"
           title="Make a Rap Guide" />

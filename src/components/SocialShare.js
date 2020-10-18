@@ -3,18 +3,21 @@ import { TwitterShareButton, EmailShareButton, FacebookShareButton } from 'react
 import styled from 'styled-components'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faTwitter } from '@fortawesome/free-brands-svg-icons'
-import { faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { faEnvelope, faShareSquare } from '@fortawesome/free-solid-svg-icons'
 
 export const SocialShare = ({
   url,
   title = "",
-  color = "black",
-  hashtag = ""
+  mode = "light",
+  hashtag = "",
+  ...rest
 }) => {
   return (
-    <StyledShareIcons>
-      <h4 style={{ color: color }}>Share</h4>
-      <p>
+    <StyledShareIcons className={mode} {...rest}>
+      <button className="share">
+        <FontAwesomeIcon icon={faShareSquare} /> Share
+      </button>
+      <div className="icons">
         <FacebookShareButton
           className="facebook"
           url={url}
@@ -38,13 +41,42 @@ export const SocialShare = ({
         >
           <FontAwesomeIcon icon={faEnvelope} />
         </EmailShareButton>
-      </p>
+      </div>
     </StyledShareIcons>
   )
 }
 
 const StyledShareIcons = styled.div`
-  p {
+  position: relative;
+  display: inline-block;
+  width: 120px;
+  transform-style: preserve-3d;
+
+  &:hover {
+    button.share {
+      opacity: 0.1;
+      filter: blur(1px);
+    }
+    .icons {
+      opacity: 1;
+      transform: translateZ(40px) translateY(-5px) scale(1.5);
+    }
+  }
+
+  button {
+    padding: 8px 10px;
+    font-size: 22px;
+    border-radius: 1px;
+    border: 3px solid black;
+    background-color: white;
+    transition: opacity 0.3s ease-out;
+  }
+
+  .icons {
+    position: absolute;
+    top: 0;
+    opacity: 0;
+    transition: opacity 0.3s ease, transform 0.3s ease;
     font-size: 3rem!important;
   }
 
@@ -56,6 +88,9 @@ const StyledShareIcons = styled.div`
   }
   .mail path {
     fill: #271013!important;
+  }
+  &.dark .mail path {
+    fill: #FFFFFF!important;
   }
 
   svg {
