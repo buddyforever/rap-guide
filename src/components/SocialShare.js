@@ -60,6 +60,7 @@ const StyledShareIcons = styled.div`
     .icons {
       opacity: 1;
       transform: translateZ(40px) translateY(-5px) scale(1.5);
+      pointer-events: all;
     }
   }
 
@@ -78,6 +79,7 @@ const StyledShareIcons = styled.div`
     opacity: 0;
     transition: opacity 0.3s ease, transform 0.3s ease;
     font-size: 3rem!important;
+    pointer-events: none;
   }
 
   .facebook path {
