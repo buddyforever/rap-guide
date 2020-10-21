@@ -484,7 +484,7 @@ export const ENROLL_STUDENT = gql`
 
 export const GET_LESSON_TEMPLATES = gql`
   query getLessons {
-    lessons(where: { isTemplate: true }){
+    lessons(where: { isTemplate: true, isLive: true }){
       id
       lessonTitle
       lessonDescription

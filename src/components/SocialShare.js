@@ -59,7 +59,7 @@ const StyledShareIcons = styled.div`
     }
     .icons {
       opacity: 1;
-      transform: translateZ(40px) translateY(-5px) scale(1.5);
+      transform: translateZ(40px) translateY(-5px) scale(1.25);
       pointer-events: all;
     }
   }

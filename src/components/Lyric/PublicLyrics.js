@@ -13,13 +13,19 @@ import Loader from '../Loader'
 import { LinkButton, Button } from '../ui'
 import { dateFormat } from '../../utilities/DateFormat'
 import { Comment } from '../Comment/Comment'
+import Video from '../Guide/Video'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { GET_PUBLIC_LYRICS_BY_GUIDE_ID } from '../../queries/lyric'
 import { CREATE_LIKE, DELETE_LIKE } from '../../queries/likes'
 import { CREATE_COMMENT } from '../../queries/comments'
 
-const PublicLyrics = ({ guideID, annotationIsShown }) => {
+const PublicLyrics = ({
+  guideID,
+  annotationIsShown,
+  videoTitle,
+  videoUrl
+}) => {
 
   /* State */
   const [hidden, setHidden] = useState(true);
@@ -32,6 +38,7 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
   const [comment, setComment] = useState("")
   const [isMobile, setIsMobile] = useState(false)
   const [windowSize, setWindowSize] = useState(getWindowSize())
+  const [startTime, setStartTime] = useState(0)
 
   function updateWindowSize() {
     const size = getWindowSize()
@@ -63,9 +70,9 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
   const [createComment] = useMutation(CREATE_COMMENT)
 
   /* Refs */
-  const lyricsRef = useRef()
-  const annotationRef = useRef()
-  const movingColumnRef = useRef()
+  const lyricsRef = useRef(null)
+  const annotationRef = useRef(null)
+  const movingColumnRef = useRef(null)
 
   let currentBar = 1;
   let nextBar = false;
@@ -186,7 +193,7 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
 
   }
 
-  function showAnnotation(annotations, index, lyricsHeight, arrowTop, maxY) {
+  async function showAnnotation(annotations, index, lyricsHeight, arrowTop, maxY) {
     if (!annotations || !annotations.length) return
     setSelectedAnnotations(annotations)
     setCurrentAnnotation(index)
@@ -194,7 +201,7 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
 
     if (!isMobile) {
       // Need to wait a bit for the state to finish updating
-      setTimeout(() => {
+      await setTimeout(() => {
         moveWindow(lyricsHeight, arrowTop, maxY)
       }, 50)
     } else {
@@ -230,36 +237,6 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
     }
   }
 
-  function handleCreateComment(e) {
-    e.preventDefault()
-    if (!comment.length) return
-    createComment({
-      variables: {
-        comment: comment,
-        annotationId: selectedAnnotations[currentAnnotation].id,
-        account: user.id,
-        isPublic: true
-      }
-    }).then(response => {
-      refetch()
-      setComment("")
-      let newState = selectedAnnotations.map(annotation => {
-        if (annotation.id === selectedAnnotations[currentAnnotation].id) {
-          return {
-            ...annotation,
-            comments: [
-              ...selectedAnnotations[currentAnnotation].comments,
-              response.data.createComment
-            ]
-          }
-        } else {
-          return annotation
-        }
-      })
-      setSelectedAnnotations(newState)
-    })
-  }
-
   useEffect(() => {
     if (annotationRef.current) {
       setAnnotationHeight(annotationRef.current.getBoundingClientRect().height)
@@ -270,7 +247,11 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
 
   if (loading || !data) return <Loader />
   return (
-    <StyledColumns className="lyrics" style={{ marginBottom: "5rem" }}>
+    <StyledColumns
+      template="320px auto"
+      className="lyrics"
+      style={{ marginBottom: "5rem" }}
+    >
       <div ref={lyricsRef}>
         {data.lyrics.map(lyric => {
           nextBar = (currentBar !== lyric.bar);
@@ -315,7 +296,9 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
         <div className="mobile-close">
           <button onClick={handleHide}><FontAwesomeIcon icon={faTimesCircle} /></button>
         </div>
-        <div className="arrow"></div>
+        <div className="arrow">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 209 233"><title>baba-rapguide-com</title><g id="Layer_1" data-name="Layer 1"><path fill="#DD3333" d="M122.66,111.32C146.43,92.46,157,66,157.16,27H140.83c0,3-.1,5.89-.24,8.74H66.72C66.57,32.9,66.5,30,66.49,27H50.16c.12,36.22,9.27,61.63,29.61,80.18a155.23,155.23,0,0,1,17.4-11.07A72.29,72.29,0,0,1,81.31,81.29h44.81c-7,9-17.05,16.88-31.41,23.83-44.54,21.55-45.4,89.56-45.34,97.82H65.7q0-6.47.7-12.87H141c.42,4.27.64,8.57.64,12.87H158C158,195.36,157.25,137.43,122.66,111.32ZM69,54.29a103.19,103.19,0,0,1-1.8-11.44h72.83a100.86,100.86,0,0,1-1.78,11.44Zm7.45,19.89A65.05,65.05,0,0,1,70.9,61.4h65.55a64.9,64.9,0,0,1-5.63,12.78Zm23.89,50.94c1.13-.54,2.17-1.13,3.27-1.69,1.09.56,2.16,1.14,3.29,1.69a47.84,47.84,0,0,1,18.19,16H82.29A47.43,47.43,0,0,1,100.38,125.12ZM77.93,148.21h51.59a89.22,89.22,0,0,1,6.21,14.86h-64a89.15,89.15,0,0,1,6.19-14.86ZM140.14,183H67.25c.63-4.32,1.46-8.59,2.49-12.78h68C138.71,174.37,139.53,178.64,140.14,183Z" /></g></svg>
+        </div>
         <div className="content view" ref={annotationRef}>
           {selectedAnnotations && (
             <AnimatePresence initial={false} exitBeforeEnter>
@@ -336,22 +319,30 @@ const PublicLyrics = ({ guideID, annotationIsShown }) => {
                   }
                 </div>
                 <div className="lyrics">
-                  {selectedLyrics.map(lyric => {
-                    let brokenLyrics = false;
-                    if (prevOrder !== null && lyric.order !== prevOrder + 1) {
-                      brokenLyrics = true;
-                    }
-                    prevOrder = lyric.order;
-                    return (
-                      <em
-                        key={lyric.id}
-                        style={{ display: "block", marginBottom: ".5rem" }}
-                      >
-                        {brokenLyrics && <div>...</div>}
-                        {lyric.lyric}
-                      </em>
-                    )
-                  })}
+                  <div>
+                    {selectedLyrics.map(lyric => {
+                      let brokenLyrics = false;
+                      if (prevOrder !== null && lyric.order !== prevOrder + 1) {
+                        brokenLyrics = true;
+                      }
+                      prevOrder = lyric.order;
+                      return (
+                        <em
+                          key={lyric.id}
+                          style={{ display: "block", marginBottom: ".5rem" }}
+                        >
+                          {brokenLyrics && <div>...</div>}
+                          {lyric.lyric}
+                        </em>
+                      )
+                    })}
+                  </div>
+                  <div style={{ width: "100%" }}>
+                    <Video
+                      videoTitle={videoTitle}
+                      videoUrl={`${videoUrl}?start=${startTime}&autoplay=1&muted=0`}
+                    />
+                  </div>
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: selectedAnnotations[currentAnnotation].annotation.replace(/(\b(https?|ftp|file):\/\/[\-A-Z0-9+&@#\/%?=~_|!:,.;]*[\-A-Z09+&@#\/%=~_|])/, '<a href="$1">$1</a>') }} />
                 <div className="author">
@@ -426,5 +417,8 @@ const StyledAnnotation = styled(motion.div)`
     margin: 2.5rem 0;
     padding-bottom: 2.5rem;
     border-bottom: 1px solid black;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 25px;
   }
 `

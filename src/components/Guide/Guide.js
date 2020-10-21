@@ -29,6 +29,9 @@ export const Guide = () => {
   const [isScrolled, setIsScrolled] = useState(false)
   const [annotationIsShown, setAnnotationIsShown] = useState(false)
   const [videoHeight, setVideoHeight] = useState(0)
+  const [videoTop, setVideoTop] = useState(0)
+  const [videoLeft, setVideoLeft] = useState(0)
+  const [videoWidth, setVideoWidth] = useState(0)
 
   /* Queries */
   const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
@@ -55,12 +58,20 @@ export const Guide = () => {
     }
   }, [])
 
+  /*
+  * TODO - The appendChild seems to work just need to
+  * find the right place to do it.
+  * Try putting the video at the root of the page
+  * then always specify a positon, this way we should
+  * be able to place it relative to the body
+  */
+
   if (loading) return <Loader />;
   const { guide } = data;
   const shareUrl = `https://www.rapguide.com/guide/${id}`
   const [titleA, titleB] = splitFirstWord(guide.videoTitle)
   return (
-    <StyledContent>
+    <StyledContent className="parent">
       <Heading className="video-heading" style={{ paddingTop: "75px" }}>
         <motion.h1
           initial={{
@@ -95,8 +106,14 @@ export const Guide = () => {
           }}
           ref={videoRef}
           className={isScrolled ? `${annotationIsShown ? 'hidden' : ''} scrolled` : ''}
+          top={videoTop}
+          left={videoLeft}
+          width={videoWidth}
         >
-          <Video videoTitle={guide.videoTitle} videoUrl={guide.videoUrl} />
+          <Video
+            videoTitle={guide.videoTitle}
+            videoUrl={guide.videoUrl}
+          />
         </StyledVideoContainer>
       </AnimateSharedLayout>
       {isScrolled &&
@@ -118,7 +135,15 @@ export const Guide = () => {
         </div>
       </StyledColumns>
 
-      <PublicLyrics annotationIsShown={setAnnotationIsShown} guideID={guide.id} />
+      <PublicLyrics
+        annotationIsShown={setAnnotationIsShown}
+        guideID={guide.id}
+        videoTitle={guide.videoTitle}
+        videoUrl={guide.videoUrl}
+        setVideoTop={setVideoTop}
+        setVideoLeft={setVideoLeft}
+        setVideoWidth={setVideoWidth}
+      />
     </StyledContent>
   )
 }
@@ -156,6 +181,10 @@ const StyledVideoContainer = styled(motion.div)`
     100% {
       opacity: 1
     }
+  }
+
+  &.hidden {
+    opacity: 0;
   }
 `
 

@@ -250,7 +250,7 @@ export const ActivityList = styled.div`
 
 export const StyledColumns = styled.div`
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: ${props => props.template || '1fr 1fr'};
   column-gap: 5rem;
 
   @media screen and (max-width: 750px){
@@ -270,24 +270,49 @@ export const StyledMovingColumn = styled(motion.div)`
   .arrow {
     position: absolute;
     display: block;
-    width: 2rem;
-    height: 2rem;
-    border-left: 3px solid #DD3333;
-    border-top: 3px solid #DD3333;
+    width: 5rem;
+    height: 5rem;
+    border-bottom-right-radius: 50%;
+    border: 5px solid rgba(221,51,51,1);
+    border-bottom-color: #FFFFFF;
+    border-right-color: #FFFFFF;
     background-color: #FFFFFF;
-    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+    -ms-transform: rotate(-45deg);
+    transform: rotate(-45deg) translateX(3px);
+    -webkit-transition: all .3s ease;
     transition: all .3s ease;
-    left: -0.9rem;
+    left: -2.1rem;
     z-index: 10;
 
     top: ${props => props.arrowTop}px;
+
+    svg {
+      max-height: 70%;
+      max-width: 70%;
+      margin-left: 4px;
+      margin-top: 4px;
+      animation: rotate 60s linear infinite;
+    }
+  }
+
+  @keyframes rotate {
+    0% {
+      transform: scale(1.2) rotate(0deg);
+    }
+    50% {
+      transform: scale(1) rotate(180deg);
+    }
+    100% {
+      transform: scale(1.2) rotate(360deg);
+    }
   }
 
   .content {
     width: 100%;
     position: absolute;
     padding-left: 2rem;
-    border-left: 3px solid #DD3333;
+    border-left: 6px solid #DD3333;
     transition: all .3s ease;
     z-index: 5;
     min-height: 7rem;
@@ -297,8 +322,10 @@ export const StyledMovingColumn = styled(motion.div)`
       max-height: 700px;
       overflow-y: scroll;
       overflow-x: hidden;
-      padding: 2.5rem;
+      position: relative;
+      padding: 5rem;
       word-break: break-word;
+      border-radius: 2px;
     }
 
     img {
