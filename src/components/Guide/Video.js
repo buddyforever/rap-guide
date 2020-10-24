@@ -1,19 +1,69 @@
-import React from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import styled from 'styled-components'
 
 import { MediumSpace } from "../../styles/PageStyles"
 
-const Video = ({ videoTitle, videoUrl }) => {
+/*
+*   Notes on Video Player
+*   Can't seem to get the onReady or onStateChange events
+*   to fire properly so right now it is just loading with
+*   the videoUrl src
+*/
+
+const Video = ({ videoTitle, videoUrl, videoId = 'O2K0ptoYpuc', getPlayer }) => {
+
+  const [player, setPlayer] = useState(null)
+
+  const videoRef = useRef()
+
+  function loadVideo() {
+    if (!videoRef.current) {
+      console.log("No Video")
+      return
+    }
+
+    var playerEmbed;
+    playerEmbed = new window.YT.Player('player', {
+      height: '390',
+      width: '640',
+      videoId: 'M7lc1UVf-VE',
+      events: {
+        'onReady': (e) => console.log(e),
+        'onStateChange': (e) => console.log(e)
+      }
+    });
+    setPlayer(playerEmbed)
+  }
+
+  useEffect(() => {
+    if (!window.YT) { // If not, load the script asynchronously
+      loadYouTubEmbedAPI(loadVideo)
+    } else {
+      loadVideo()
+    }
+  }, [])
+
   return (
     <StyledVideo>
       <div className="video">
-        <iframe title={videoTitle} width="100%" src={videoUrl} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+        <iframe title={videoTitle} width="100%" src={videoUrl} ref={videoRef} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
       </div>
     </StyledVideo>
   )
 }
 
 export default Video
+
+function loadYouTubEmbedAPI(callback) {
+
+  const tag = document.createElement('script');
+  tag.src = 'https://www.youtube.com/iframe_api';
+
+  const firstScriptTag = document.getElementsByTagName('script')[0];
+  firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+  window.onYouTubeIframeAPIReady = callback;
+}
 
 export const StyledVideo = styled.div`
   margin-bottom: 5rem;

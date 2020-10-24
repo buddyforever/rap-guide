@@ -150,6 +150,7 @@ const PublicLyrics = ({
   }
 
   function handleClick(lyric, top, maxY) {
+    if (lyric.seconds) setStartTime(lyric.seconds)
     annotationIsShown(true)
     showAnnotation(
       lyric.annotations,
@@ -340,7 +341,7 @@ const PublicLyrics = ({
                   <div style={{ width: "100%" }}>
                     <Video
                       videoTitle={videoTitle}
-                      videoUrl={`${videoUrl}?start=${startTime}&autoplay=1&muted=0`}
+                      videoUrl={`${videoUrl}?start=${startTime}&autoplay=0&muted=0`}
                     />
                   </div>
                 </div>
@@ -420,5 +421,10 @@ const StyledAnnotation = styled(motion.div)`
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 25px;
+
+    @media screen and (max-width: 1110px) {
+      display: flex;
+      flex-direction: column;
+    }
   }
 `

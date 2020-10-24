@@ -113,6 +113,7 @@ export const GET_PUBLIC_LYRICS_BY_GUIDE_ID = gql`
       order
       bar
       isGap
+      seconds
       annotations(
         orderBy: order_ASC
         where: {isPublic: true}) {
