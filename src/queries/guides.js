@@ -7,6 +7,7 @@ export const GET_GUIDE_FOR_LESSON = gql`
       videoId
       videoUrl
       videoTitle
+      videoSlug
     }
   }
 `
@@ -19,6 +20,7 @@ export const GET_ALL_GUIDES = gql`
       videoUrl
       videoTitle
       videoThumb
+      videoSlug
       topics {
         id
         topic
@@ -55,6 +57,29 @@ export const GET_GUIDE_BY_ID = gql`
       videoUrl
       videoTitle
       videoThumb
+      videoSlug
+      topics {
+        topic
+      }
+      lyrics(orderBy: order_ASC) {
+        id
+        lyric
+        order
+        bar
+      }
+    }
+  }
+`
+
+export const GET_GUIDE_BY_SLUG = gql`
+  query getGuide($slug:String!) {
+    guide(where: {videoSlug:$slug}) {
+      id
+      videoId
+      videoUrl
+      videoTitle
+      videoThumb
+      videoSlug
       topics {
         topic
       }
@@ -74,6 +99,7 @@ export const CREATE_GUIDE = gql`
     $videoUrl:String!,
     $videoID:String!,
     $videoThumb: String!
+    $videoSlug: String!
     $topics:[TopicWhereUniqueInput!]){
       createGuide(data: {
         status: PUBLISHED
@@ -81,6 +107,7 @@ export const CREATE_GUIDE = gql`
         videoUrl:$videoUrl
         videoId:$videoID
         videoThumb: $videoThumb
+        videoSlug: $videoSlug
         topics: {
           connect: $topics
         }
@@ -94,10 +121,11 @@ export const SEARCH_VIDEOS = gql`
   query searchVideos($term:String!) {
     guides(where: { _search: $term }) {
       id
-			videoTitle,
-      videoThumb,
-      videoUrl,
       videoId,
+			videoTitle,
+      videoUrl,
+      videoThumb,
+      videoSlug,
       topics {
         id
         topic
@@ -108,10 +136,11 @@ export const SEARCH_VIDEOS = gql`
       topic
       guides {
         id
-				videoTitle,
-      	videoThumb,
-      	videoUrl,
       	videoId,
+				videoTitle,
+      	videoUrl,
+      	videoThumb,
+        videoSlug,
         topics {
           id
           topic
@@ -128,10 +157,11 @@ export const SEARCH_VIDEOS = gql`
       lessonTitle
       guide {
         id
-				videoTitle,
-      	videoThumb,
-      	videoUrl,
       	videoId,
+				videoTitle,
+      	videoUrl,
+      	videoThumb,
+        videoSlug,
         topics {
           id
           topic

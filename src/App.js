@@ -66,7 +66,7 @@ function App() {
                 <Route path="/login" component={Login} />
                 <Route path="/contact" component={Contact} />
                 <Route path="/privacy" component={Privacy} />
-                <Route path="/guide/:id" component={Guide} />
+                <Route path="/guide/:slug" component={Guide} />
                 <Route path="/playlist/:slug" component={Playlist} />
                 <Route path="/lesson/signup/:id" component={LessonSignup} />
                 <PrivateRoute
@@ -77,7 +77,7 @@ function App() {
                   isAllowed={auth.isAuthenticated()}
                   restrictedPath="/404" />
                 <PrivateRoute
-                  path="/lesson/add/:id"
+                  path="/lesson/add/:slug"
                   component={AddLesson}
                   authenticationPath="/login"
                   isAuthenticated={auth.isAuthenticated()}

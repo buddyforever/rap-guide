@@ -13,7 +13,7 @@ import { SocialShare } from '../SocialShare'
 import { splitFirstWord } from '../../utilities/text'
 
 import { useQuery } from '@apollo/react-hooks'
-import { GET_GUIDE_BY_ID } from '../../queries/guides'
+import { GET_GUIDE_BY_SLUG } from '../../queries/guides'
 
 export const Guide = () => {
 
@@ -23,7 +23,8 @@ export const Guide = () => {
   const { user } = useContext(UserContext);
 
   /* Paramaters */
-  let { id } = useParams();
+  let { slug } = useParams();
+  console.log(slug);
 
   /* State */
   const [isScrolled, setIsScrolled] = useState(false)
@@ -34,9 +35,9 @@ export const Guide = () => {
   const [videoWidth, setVideoWidth] = useState(0)
 
   /* Queries */
-  const { loading, data, refetch } = useQuery(GET_GUIDE_BY_ID, {
+  const { loading, data, refetch } = useQuery(GET_GUIDE_BY_SLUG, {
     variables: {
-      id: id
+      slug: slug
     }
   });
 
@@ -68,7 +69,7 @@ export const Guide = () => {
 
   if (loading) return <Loader />;
   const { guide } = data;
-  const shareUrl = `https://www.rapguide.com/guide/${id}`
+  const shareUrl = `https://www.rapguide.com/guide/${slug}`
   const [titleA, titleB] = splitFirstWord(guide.videoTitle)
   return (
     <StyledContent className="parent">
@@ -128,7 +129,7 @@ export const Guide = () => {
         <div style={{ textAlign: "right" }}>
           {
             user && (user.type === 'educator' || user.type === 'educator view') &&
-            <Link className="button" to={'/lesson/add/' + id}>
+            <Link className="button" to={'/lesson/add/' + slug}>
               <Button>Create a Lesson</Button>
             </Link>
           }

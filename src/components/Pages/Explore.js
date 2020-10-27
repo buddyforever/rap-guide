@@ -107,7 +107,7 @@ export const Explore = () => {
                   key={guide.id}
                   title={guide.videoTitle}
                   topics={guide.topics}
-                  link={`/guide/${guide.id}`}
+                  link={`/guide/${guide.videoSlug}`}
                   headingSize="3rem"
                   onMouseOver={() => setHoveredVideo(guide.id)}
                   onMouseOut={() => setHoveredVideo(null)}

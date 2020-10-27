@@ -8,20 +8,20 @@ import Loader from '../Loader'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_LESSON } from '../../queries/lessons'
-import { GET_GUIDE_BY_ID } from '../../queries/guides'
+import { GET_GUIDE_BY_SLUG } from '../../queries/guides'
 
 const AddLesson = () => {
 
   /* Paramaters */
-  let { id } = useParams();
+  let { slug } = useParams();
 
   /* State */
   const [redirect, setRedirect] = useState(null);
 
   /* Queries */
-  const { loading, data } = useQuery(GET_GUIDE_BY_ID, {
+  const { loading, data } = useQuery(GET_GUIDE_BY_SLUG, {
     variables: {
-      id: id
+      slug: slug
     }
   })
   const [createLesson] = useMutation(CREATE_LESSON);
