@@ -38,6 +38,12 @@ export const Request = () => {
                   <label>Message</label>
                   <textarea name="message" placeholder="message" />
                 </FormBlock>
+                <FormBlock>
+                  <label>
+                    <input type="checkbox" name="educatorRequest" />
+                    &nbsp;Request Educator Account
+                  </label>
+                </FormBlock>
                 <ButtonBlock>
                   <div></div>
                   <Button type="submit" iconLeft={faReply}>Send</Button>

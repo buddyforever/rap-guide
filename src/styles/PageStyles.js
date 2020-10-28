@@ -63,6 +63,13 @@ export const StyledContent = styled.div`
     fontFamily: 'Barlow';
     fontWeight: 100;
   }
+  .stacked-buttons {
+    a {
+      font-size: 20px;
+      width: 250px;
+      margin-top: 25px;
+    }
+  }
 
   h2 span,
   h3 span,

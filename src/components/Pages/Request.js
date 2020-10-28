@@ -334,7 +334,13 @@ export const Request = () => {
               </Heading>
               <p className="paragraph-top">We can add any existing song or music video to this teaching platform, along with annotatable lyrics for lesson-building. Teachers, if you would like to use an existing song or video for a class assignment, please <Link to="/contact">contact us</Link> to request it.</p>
 
-              <p className="paragraph-bottom">Not sure where to start? Check out Baba’s collection of <Link to="/playlist/videos-by-baba-brinkman">Rap Guide videos</Link> and <Link to="/playlist/more-songs-by-baba-brinkman">informative songs</Link> without a video yet, any of which can be added to the site. We can also add <Link to="/playlist/more-songs-by-baba-brinkman">videos by other artists</Link> with annotatable lyrics, subject to permission.</p>
+              <p style={{ marginTop: `50px`, fontSize: `24px` }} className="paragraph-bottom">Not sure where to start? Check out these...</p>
+
+              <div className="stacked-buttons">
+                <Link to="/playlist/videos-by-baba-brinkman" className="link">More Baba Brinkman Videos</Link>
+                <Link to="/playlist/more-songs-by-baba-brinkman" className="link">More Baba Brinkman Songs</Link>
+                <Link to="/playlist/videos-by-other-artists" className="link">Other Artist Videos</Link>
+              </div>
             </MediumSpace>
             <MediumSpace style={{ textAlign: "center" }}>
               <img src="images/illustration5.svg" alt="Rap Guide | Requests" style={{ maxHeight: "600px" }} />
