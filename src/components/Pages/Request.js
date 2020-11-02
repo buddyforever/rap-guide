@@ -132,7 +132,12 @@ export const Request = () => {
   }
 
   useEffect(() => {
-    if (!rapGuideTitle || rapGuideTitle.length < 3 || searching) return
+    if (
+      !isAuthenticated ||
+      !rapGuideTitle ||
+      rapGuideTitle.length < 3 ||
+      searching
+    ) return
     setSearching(true)
     searchVideos(rapGuideTitle)
   }, [rapGuideTitle])
@@ -162,7 +167,7 @@ export const Request = () => {
             </FormBlock>
             {loadingGuides && <Loader />}
             <AnimatePresence exitBeforeEnter>
-              {(rapGuideTitle && !loadingGuides && dataGuides) &&
+              {(isAuthenticated && rapGuideTitle && !loadingGuides && dataGuides) &&
                 <motion.div
                   key="existing-guides"
                   initial={{ opacity: 0, scaleY: 0, height: 0 }}
