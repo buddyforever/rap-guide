@@ -34,7 +34,6 @@ export const Request = () => {
   const [rapGuideInformation, setRapGuideInformation] = useState("")
   const [isAdmin, setIsAdmin] = useState(false)
   const [videosToShow, setVideosToShow] = useState([])
-  const [lessonsToShow, setLessonsToShow] = useState([])
   const [searching, setSearching] = useState(false)
 
   /* Queries */
@@ -110,23 +109,17 @@ export const Request = () => {
       const { data } = response
       if (!data) return
 
-      let videos = []
-      if (data && data.topics.length > 0) {
-        data.topics.map(topic => {
-          videos = [
-            ...videos,
-            ...topic.guides
-          ]
+      let videos = data.guides
+      data.topics.map(topic => {
+        topic.guides.map(guide => {
+          if (!videos.find(video => video.id === guide.id)) {
+            videos.push(guide)
+          }
         })
-      }
-      if (data && data.guides.length > 0) {
-        videos = [
-          ...videos,
-          ...data.guides
-        ]
-      }
+        return null
+      })
+
       setVideosToShow(videos)
-      setLessonsToShow(data.lessons)
       setSearching(false)
     })
   }
@@ -166,126 +159,91 @@ export const Request = () => {
                 onChange={(e) => setRapGuideTitle(e.target.value)} />
             </FormBlock>
             {loadingGuides && <Loader />}
-            <AnimatePresence exitBeforeEnter>
-              {(isAuthenticated && rapGuideTitle && !loadingGuides && dataGuides) &&
-                <motion.div
-                  key="existing-guides"
-                  initial={{ opacity: 0, scaleY: 0, height: 0 }}
-                  animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
-                >
-                  <h3><span>Existing Videos</span> and Lessons</h3>
-                  <h2>Is one of these what you're looking for?</h2>
-                  <MediumSpace>
-                    <ThreeGrid>
-                      {videosToShow.map(video => {
-                        return (
-                          <Card
-                            initial={{
-                              opacity: 0,
-                              y: 100
-                            }}
-                            animate={{
-                              opacity: 1,
-                              y: 0
-                            }}
-                            exit={{
-                              opacity: 0,
-                              y: -50
-                            }}
-                            key={video.id}
-                            title={video.videoTitle}
-                            topics={video.topics}
-                            link={`/video/${video.id}`}
-                            headingSize="3rem"
-                            image={video.videoThumb}
-                            color="#DD3333"
-                            buttonText="View Video"
-                          />
-                        )
-                      })}
-                    </ThreeGrid>
-                  </MediumSpace>
-                  {['educator'].includes(user.type) && lessonsToShow.length > 0 &&
-                    <MediumSpace>
-                      <h2>Or maybe one of these Lesson Templates?</h2>
-                      <ThreeGrid>
-                        {lessonsToShow.map(lesson => {
-                          return (
-                            <Card
-                              initial={{
-                                opacity: 0,
-                                y: 100
-                              }}
-                              animate={{
-                                opacity: 1,
-                                y: 0
-                              }}
-                              exit={{
-                                opacity: 0,
-                                y: -50
-                              }}
-                              key={lesson.guide.id}
-                              title={lesson.lessonTitle}
-                              topics={lesson.guide.topics}
-                              link={`/video/${lesson.guide.id}`}
-                              headingSize="3rem"
-                              image={lesson.guide.videoThumb}
-                              color="blue"
-                              buttonText="View Template"
-                            />
-                          )
-                        })}
-                      </ThreeGrid>
-                    </MediumSpace>
-                  }
-                </motion.div>
-              }
-              {(rapGuideTitle && !isAuthenticated) &&
-                <motion.div
-                  key="please-signup"
-                  initial={{ opacity: 0, scaleY: 0, height: 0 }}
-                  animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
-                  exit={{ opacity: 0, scaleY: 0, height: 0 }}
-                >
-                  <p><strong className="red">GREAT IDEA!</strong> Thank you, for your willingness to share it!</p>
-                  <p>Please <a href="/profile" onClick={loginWithRedirect} alt="Sign Up">create an account</a> first so that we know who to get in touch with if the request gets created.</p>
-                </motion.div>
-              }
-              {(rapGuideTitle && isAuthenticated) &&
-                <motion.div
-                  key="request-submit"
-                  initial={{ opacity: 0, scaleY: 0, height: 0 }}
-                  animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
-                  exit={{ opacity: 0, scaleY: 0, height: 0 }}
-                >
-                  <FormBlock>
-                    <h2><span>No luck?</span> didn't find what you're looking for?</h2>
-                    <h3>Tell us more about your idea!</h3>
-                    <Editor
-                      initialValue={rapGuideInformation}
-                      apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
-                      init={{
-                        height: 300,
-                        menubar: false,
-                        plugins: [
-                          'advlist autolink lists link image charmap print preview anchor',
-                          'searchreplace visualblocks code fullscreen',
-                          'insertdatetime media table paste code help wordcount'
-                        ],
-                        toolbar:
-                          'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
-                      }}
-                      onEditorChange={handleRapGuideInformation}
-                      placeHolder="About your idea..."
-                    />
-                  </FormBlock>
-                  <ButtonBlock>
-                    <span></span>
-                    <Button>REQUEST</Button>
-                  </ButtonBlock>
-                </motion.div>
-              }
-            </AnimatePresence>
+            {(isAuthenticated && rapGuideTitle && !loadingGuides && dataGuides) &&
+              <motion.div
+                key="existing-guides"
+                initial={{ opacity: 0, scaleY: 0, height: 0 }}
+                animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
+              >
+                <h3><span>Existing Videos</span> and Lessons</h3>
+                <h2>Is one of these what you're looking for?</h2>
+                <MediumSpace>
+                  <ThreeGrid>
+                    {videosToShow.map(video => {
+                      return (
+                        <Card
+                          initial={{
+                            opacity: 0,
+                            y: 100
+                          }}
+                          animate={{
+                            opacity: 1,
+                            y: 0
+                          }}
+                          exit={{
+                            opacity: 0,
+                            y: -50
+                          }}
+                          key={video.id}
+                          title={video.videoTitle}
+                          topics={video.topics}
+                          link={`/video/${video.id}`}
+                          headingSize="3rem"
+                          image={video.videoThumb}
+                          color="#DD3333"
+                          buttonText="View Video"
+                        />
+                      )
+                    })}
+                  </ThreeGrid>
+                </MediumSpace>
+              </motion.div>
+            }
+            {(rapGuideTitle && !isAuthenticated) &&
+              <motion.div
+                key="please-signup"
+                initial={{ opacity: 0, scaleY: 0, height: 0 }}
+                animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
+                exit={{ opacity: 0, scaleY: 0, height: 0 }}
+              >
+                <p><strong className="red">GREAT IDEA!</strong> Thank you, for your willingness to share it!</p>
+                <p>Please <a href="/profile" onClick={loginWithRedirect} alt="Sign Up">create an account</a> first so that we know who to get in touch with if the request gets created.</p>
+              </motion.div>
+            }
+            {(rapGuideTitle && isAuthenticated) &&
+              <motion.div
+                key="request-submit"
+                initial={{ opacity: 0, scaleY: 0, height: 0 }}
+                animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
+                exit={{ opacity: 0, scaleY: 0, height: 0 }}
+              >
+                <FormBlock>
+                  <h2><span>No luck?</span> didn't find what you're looking for?</h2>
+                  <h3>Tell us more about your idea!</h3>
+                  <Editor
+                    initialValue={rapGuideInformation}
+                    apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
+                    init={{
+                      height: 300,
+                      menubar: false,
+                      plugins: [
+                        'advlist autolink lists link image charmap print preview anchor',
+                        'searchreplace visualblocks code fullscreen',
+                        'insertdatetime media table paste code help wordcount'
+                      ],
+                      toolbar:
+                        'undo redo | formatselect | link | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help'
+                    }}
+                    onEditorChange={handleRapGuideInformation}
+                    placeHolder="About your idea..."
+                  />
+                </FormBlock>
+                <ButtonBlock>
+                  <span></span>
+                  <Button>REQUEST</Button>
+                </ButtonBlock>
+              </motion.div>
+            }
           </Form>
         </StyledContent>
       </FullSection>

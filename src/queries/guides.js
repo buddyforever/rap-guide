@@ -147,26 +147,5 @@ export const SEARCH_VIDEOS = gql`
         }
       }
   	}
-    lessons(
-      where: {
-        _search: $term,
-        isTemplate: true
-      }
-    ) {
-      id
-      lessonTitle
-      guide {
-        id
-      	videoId,
-				videoTitle,
-      	videoUrl,
-      	videoThumb,
-        videoSlug,
-        topics {
-          id
-          topic
-        }
-      }
-  	}
   }
 `

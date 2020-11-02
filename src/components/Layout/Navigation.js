@@ -13,7 +13,6 @@ export const Navigation = ({ isOpen, toggleMenu }) => {
   const { user } = useContext(UserContext)
 
   if (isAuthenticated && !user) return null;
-  console.log(user)
   return (
     <StyledNavigation animate className={isOpen ? 'open' : ''}>
       <NavLink exact to="/" activeClassName="active" onClick={toggleMenu}>Home</NavLink>

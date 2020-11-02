@@ -44,7 +44,6 @@ export const Layout = ({ children }) => {
               >
                 Welcome to <strong className="red">RapGuide.com</strong></h1>
               <AnimalChooser closeModal={() => {
-                console.log("here")
                 setIsModal(false)
               }} />
             </div>
