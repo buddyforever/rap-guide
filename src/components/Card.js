@@ -24,6 +24,7 @@ export const Card = ({
   classes,
   showTags = true,
   buttonText = "View More...",
+  noHover = false,
   ...rest
 }) => {
 
@@ -31,6 +32,10 @@ export const Card = ({
 
   const [isMobile, setIsMobile] = useState(false)
   const [windowSize, setWindowSize] = useState(getWindowSize())
+
+  if (noHover) {
+    classes += ' nohover'
+  }
 
   function updateWindowSize() {
     const size = getWindowSize()
@@ -58,7 +63,7 @@ export const Card = ({
       >
         <motion.div
           className="card"
-          whileHover={!isMobile && {
+          whileHover={!isMobile && !noHover && {
             height: "450px",
             y: "-125px",
             scale: 1.05,
@@ -201,7 +206,7 @@ const StyledCard = styled(motion.div)`
     transition: padding .4s ease;
   }
 
-  &:hover {
+  &:not(.nohover):hover {
     .card {
       z-index: 1000;
 

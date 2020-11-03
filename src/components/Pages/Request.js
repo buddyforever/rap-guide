@@ -118,7 +118,6 @@ export const Request = () => {
         })
         return null
       })
-
       setVideosToShow(videos)
       setSearching(false)
     })
@@ -159,13 +158,18 @@ export const Request = () => {
                 onChange={(e) => setRapGuideTitle(e.target.value)} />
             </FormBlock>
             {loadingGuides && <Loader />}
-            {(isAuthenticated && rapGuideTitle && !loadingGuides && dataGuides) &&
+            {(
+              isAuthenticated &&
+              rapGuideTitle &&
+              !loadingGuides &&
+              dataGuides &&
+              videosToShow.length) &&
               <motion.div
                 key="existing-guides"
                 initial={{ opacity: 0, scaleY: 0, height: 0 }}
                 animate={{ opacity: 1, scaleY: 1, height: 'auto' }}
               >
-                <h3><span>Existing Videos</span> and Lessons</h3>
+                <h3><span>Existing</span> Videos</h3>
                 <h2>Is one of these what you're looking for?</h2>
                 <MediumSpace>
                   <ThreeGrid>
@@ -184,10 +188,11 @@ export const Request = () => {
                             opacity: 0,
                             y: -50
                           }}
+                          noHover={true}
                           key={video.id}
                           title={video.videoTitle}
                           topics={video.topics}
-                          link={`/video/${video.id}`}
+                          link={`/guide/${video.videoSlug}`}
                           headingSize="3rem"
                           image={video.videoThumb}
                           color="#DD3333"
