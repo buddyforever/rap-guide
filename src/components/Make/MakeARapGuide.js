@@ -108,8 +108,8 @@ export const MakeARapGuide = () => {
 
               <p>
                 <iframe title="Volume 1" style={{ border: 0, width: "100%", height: "42px" }} src="https://bandcamp.com/EmbeddedPlayer/album=896253204/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" seamless><a href="http://litfuserecords.bandcamp.com/album/lit-fuse-instrumentals-vol-1">Lit Fuse Instrumentals Vol. 1 by Lit Fuse Records Artists</a></iframe>
-                <iframe title="Volume 2" style={{ border: 0, width: "100%", height: "42px" }} src="https://bandcamp.com/EmbeddedPlayer/album=896253204/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" seamless><a href="https://litfuserecords.bandcamp.com/album/lit-fuse-instrumentals-vol-2">Lit Fuse Instrumentals Vol. 2 by Lit Fuse Records Artists</a></iframe>
-                <iframe title="Volume 3" style={{ border: 0, width: "100%", height: "42px" }} src="https://bandcamp.com/EmbeddedPlayer/album=896253204/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" seamless><a href="https://litfuserecords.bandcamp.com/album/lit-fuse-instrumentals-vol-3">Lit Fuse Instrumentals Vol. 3 by Lit Fuse Records Artists</a></iframe>
+                <iframe title="Volume 2" style={{ border: 0, width: "100%", height: "42px" }} src="https://bandcamp.com/EmbeddedPlayer/album=2311099027/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" seamless><a href="https://litfuserecords.bandcamp.com/album/lit-fuse-instrumentals-vol-2">Lit Fuse Instrumentals Vol. 2 by Lit Fuse Records Artists</a></iframe>
+                <iframe title="Volume 3" style={{ border: 0, width: "100%", height: "42px" }} src="https://bandcamp.com/EmbeddedPlayer/album=48768687/size=small/bgcol=ffffff/linkcol=0687f5/transparent=true/" seamless><a href="https://litfuserecords.bandcamp.com/album/lit-fuse-instrumentals-vol-3">Lit Fuse Instrumentals Vol. 3 by Lit Fuse Records Artists</a></iframe>
               </p>
             </StyledContent>
           </FullSection>)}
