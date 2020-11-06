@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import styled from 'styled-components'
 
 import { Tag } from '../../styles/TagStyles'
@@ -8,8 +8,8 @@ const maxFontSize = 4;
 
 const TagCloud = ({ selectTag, tags }) => {
 
-  const values = tags.map(tag => tag.count);
-  const minMax = getMinMax(values);
+  const values = tags.map(tag => tag.count)
+  const minMax = getMinMax(values)
 
   function getMinMax(arr) {
     return {

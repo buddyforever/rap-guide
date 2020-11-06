@@ -3,16 +3,20 @@ import gql from 'graphql-tag'
 export const CREATE_REQUEST = gql`
   mutation createRequest(
     $title: String!,
-    $name: String!,
-    $email: String!,
+    $account: ID!,
+    $urls: String!,
+    $thumb: String!,
     $information: String!
   ){
     createRequest(
       data: {
         status: PUBLISHED
         title: $title
-        name: $name
-        email: $email
+        account: {
+          connect: { id: $account }
+        }
+        urls: $urls
+        thumb: $thumb
         information: $information
         isApproved: false
     }) {
@@ -32,6 +36,17 @@ export const GET_REQUESTS = gql`
       id
       title
       information
+      urls
+      account {
+        id
+        email
+        image
+        nameFirst
+        nameLast
+        twitter
+        isPublic
+        displayName
+      }
       updatedAt
     }
   }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 
@@ -11,13 +11,27 @@ import {
   FullSection,
   StyledColumns
 } from '../../styles/PageStyles'
+import { Message } from '../ui/Message'
 import Loader from '../Loader'
 import { dateFormat } from '../../utilities/DateFormat'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_REQUESTS } from '../../queries/requests'
 
+function displayUserLink(account) {
+  let text = account.isPublic ? `${account.nameFirst} ${account.nameLast}` : account.displayName
+  let url = account.twitter.length ? `https://www.twitter.com/${account.twitter}` : null
+
+  if (url) {
+    return `<a href="${url}" target="_blank" rel="noopener noreferrer" alt="Twitter">${text}</a>`
+  } else {
+    return `<strong>${text}</strong>`
+  }
+}
+
 export const Request = () => {
+
+  const [message, setMessage] = useState(null)
 
   /* Queries */
   const { loading, data, refetch } = useQuery(GET_REQUESTS)
@@ -28,7 +42,7 @@ export const Request = () => {
       {/* PANEL 1 */}
       <FullSection style={{ minHeight: "auto" }}>
         <StyledContent style={{ width: "100%" }}>
-          <RequestForm refetchRequests={refetch} />
+          <RequestForm refetchRequests={refetch} setMessage={setMessage} />
         </StyledContent>
       </FullSection>
 
@@ -114,8 +128,18 @@ export const Request = () => {
               {data.requests.map(request => (
                 <StyledRequest key={request.id}>
                   <h2>I Wish There Was a Rap Guide to ~ {request.title}</h2>
-                  <span className="date">{dateFormat(request.updatedAt)}</span>
+                  <p className="date">
+                    posted by <span dangerouslySetInnerHTML={{ __html: displayUserLink(request.account) }} /> on {dateFormat(request.updatedAt)}
+                  </p>
                   <p dangerouslySetInnerHTML={{ __html: request.information }} />
+                  <h5>Sources</h5>
+                  <ul className="links">
+                    {JSON.parse(request.urls).map(link => (
+                      <li key={link}>
+                        <a alt={link} href={link}>{link}</a>
+                      </li>
+                    ))}
+                  </ul>
                 </StyledRequest>
               ))}
             </LargeSpace>
@@ -123,6 +147,15 @@ export const Request = () => {
           {data.requests.length === 0 && <p>There are currently no requests that have been approved. Check back soon!</p>}
         </StyledContent>
       </FullSection>
+      {message &&
+        <Message
+          toast
+          dismiss={() => setMessage(null)}
+          type={message.type}
+          title={message.title}>
+          {message.text}
+        </Message>
+      }
     </>
   )
 }
@@ -143,6 +176,7 @@ const StyledRequest = styled.div`
   .date {
     font-size: 1.4rem;
     color: #666;
+    margin: 0 0 1rem 0;
   }
 
 `

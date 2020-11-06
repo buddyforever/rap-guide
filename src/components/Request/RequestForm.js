@@ -1,10 +1,10 @@
-import React, { useState, useRef, useContext, useEffect } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { motion, AnimatePresence } from 'framer-motion'
 import { Editor } from '@tinymce/tinymce-react';
 
 import { ThreeGrid, Heading, MediumSpace } from '../../styles/PageStyles'
 import { Card } from '../Card'
-import { Button, Message } from '../ui'
+import { Button } from '../ui'
 import Loader from "../Loader"
 import { MultiText } from '../ui/MultiText/MultiText'
 import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
@@ -16,21 +16,17 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import { CREATE_REQUEST, GET_REQUESTS } from '../../queries/requests'
 import { SEARCH_VIDEOS } from '../../queries/guides'
 
-export const RequestForm = ({ refetchRequests }) => {
-
-  const infoRef = useRef(null)
-  const requestRef = useRef(null)
+export const RequestForm = ({ refetchRequests, setMessage }) => {
 
   const { isAuthenticated, loginWithRedirect } = useAuth0()
 
   /* Context */
   const { user, setUser } = useContext(UserContext)
 
-  const [message, setMessage] = useState("")
   const [rapGuideTitle, setRapGuideTitle] = useState("")
-  const [rapGuideName, setRapGuideName] = useState("")
   const [urls, setUrls] = useState([])
-  const [rapGuideEmail, setRapGuideEmail] = useState("")
+  const [thumb, setThumb] = useState(null)
+  const [uploading, setUploading] = useState(false)
   const [rapGuideInformation, setRapGuideInformation] = useState("")
   const [videosToShow, setVideosToShow] = useState([])
   const [searching, setSearching] = useState(false)
@@ -52,10 +48,10 @@ export const RequestForm = ({ refetchRequests }) => {
 
     let errors = []
     if (rapGuideTitle.length === 0) {
-      errors.push("<p>Please enter a Title for your request");
+      errors.push("<p>Please enter a Title for your request</p>");
     }
     if (rapGuideInformation.length === 0) {
-      errors.push("<p>Please enter some Information about your Idea");
+      errors.push("<p>Please enter some Information about your Idea</p>");
     }
 
     if (errors.length) {
@@ -64,22 +60,23 @@ export const RequestForm = ({ refetchRequests }) => {
         title: "Please fix these errors",
         text: errors.join(" ")
       })
-      infoRef.current.classList.add("error")
       return
     }
 
     createRequest({
       variables: {
         title: rapGuideTitle,
-        name: rapGuideName,
-        email: rapGuideEmail,
+        account: user.id,
+        urls: JSON.stringify(urls),
+        thumb: thumb || '',
         information: rapGuideInformation
       }
     }).then(() => {
+      window.scrollTo(0, 0);
       setRapGuideTitle("")
-      setRapGuideName("")
-      setRapGuideEmail("")
       setRapGuideInformation("")
+      setUrls([])
+      setThumb(null)
       setMessage({
         autoDismiss: 10000,
         type: "success",
@@ -107,6 +104,31 @@ export const RequestForm = ({ refetchRequests }) => {
       })
       setVideosToShow(videos)
       setSearching(false)
+    })
+  }
+
+  async function uploadFile(file_data) {
+    setUploading(true)
+    const data = new FormData()
+    data.append('file', file_data)
+    data.append('upload_preset', 'rap_guide')
+
+    const response = await fetch(
+      '	https://api.cloudinary.com/v1_1/burtonmedia/image/upload',
+      {
+        method: "POST",
+        body: data
+      }
+    )
+
+    setUploading(false)
+    const file = await response.json()
+    return file.secure_url;
+  }
+
+  function handleChangeFile(e) {
+    uploadFile(e.target.files[0]).then((file_url) => {
+      setThumb(file_url)
     })
   }
 
@@ -224,6 +246,37 @@ export const RequestForm = ({ refetchRequests }) => {
               onEditorChange={handleRapGuideInformation}
               placeHolder="About your idea..."
             />
+          </FormBlock>
+          <FormBlock>
+            <h3>Thumbnail <span style={{ fontSize: '16px', fontWeight: '400' }}>* optional but recommended</span></h3>
+            <div style={{ display: "flex", justifyContent: "space-between" }}>
+              <div>
+                <input
+                  name="thumb"
+                  type="file"
+                  onChange={handleChangeFile} />
+              </div>
+              {uploading && <div>Uploading...<br /><Loader /></div>}
+              {(thumb && thumb.length) &&
+                <div
+                  style={{
+                    backgroundColor: "black",
+                    width: "400px",
+                    height: "225px",
+                    margin: "25px auto 0 auto"
+                  }}>
+                  <img
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "contain"
+                    }}
+                    src={thumb}
+                    alt={thumb}
+                  />
+                </div>
+              }
+            </div>
           </FormBlock>
           <FormBlock>
             <h3>Suggested Sources</h3>
