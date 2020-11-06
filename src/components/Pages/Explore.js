@@ -15,7 +15,7 @@ import { escapeRegex } from '../../utilities/regex'
 
 import { useQuery } from '@apollo/react-hooks'
 import { GET_ALL_GUIDES } from '../../queries/guides'
-
+//test
 export const Explore = () => {
 
   /* Queries */
