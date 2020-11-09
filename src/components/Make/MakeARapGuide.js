@@ -5,30 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion'
 
 import { FullSection, StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { SocialShare } from '../SocialShare'
+import { scrollToHashId } from '../../utilities/hash'
 
 export const MakeARapGuide = () => {
 
   const [step, setStep] = useState(0)
   const [isVisible, setIsVisible] = useState(true)
-
-  // emulate URL anchor page scroll functionality
-  function scrollToHashId() {
-    // get URL hash (minus the hash mark)
-    const hash = window.location.hash.substring(1)
-
-    // if there's a hash, scroll to that ID
-    if (hash && hash.length) {
-      // setTimeout and requestAnimationFrame help ensure a true DOM repaint/reflow before we try to scroll
-      // - reference: http://stackoverflow.com/a/34999925
-      setTimeout(
-        window.requestAnimationFrame(function () {
-          const el = document.getElementById(hash)
-          el.scrollIntoView()
-        }),
-        0
-      )
-    }
-  }
 
   useEffect(() => {
     scrollToHashId()

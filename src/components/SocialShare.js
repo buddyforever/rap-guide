@@ -7,9 +7,9 @@ import { faEnvelope, faShareSquare } from '@fortawesome/free-solid-svg-icons'
 
 export const SocialShare = ({
   url,
-  title = "",
+  title,
   mode = "light",
-  hashtag = "",
+  hashtag,
   ...rest
 }) => {
   return (
@@ -22,15 +22,15 @@ export const SocialShare = ({
           className="facebook"
           url={url}
           hashtag={hashtag || "RapGuide"}
-          quote={"Check out RapGuide.com | " + title}
+          quote={title || "Check out RapGuide.com"}
         >
           <FontAwesomeIcon icon={faFacebook} />
         </FacebookShareButton>
         <TwitterShareButton
           className="twitter"
           url={url}
-          hashtags={["RapGuide", "BabaBrinkman", hashtag]}
-          title={"Check out RapGuide.com | " + title}
+          hashtags={hashtag || ["RapGuide", "BabaBrinkman"]}
+          title={title || "Check out RapGuide.com"}
         >
           <FontAwesomeIcon icon={faTwitter} />
         </TwitterShareButton>
