@@ -76,7 +76,7 @@ export const Request = () => {
                         </FormBlock>
                         <FormBlock>
                           <label>Student Age Range</label>
-                          <select name="range">
+                          <select name="studentAgeRange">
                             <option value="Primary">Primary</option>
                             <option value="Middle School">Middle School</option>
                             <option value="High School">High School</option>
