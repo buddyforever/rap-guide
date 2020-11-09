@@ -234,6 +234,14 @@ const LessonLyrics = ({ guideID, lessonID }) => {
     })
   }
 
+  function showUser(account) {
+    if (user.type === 'educator') {
+      return `<a href="mailto:${account.email}">${account.email}</a>`
+    } else {
+      return account.displayName || 'someone'
+    }
+  }
+
   useEffect(() => {
     if (annotationRef.current) {
       setAnnotationHeight(annotationRef.current.getBoundingClientRect().height)
@@ -329,7 +337,7 @@ const LessonLyrics = ({ guideID, lessonID }) => {
                 </div>
                 <div dangerouslySetInnerHTML={{ __html: selectedAnnotations[currentAnnotation].annotation.replace(/(\b(https?|ftp|file):\/\/[\-A-Z0-9+&@#\/%?=~_|!:,.;]*[\-A-Z09+&@#\/%=~_|])/, '<a href="$1">$1</a>') }} />
                 <div className="author">
-                  by {selectedAnnotations[currentAnnotation].account.displayName || 'anonymous'} at {dateFormat(selectedAnnotations[currentAnnotation].createdAt)}
+                  by <span dangerouslySetInnerHTML={{ __html: showUser(selectedAnnotations[currentAnnotation].account) }} /> at {dateFormat(selectedAnnotations[currentAnnotation].createdAt)}
                 </div>
                 <div className="likes">
                   <span

@@ -162,7 +162,7 @@ export const AnnotationForm = ({
             }
             <ConfirmButton
               preClick={(checked) => setIsSubmit(checked)}
-              onConfirm={handleSubmitAnnotation}>Submit for Review</ConfirmButton>
+              onConfirm={handleSubmitAnnotation}>Submit</ConfirmButton>
           </div>
         }
         {isSaving && <div><Loader /></div>}

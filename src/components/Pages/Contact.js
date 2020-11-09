@@ -1,11 +1,17 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { faReply, faEnvelope } from '@fortawesome/free-solid-svg-icons'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { StyledContent, StyledColumns, Heading, FullSection, MediumSpace } from '../../styles/PageStyles'
 import { Form, FormBlock, ButtonBlock } from '../../styles/FormStyles'
 import { Button } from '../ui'
 
+const interests = ['Education', 'Science', 'Literature', 'Arts', 'Evolution', 'Climate Chaos', 'Religion', 'Neuroscience', 'Medicine', 'Environmentalism', 'Psychology', 'Technology', 'Critical Thinking', 'Hip Hop']
+
 export const Request = () => {
+
+  const [isEducatorRequest, setIsEducatorRequest] = useState(false)
+
   return (
     <>
       <FullSection style={{ display: "flex", alignItems: "center", paddingBottom: "5rem" }}>
@@ -15,7 +21,7 @@ export const Request = () => {
               <Heading>
                 <h2>Contact us with any questions or comments, or to request an educator account.</h2>
               </Heading>
-              <Form name="contact" method="post">
+              <Form name="contact" method="post" data-netlify="true">
                 <FormBlock style={{ display: "flex", justifyContent: "space-between" }}>
                   <div style={{ width: "45%" }}>
                     <label>First Name</label>
@@ -40,10 +46,56 @@ export const Request = () => {
                 </FormBlock>
                 <FormBlock>
                   <label>
-                    <input type="checkbox" name="educatorRequest" />
+                    <input
+                      type="checkbox"
+                      name="educatorRequest"
+                      onChange={(e) => setIsEducatorRequest(e.target.checked)}
+                    />
                     &nbsp;Request Educator Account
                   </label>
                 </FormBlock>
+                <AnimatePresence exitBeforeEnter>
+                  {isEducatorRequest &&
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                    >
+                      <div style={{ padding: 0 }}>
+                        <FormBlock>
+                          <label>Institution</label>
+                          <input name="institution" type="text" placeholder="institution" />
+                        </FormBlock>
+                        <FormBlock>
+                          <label>City</label>
+                          <input name="city" type="text" placeholder="city" />
+                        </FormBlock>
+                        <FormBlock>
+                          <label>State</label>
+                          <input name="state" type="text" placeholder="state" />
+                        </FormBlock>
+                        <FormBlock>
+                          <label>Student Age Range</label>
+                          <select name="range">
+                            <option value="Primary">Primary</option>
+                            <option value="Middle School">Middle School</option>
+                            <option value="High School">High School</option>
+                            <option value="Post Secondary">Post Secondary</option>
+                            <option value="Other">Other</option>
+                          </select>
+                        </FormBlock>
+                        <FormBlock>
+                          <label>Interests</label>
+                          {interests.map(interest => (
+                            <label style={{ display: 'block' }}>
+                              <input name="interests" type="checkbox" defaultValue={interest} /> {interest}
+                            </label>
+                          ))}
+                        </FormBlock>
+                      </div>
+                    </motion.div>
+                  }
+                </AnimatePresence>
                 <ButtonBlock>
                   <div></div>
                   <Button type="submit" iconLeft={faReply}>Send</Button>
