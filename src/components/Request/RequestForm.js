@@ -157,7 +157,7 @@ export const RequestForm = ({ refetchRequests, setMessage }) => {
       <FormBlock>
         <input
           type="text"
-          placeholder="Enter you Rap Guide Name..."
+          placeholder="Enter your Rap Guide Name..."
           value={rapGuideTitle}
           onChange={(e) => setRapGuideTitle(e.target.value)} />
       </FormBlock>
@@ -227,7 +227,7 @@ export const RequestForm = ({ refetchRequests, setMessage }) => {
           exit={{ opacity: 0, scaleY: 0, height: 0 }}
         >
           <FormBlock>
-            <h2><span>No luck?</span> didn't find what you're looking for?</h2>
+            <h2><span>Didn't find</span> what you're looking for?</h2>
             <h3>Tell us more about your idea!</h3>
             <Editor
               initialValue={rapGuideInformation}
