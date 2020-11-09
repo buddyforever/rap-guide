@@ -88,7 +88,7 @@ export const Request = () => {
                           <label>Interests</label>
                           {interests.map(interest => (
                             <label style={{ display: 'block' }}>
-                              <input name="interests" type="checkbox" defaultValue={interest} /> {interest}
+                              <input name="interests[]" type="checkbox" defaultValue={interest} /> {interest}
                             </label>
                           ))}
                         </FormBlock>
