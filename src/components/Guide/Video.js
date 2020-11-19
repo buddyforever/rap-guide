@@ -24,8 +24,8 @@ const Video = ({ videoTitle, videoUrl, videoId = 'O2K0ptoYpuc', getPlayer }) => 
 
     var playerEmbed;
     playerEmbed = new window.YT.Player('player', {
-      height: '390',
-      width: '640',
+      height: '315',
+      width: '560',
       videoId: 'M7lc1UVf-VE',
       events: {
         'onReady': (e) => console.log(e),
@@ -46,7 +46,7 @@ const Video = ({ videoTitle, videoUrl, videoId = 'O2K0ptoYpuc', getPlayer }) => 
   return (
     <StyledVideo>
       <div className="video">
-        <iframe title={videoTitle} width="100%" src={videoUrl} ref={videoRef} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
+        <iframe title={videoTitle} width="100%" src={videoUrl + '?rel=0'} ref={videoRef} frameBorder="0" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowFullScreen></iframe>
       </div>
     </StyledVideo>
   )
@@ -76,7 +76,7 @@ export const StyledVideo = styled.div`
 
   .video {
     position: relative;
-    padding-bottom: 56.25%;
+    padding-bottom: 53.25%;
     padding-top: 30px; height: 0; overflow: hidden;
     background-color: black;
     border-radius: 5px;

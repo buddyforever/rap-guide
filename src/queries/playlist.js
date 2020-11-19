@@ -6,6 +6,16 @@ export const GET_PLAYLIST_BY_SLUG = gql`
       playlistId
       title
       slug
+      isShowFilter
+    }
+  }
+`
+
+export const GET_PLAYLISTS_FOR_FILTER = gql`
+  query getPlaylist {
+    playlists(where: { isShowFilter: true }) {
+      title
+      slug
     }
   }
 `

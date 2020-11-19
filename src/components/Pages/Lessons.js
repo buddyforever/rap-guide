@@ -246,8 +246,15 @@ export const Lessons = () => {
             alignItems: "center"
           }}>
           <StyledContent>
-            <h2>Annotations</h2>
-            <p>Lesson content on RapGuide.com is submitted via student annotations attached to the lyrics of songs. These annotations are content-agnostic, which means any existing music video about any topic can be used, and students can be assigned to provide any kind of response, from personal reflections to analysis of the scientific references to close-reading of the text.</p>
+            <StyledColumns>
+              <div>
+                <h2>Annotations</h2>
+                <p>Lesson content on RapGuide.com is submitted via student annotations attached to the lyrics of songs. These annotations are content-agnostic, which means any existing music video about any topic can be used, and students can be assigned to provide any kind of response, from personal reflections to analysis of the scientific references to close-reading of the text.</p>
+              </div>
+              <div>
+                <img style={{ maxWidth: "600px" }} src="images/sample.png" alt="Sample Annotation" />
+              </div>
+            </StyledColumns>
           </StyledContent>
         </FullSection>
         <FullSection
@@ -394,8 +401,15 @@ export const Lessons = () => {
           alignItems: "center"
         }}>
         <StyledContent>
-          <h2>Annotations</h2>
-          <p>Lesson content on RapGuide.com is submitted via student annotations attached to the lyrics of songs. These annotations are content-agnostic, which means any existing music video about any topic can be used, and students can be assigned to provide any kind of response, from personal reflections to analysis of the scientific references to close-reading of the text.</p>
+          <StyledColumns>
+            <div>
+              <h2>Annotations</h2>
+              <p>Lesson content on RapGuide.com is submitted via student annotations attached to the lyrics of songs. These annotations are content-agnostic, which means any existing music video about any topic can be used, and students can be assigned to provide any kind of response, from personal reflections to analysis of the scientific references to close-reading of the text.</p>
+            </div>
+            <div>
+              <img style={{ maxWidth: "600px" }} src="images/sample.png" alt="Sample Annotation" />
+            </div>
+          </StyledColumns>
         </StyledContent>
       </FullSection>
       <MakeARapGuide />

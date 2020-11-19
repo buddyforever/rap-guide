@@ -229,7 +229,12 @@ const LessonDetailsForm = ({ template = null, lesson, onSubmit }) => {
 
       <FormBlock>
         <h3>Lesson Plan</h3>
-        <p>Enter your lesson plan here, provide instructions for your students about what the objectives are for this lesson.</p>
+        {template &&
+          <p>Adapt these instructions for students enrolled in your lesson. Don't forget to change the title and any details that pertain to the the video chosen and any other relevant detail</p>
+        }
+        {!template &&
+          <p>Enter your lesson plan here, provide instructions for your students about what the objectives are for this lesson.</p>
+        }
         <Editor
           initialValue={lessonDescription}
           apiKey="6fh30tpray4z96bvzqga3vqcj57v5hvg2infqk924uvnxr13"
