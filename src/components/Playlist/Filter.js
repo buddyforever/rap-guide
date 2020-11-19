@@ -38,6 +38,11 @@ const StyledFilter = styled.div`
 
   .filters {
     display: flex;
+    flex-flow: wrap;
+
+    a {
+      margin-top: 5px;
+    }
 
     a + a {
       margin-left: 5px;
