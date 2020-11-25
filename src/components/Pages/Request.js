@@ -19,9 +19,8 @@ import { useQuery } from '@apollo/react-hooks'
 import { GET_REQUESTS } from '../../queries/requests'
 
 function displayUserLink(account) {
-  let text = account.isPublic ? `${account.nameFirst} ${account.nameLast}` : account.displayName
-  let url = account.twitter.length ? `https://www.twitter.com/${account.twitter}` : null
-
+  let text = account.displayName ? account.displayName : `${account.nameFirst} ${account.nameLast}`
+  let url = account.twitter ? `https://www.twitter.com/${account.twitter}` : null
   if (url) {
     return `<a href="${url}" target="_blank" rel="noopener noreferrer" alt="Twitter">${text}</a>`
   } else {
