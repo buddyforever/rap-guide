@@ -131,7 +131,7 @@ export const Request = () => {
                     posted by <span dangerouslySetInnerHTML={{ __html: displayUserLink(request.account) }} /> on {dateFormat(request.updatedAt)}
                   </p>
                   <p dangerouslySetInnerHTML={{ __html: request.information }} />
-                  <h5>Sources</h5>
+                  <h5>Suggested Sources</h5>
                   <ul className="links">
                     {JSON.parse(request.urls).map(link => (
                       <li key={link}>
