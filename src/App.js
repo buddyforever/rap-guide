@@ -10,7 +10,7 @@ import LogRocket from 'logrocket';
 
 import Guide from './components/Guide/Guide'
 import Layout from './components/Layout/Layout'
-import { About, Contact, Lessons, Login, PageNotFound, Request, Explore, Temp, Home, AddGuide, Privacy } from './components/Pages'
+import { About, Contact, Lessons, Login, PageNotFound, Request, Explore, Temp, Home, AddGuide, Privacy, Feedback } from './components/Pages'
 import UpdateLyrics from './TEMP/UpdateLyrics'
 import LessonSignup from './components/Lesson/LessonSignup'
 import PrivateRoute from './auth/PrivateRoute'
@@ -65,6 +65,7 @@ function App() {
                 <Route path="/about" component={About} />
                 <Route path="/login" component={Login} />
                 <Route path="/contact" component={Contact} />
+                <Route path="/feedback" component={Feedback} />
                 <Route path="/privacy" component={Privacy} />
                 <Route path="/guide/:slug" component={Guide} />
                 <Route path="/playlist/:slug" component={Playlist} />

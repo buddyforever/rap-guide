@@ -64,6 +64,17 @@ export const FormBlock = styled.div`
   textarea.error {
     border: 1px solid #DD3333;
   }
+
+  .rating-group {
+    display: flex;
+    gap: 25px;
+
+    &>span {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+  }
 `
 
 export const ButtonBlock = styled.div`

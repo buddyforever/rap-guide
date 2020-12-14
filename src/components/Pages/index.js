@@ -9,6 +9,7 @@ import Temp from './Temp'
 import AddGuide from './AddGuide'
 import Home from './Home'
 import Privacy from './Privacy'
+import Feedback from './Feedback'
 
 export {
   About,
@@ -21,5 +22,6 @@ export {
   Temp,
   Home,
   AddGuide,
-  Privacy
+  Privacy,
+  Feedback
 }
