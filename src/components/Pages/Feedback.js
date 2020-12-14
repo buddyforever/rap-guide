@@ -127,7 +127,7 @@ export const Feedback = () => {
               <div></div>
               <Button type="submit" iconLeft={faReply}>Send</Button>
             </ButtonBlock>
-            <input type="hidden" name="form-name" defaultValue="contact" />
+            <input type="hidden" name="form-name" defaultValue="feedback" />
           </Form>
         </StyledContent>
       </FullSection>
