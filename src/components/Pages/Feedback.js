@@ -100,7 +100,7 @@ export const Feedback = () => {
               </p>
             </FormBlock>
             <FormBlock>
-              <label>How interested would be in writing and filming your own original raps about educational material?</label>
+              <label>How interested would you be in creating your own original raps with help from Rap Guide?</label>
               <p className="rating-group">
                 <span>
                   <input name="writeyourown" type="radio" value="1" /><span>1</span>
