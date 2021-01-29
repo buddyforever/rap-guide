@@ -72,7 +72,9 @@ export const ASSIGN_LYRIC = gql`
       where: { id:$lessonId }
       data: {
         lyrics: {
-          connect: { id: $lyricId }
+          connect: { where: {
+            id: $lyricId
+          }}
         }
     }) {
       id
@@ -151,5 +153,13 @@ export const GET_PUBLIC_LYRICS_BY_GUIDE_ID = gql`
         }
       }
     }
+  }
+`
+
+export const PUBLISH_LYRIC = gql`
+  mutation publishLyric($ID: ID!){
+    publishLyric(where: { id: $ID }, to: PUBLISHED) {
+      id
+  	}
   }
 `

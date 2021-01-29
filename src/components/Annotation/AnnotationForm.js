@@ -13,9 +13,6 @@ import { Message } from '../ui/Message'
 import { DotWave as Loader } from '../ui'
 import Comment from '../Comment/Comment'
 
-import { useMutation } from '@apollo/react-hooks'
-import { CREATE_COMMENT } from '../../queries/comments'
-
 export const AnnotationForm = ({
   lesson,
   selectedLyrics,

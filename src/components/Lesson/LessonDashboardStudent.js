@@ -16,7 +16,9 @@ import { Comment } from '../Comment/Comment'
 import { Button } from '../ui'
 
 import { useMutation, useQuery } from '@apollo/react-hooks'
-import { CREATE_ANNOTATION, UPDATE_ANNOTATION } from '../../queries/annotations'
+import { CREATE_ANNOTATION, UPDATE_ANNOTATION, PUBLISH_ANNOTATION } from '../../queries/annotations'
+import { PUBLISH_LESSON } from '../../queries/lessons'
+import { PUBLISH_ACCOUNT } from '../../queries/accounts'
 import { GET_LESSON_LIKES_BY_ACCOUNT } from '../../queries/likes'
 
 const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
@@ -45,6 +47,9 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
   /* Queries */
   const [createAnnotation] = useMutation(CREATE_ANNOTATION)
   const [updateAnnotation] = useMutation(UPDATE_ANNOTATION)
+  const [publishAnnotation] = useMutation(PUBLISH_ANNOTATION)
+  const [publishLesson] = useMutation(PUBLISH_LESSON)
+  const [publishAccount] = useMutation(PUBLISH_ACCOUNT)
   const { loading, data: likes, refetch: refetchLikeCount } = useQuery(GET_LESSON_LIKES_BY_ACCOUNT, {
     variables: {
       accountid: user.id,
@@ -72,6 +77,22 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
         })
         setAnnotation(response.data.createAnnotation)
         setIsSaving(false)
+        /* Publish the record */
+        publishAnnotation({
+          variables: {
+            ID: response.data.createAnnotation.id
+          }
+        })
+        publishLesson({
+          variables: {
+            ID: lesson.id
+          }
+        })
+        publishAccount({
+          variables: {
+            ID: user.id
+          }
+        })
       })
     } else {
       updateAnnotation({
@@ -92,6 +113,23 @@ const LessonDashboardStudent = ({ setViewMode, lesson, refetch }) => {
         setIsSaving(false)
         setHidden(true);
         setSelectedLyrics([])
+        setIsSaving(false)
+        /* Publish the record */
+        publishAnnotation({
+          variables: {
+            ID: lesson.id
+          }
+        })
+        publishLesson({
+          variables: {
+            ID: response.data.updateAnnotation.id
+          }
+        })
+        publishAccount({
+          variables: {
+            ID: user.id
+          }
+        })
       })
     }
   }

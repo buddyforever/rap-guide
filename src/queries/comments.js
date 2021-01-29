@@ -41,3 +41,18 @@ export const DELETE_COMMENT = gql`
     }
   }
 `
+
+export const PUBLISH_COMMENT = gql`
+  mutation publishComment($ID: ID!){
+    publishComment(where: { id: $ID }, to: PUBLISHED) {
+      id
+      updatedAt
+      comment
+      isPublic
+      account {
+        id
+        displayName
+      }
+  	}
+  }
+`

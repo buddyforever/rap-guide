@@ -16,7 +16,7 @@ export const CREATE_TOPIC = gql`
   mutation addTopic(
     $topic:String!){
       createTopic(data: {
-        status: PUBLISHED
+        #status: PUBLISHED
         topic: $topic
       }){
         id
@@ -38,5 +38,19 @@ export const CONNECT_TOPIC_TO_GUIDE = gql`
       }){
         id
     }
+  }
+`
+
+export const PUBLISH_TOPIC = gql`
+  mutation publishTopic($ID: ID!){
+    publishTopic(where: { id: $ID }, to: PUBLISHED) {
+      id
+      note
+      isExample
+      lyrics(orderBy: order_ASC) {
+        id
+        topic
+      }
+  	}
   }
 `

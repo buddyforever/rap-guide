@@ -19,8 +19,10 @@ import { faBackward } from '@fortawesome/free-solid-svg-icons'
 import { UserContext } from '../../context/UserContext'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { REVIEW_ANNOTATION } from '../../queries/annotations'
-import { UPDATE_LESSON_STATUS, GET_LESSON_STUDENTS } from '../../queries/lessons'
+import { PUBLISH_ANNOTATION, REVIEW_ANNOTATION } from '../../queries/annotations'
+import { UPDATE_LESSON_STATUS, GET_LESSON_STUDENTS, PUBLISH_LESSON } from '../../queries/lessons'
+import { PUBLISH_COMMENT } from '../../queries/comments'
+import { PUBLISH_ACCOUNT } from '../../queries/accounts'
 
 const variants = {
   open: { x: "-50vw" },
@@ -41,6 +43,10 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
   })
   const [reviewAnnotation] = useMutation(REVIEW_ANNOTATION);
   const [updateLessonStatusMutation] = useMutation(UPDATE_LESSON_STATUS);
+  const [publishLesson] = useMutation(PUBLISH_LESSON);
+  const [publishAnnotation] = useMutation(PUBLISH_ANNOTATION)
+  const [publishComment] = useMutation(PUBLISH_COMMENT)
+  const [publishAccount] = useMutation(PUBLISH_ACCOUNT)
 
   const { user } = useContext(UserContext)
 
@@ -64,6 +70,11 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
         type: "success",
         title: "Status Updated",
         text: `Lesson status has been changed to <strong>${response.data.updateLesson.lessonStatus}</strong>`
+      })
+      publishLesson({
+        variables: {
+          ID: lesson.id
+        }
       })
     })
   }
@@ -92,6 +103,11 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
       refetch();
       refetchStudents();
       closeModal();
+      publishAnnotation({
+        variables: {
+          ID: annotation.id
+        }
+      })
     });
   }
 
@@ -106,11 +122,29 @@ const LessonDashboardTeacher = ({ setViewMode, lesson, refetch }) => {
         comment: comment,
         teacherAccountId: annotation.comment.account.id
       }
-    }).then(() => {
+    }).then((response) => {
       refetch();
       refetchStudents();
       closeModal();
-    });
+      publishAnnotation({
+        variables: {
+          ID: annotation.id
+        }
+      })
+      if (!response.data.updateAnnotation.comments) return
+      response.data.updateAnnotation.comments.map(comment => {
+        publishComment({
+          variables: {
+            ID: comment.id
+          }
+        })
+        publishAccount({
+          variables: {
+            ID: comment.account.id
+          }
+        })
+      })
+    })
   }
 
   useEffect(() => {

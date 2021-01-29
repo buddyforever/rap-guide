@@ -13,7 +13,8 @@ import { useQuery, useMutation } from '@apollo/react-hooks'
 import {
   GET_ACCOUNT_BY_EMAIL,
   CREATE_ACCOUNT,
-  UPDATE_NAME_AND_PICTURE
+  UPDATE_NAME_AND_PICTURE,
+  PUBLISH_ACCOUNT
 } from '../../queries/accounts'
 
 export const Header = ({ showModal }) => {
@@ -27,6 +28,7 @@ export const Header = ({ showModal }) => {
   /* Queries */
   const { refetch } = useQuery(GET_ACCOUNT_BY_EMAIL, { variables: { email: "" } });
   const [createAccount] = useMutation(CREATE_ACCOUNT)
+  const [publishAccount] = useMutation(PUBLISH_ACCOUNT)
   const [updateAccount] = useMutation(UPDATE_NAME_AND_PICTURE)
 
   /* Context */
@@ -51,6 +53,12 @@ export const Header = ({ showModal }) => {
             nameLast: profile.family_name || '',
             image: profile.picture || ''
           }
+        }).then(({ data: { updateAccount } }) => {
+          publishAccount({
+            variables: {
+              ID: updateAccount.id
+            }
+          })
         })
       }
       setUser(prevState => {
@@ -94,6 +102,11 @@ export const Header = ({ showModal }) => {
           name: createAccount.firstName,
           email: createAccount.email,
           type: createAccount.type
+        })
+        publishAccount({
+          variables: {
+            ID: createAccount.id
+          }
         })
       });
     }

@@ -388,7 +388,7 @@ export const CREATE_LESSON = gql`
     $isTemplate: Boolean!
   ) {
     createLesson(data: {
-      status: PUBLISHED
+      ##status: PUBLISHED
       lessonTitle: $lessonTitle
       lessonDescription: $lessonDescription
       lessonStatus: "Draft"
@@ -427,7 +427,7 @@ export const UPDATE_LESSON_DETAILS = gql`
     updateLesson(
       where: { id: $id }
       data: {
-        status: PUBLISHED
+        #status: PUBLISHED
         lessonTitle: $lessonTitle
         lessonDescription: $lessonDescription
         maxStudents: $maxStudents
@@ -464,7 +464,7 @@ export const UPDATE_LESSON_STATUS = gql`
 export const ENROLL_STUDENT = gql`
   mutation updateAccount(
     $email:String!,
-    $lesson: [LessonWhereUniqueInput!]
+    $lesson: [LessonConnectInput!]
   ){
     updateAccount(
       where: { email: $email }
@@ -514,5 +514,13 @@ export const GET_LESSON_TEMPLATES = gql`
         isSubmitted
       }
     }
+  }
+`
+
+export const PUBLISH_LESSON = gql`
+  mutation publishLesson($ID: ID!){
+    publishLesson(where: { id: $ID }, to: PUBLISHED) {
+      id
+  	}
   }
 `
