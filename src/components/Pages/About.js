@@ -476,6 +476,7 @@ export const About = () => {
               <img
                 src={require("../../images/logo-standard.jpg")}
                 width="100%"
+                style={{ paddingRight: "5rem" }}
               />
             </CenteredContent>
             <MediumSpace className="faq">
