@@ -29,7 +29,7 @@ import { defaultTheme } from '../src/components/themes/default'
 import RouteChange from './utilities/RouteChange'
 import Loader from './components/Loader'
 
-const GRAPHCMS_API = "https://api-eu-central-1.graphcms.com/v2/ck56vnvt50t7301gifvv37btb/master"
+const GRAPHCMS_API = "https://api-us-east-1.graphcms.com/v2/ck56vnvt50t7301gifvv37btb/master"
 
 const client = new ApolloClient({
   link: new HttpLink({ uri: GRAPHCMS_API }),
