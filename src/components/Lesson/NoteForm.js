@@ -10,7 +10,9 @@ import { UserContext } from '../../context/UserContext'
 import { Message } from '../ui/Message'
 
 import { useMutation } from '@apollo/react-hooks'
-import { CREATE_NOTE, DELETE_NOTE, UPDATE_NOTE } from '../../queries/note'
+import { CREATE_NOTE, DELETE_NOTE, UPDATE_NOTE, PUBLISH_NOTE } from '../../queries/note'
+import { PUBLISH_ACCOUNT } from '../../queries/accounts'
+import { PUBLISH_LESSON } from '../../queries/lessons'
 
 export const NoteForm = ({
   refetch,
@@ -36,6 +38,9 @@ export const NoteForm = ({
   const [createNoteMutation] = useMutation(CREATE_NOTE)
   const [updateNoteMutation] = useMutation(UPDATE_NOTE)
   const [deleteNoteMutation] = useMutation(DELETE_NOTE)
+  const [publishNote] = useMutation(PUBLISH_NOTE)
+  const [publishLesson] = useMutation(PUBLISH_LESSON)
+  const [publishAccount] = useMutation(PUBLISH_ACCOUNT)
 
   function cancel() {
     setSelectedLyrics([]);
@@ -62,13 +67,27 @@ export const NoteForm = ({
           lesson: lesson.id
         }
       }).then(response => {
-        console.log(response);
         setSelectedNote(response.data.createNote)
         setEditMode(true)
         setMessage({
           type: "success",
           title: "Note Saved!",
           text: "Your note has been successfully saved."
+        })
+        publishNote({
+          variables: {
+            ID: response.data.createNote.id
+          }
+        })
+        publishLesson({
+          variables: {
+            ID: lesson.id
+          }
+        })
+        publishAccount({
+          variables: {
+            ID: user.id
+          }
         })
         refetch()
       })
@@ -86,6 +105,21 @@ export const NoteForm = ({
           title: "Note Saved!",
           text: "Your note has been successfully saved."
         })
+        publishNote({
+          variables: {
+            ID: response.data.updateNote.id
+          }
+        })
+        publishLesson({
+          variables: {
+            ID: lesson.id
+          }
+        })
+        publishAccount({
+          variables: {
+            ID: user.id
+          }
+        })
         refetch()
       })
     }
@@ -100,6 +134,21 @@ export const NoteForm = ({
       setSelectedLyrics([])
       setSelectedNote(null)
       setEditMode(false)
+      publishNote({
+        variables: {
+          ID: response.data.deleteNote.id
+        }
+      })
+      publishLesson({
+        variables: {
+          ID: lesson.id
+        }
+      })
+      publishAccount({
+        variables: {
+          ID: user.id
+        }
+      })
       refetch()
     })
   }

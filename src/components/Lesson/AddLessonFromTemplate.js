@@ -7,7 +7,7 @@ import { LinkButton } from '../ui/LinkButton'
 import Loader from '../Loader'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { CREATE_LESSON } from '../../queries/lessons'
+import { CREATE_LESSON, PUBLISH_LESSON } from '../../queries/lessons'
 import { GET_LESSON_TEMPLATE_BY_ID } from '../../queries/lessons'
 
 const AddLessonFromTemplate = () => {
@@ -27,6 +27,7 @@ const AddLessonFromTemplate = () => {
     }
   })
   const [createLesson] = useMutation(CREATE_LESSON);
+  const [publishLesson] = useMutation(PUBLISH_LESSON);
 
   /* Functions */
   function addLesson(lesson) {
@@ -37,6 +38,11 @@ const AddLessonFromTemplate = () => {
       }
     }).then(response => {
       setRedirect(`/lesson/edit/${response.data.createLesson.id}/2`);
+      publishLesson({
+        variables: {
+          ID: response.data.createLesson.id
+        }
+      })
     });
   }
 

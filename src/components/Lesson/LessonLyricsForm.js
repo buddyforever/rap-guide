@@ -11,7 +11,8 @@ import { LinkButton } from '../ui/LinkButton'
 import { Message } from '../ui/Message'
 
 import { useMutation } from '@apollo/react-hooks'
-import { ASSIGN_LYRIC, UNASSIGN_LYRIC } from '../../queries/lyric'
+import { ASSIGN_LYRIC, UNASSIGN_LYRIC, PUBLISH_LYRIC } from '../../queries/lyric'
+import { PUBLISH_LESSON } from '../../queries/lessons'
 
 const LessonLyricsForm = ({ lesson, refetch }) => {
 
@@ -33,6 +34,8 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
   /* Queries */
   const [assignLyricMutation] = useMutation(ASSIGN_LYRIC);
   const [unAssignLyricMutation] = useMutation(UNASSIGN_LYRIC);
+  const [publishLesson] = useMutation(PUBLISH_LESSON);
+  const [publishLyric] = useMutation(PUBLISH_LYRIC);
 
   /* NOTE - When viewing the annotation I can now simple update selectedLyrics with
   any lyrics that are associated with the specific annotation */
@@ -93,6 +96,16 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
         ...prevState,
         lyric
       ]));
+      publishLesson({
+        variables: {
+          ID: lesson.id
+        }
+      })
+      publishLyric({
+        variables: {
+          ID: lyric.id
+        }
+      })
     })
   }
 
@@ -111,6 +124,16 @@ const LessonLyricsForm = ({ lesson, refetch }) => {
         });
         deSelectLyric(lyric);
       }
+      publishLesson({
+        variables: {
+          ID: lesson.id
+        }
+      })
+      publishLyric({
+        variables: {
+          ID: lyric.id
+        }
+      })
     })
   }
 

@@ -10,7 +10,7 @@ export const CREATE_NOTE = gql`
   ){
     createNote(
       data: {
-        status: PUBLISHED
+        #status: PUBLISHED
         note: $note
         isExample: $isExample
         account: { connect: $account }
@@ -60,5 +60,20 @@ export const DELETE_NOTE = gql`
     deleteNote( where: { id: $id } ){
       id
     }
+  }
+`
+
+export const PUBLISH_NOTE = gql`
+  mutation publishNote($ID: ID!){
+    publishNote(where: { id: $ID }, to: PUBLISHED) {
+      id
+      note
+      isExample
+      lyrics(orderBy: order_ASC) {
+        id
+        lyric
+        order
+      }
+  	}
   }
 `

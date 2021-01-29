@@ -1,10 +1,12 @@
+/* THIS PAGE IS NO LONGER USED, SEE HEADER and NAVIGATION */
+
 import React, { useState, useEffect, useContext } from 'react'
 import { Redirect } from 'react-router-dom'
 import styled from 'styled-components'
 
 import { StyledContent, Heading, MediumSpace } from '../../styles/PageStyles'
 import { FormBlock } from '../../styles/FormStyles'
-import { Button } from '../ui/Button/'
+import { Button } from '../ui/Button'
 import auth from '../../auth/auth'
 import Message from '../Layout/Message'
 import FacebookLogin from 'react-facebook-login'
@@ -12,7 +14,8 @@ import GoogleLogin from 'react-google-login'
 import { UserContext } from '../../context/UserContext'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import gql from 'graphql-tag'
+import { CREATE_ACCOUNT, PUBLISH_ACCOUNT, GET_ACCOUNT_BY_EMAIL } from '../../queries/accounts'
+import { ENROLL_STUDENT, PUBLISH_LESSON } from '../../queries/lessons'
 
 const Login = ({ lesson }) => {
 
@@ -21,15 +24,16 @@ const Login = ({ lesson }) => {
 
   const { user, setUser } = useContext(UserContext);
 
-  const { refetch } = useQuery(GET_ACCOUNT, { variables: { accountId: "" } });
+  const { refetch } = useQuery(GET_ACCOUNT_BY_EMAIL, { variables: { email: "" } });
 
   const [createAccount] = useMutation(CREATE_ACCOUNT);
-  const [updateAccount] = useMutation(UPDATE_ACCOUNT);
+  const [publishAccount] = useMutation(PUBLISH_ACCOUNT);
   const [enrollStudentInLesson] = useMutation(ENROLL_STUDENT);
+  const [publishLesson] = useMutation(PUBLISH_LESSON);
 
   /* TODO MAKE THE ACCOUNT BASED ON EMAIL ADDRESS - ONE ACCOUNT PER EMAIL */
   async function loginUser(profile) {
-    const { data: { account } } = await refetch({ accountId: profile.accountId });
+    const { data: { account } } = await refetch({ email: profile.email });
 
     if (!account) {
       await createAccount({
@@ -43,6 +47,12 @@ const Login = ({ lesson }) => {
         }
       }).then(({ data: { createAccount } }) => {
         setUser(createAccount);
+        /* Publish the record */
+        publishAccount({
+          variables: {
+            ID: createAccount.id
+          }
+        })
       });
     } else {
       const newAccount = {
@@ -59,15 +69,28 @@ const Login = ({ lesson }) => {
       variables: {
         id: user.id,
         type: "student",
-        lesson: {
-          id: lesson.id
-        }
+        lesson: [{
+          where: {
+            id: lesson.id
+          }
+        }]
       }
     }).then(() => {
       // A user has been logged in
       auth.login(user).then(() => {
         setRedirect("/");
       });
+      /* Publish the record */
+      publishAccount({
+        variables: {
+          ID: user.id
+        }
+      })
+      publishLesson({
+        variables: {
+          ID: lesson.id
+        }
+      })
     });
   }
 
@@ -186,92 +209,3 @@ const StyledLoginProvider = styled.div`
   }
 `
 
-const GET_ACCOUNT = gql`
-  query getAccount($accountId: String!) {
-    account(where: {
-      accountId: $accountId
-    }){
-      id
-      accountId
-      email
-      nameFirst
-      nameLast
-      type
-    }
-  }
-`
-
-const ENROLL_STUDENT = gql`
-  mutation updateAccount(
-    $id:ID!,
-    $type:String!
-    $lesson: [LessonWhereUniqueInput!],
-  ){
-    updateAccount(
-      where: { id: $id }
-      data: {
-        type: $type
-        lessons: { connect: $lesson }
-      }){
-      id
-    }
-  }
-`;
-
-const CREATE_ACCOUNT = gql`
-  mutation createAccount(
-    $email: String!,
-    $nameFirst: String!,
-    $nameLast: String!,
-    $type: String!,
-    $image: String!,
-    $accountId: String!) {
-    createAccount(data: {
-      status: PUBLISHED
-      email: $email
-      nameFirst: $nameFirst
-      nameLast: $nameLast
-      image: $image
-      type: $type
-      accountId: $accountId
-    }) {
-      id
-      accountId
-      nameFirst
-      nameLast
-      image
-      email
-      type
-    }
-  }
-`
-
-const UPDATE_ACCOUNT = gql`
-  mutation updateAccount(
-    $email: String!,
-    $nameFirst: String!,
-    $nameLast: String!,
-    $image: String!,
-    $type: String!,
-    $accountId: String!) {
-    updateAccount(
-      where: { accountId: $accountId }
-      data: {
-      status: PUBLISHED
-      email: $email
-      nameFirst: $nameFirst
-      nameLast: $nameLast
-      image: $image
-      type: $type
-      accountId: $accountId
-    }) {
-      id
-      accountId
-      nameFirst
-      nameLast
-      image
-      email
-      type
-    }
-  }
-`

@@ -57,7 +57,6 @@ export const REVIEW_ANNOTATION = gql`
         isRequestRevisions: $isRequestRevisions
         comments: {
           create: {
-            status: PUBLISHED
             isPublic: false
             comment: $comment
             account: {
@@ -69,6 +68,12 @@ export const REVIEW_ANNOTATION = gql`
         }
     }){
       id
+      comments {
+        id
+        account {
+          id
+        }
+      }
     }
   }
 `
@@ -82,7 +87,6 @@ export const CREATE_ANNOTATION = gql`
     $lyrics: [LyricWhereUniqueInput!],
   ){
     createAnnotation(data: {
-      status:PUBLISHED
       isSubmitted: $isSubmitted
       annotation: $annotation
       account: {
@@ -124,7 +128,6 @@ export const UPDATE_ANNOTATION = gql`
     updateAnnotation(
       where: { id: $id },
       data: {
-      status:PUBLISHED
       isSubmitted: $isSubmitted
       annotation: $annotation
             lyrics: { connect: $lyrics }
@@ -201,5 +204,29 @@ export const GET_ANNOTATIONS_BY_LESSON_ID = gql`
         displayName
       }
     }
+  }
+`
+
+export const PUBLISH_ANNOTATION = gql`
+  mutation publishAnnotation($ID: ID!){
+    publishAnnotation(where: { id: $ID }, to: PUBLISHED) {
+      id
+      annotation
+      updatedAt
+      createdAt
+      isSubmitted
+      isApproved
+      account {
+        id
+        nameFirst
+        nameLast
+        email
+        image
+      }
+      lyrics {
+        id
+        lyric
+      }
+  	}
   }
 `

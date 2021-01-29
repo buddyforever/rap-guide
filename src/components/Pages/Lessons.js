@@ -16,9 +16,9 @@ import { Card } from '../Card'
 import { LessonTemplates } from '../Lesson/LessonTemplates'
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { GET_LESSONS_BY_ACCOUNT_SHORT, ENROLL_STUDENT } from '../../queries/lessons'
+import { GET_LESSONS_BY_ACCOUNT_SHORT, ENROLL_STUDENT, PUBLISH_LESSON } from '../../queries/lessons'
 import { GET_CODE } from '../../queries/codes'
-import { UPDATE_ACCOUNT_TYPE } from '../../queries/accounts'
+import { UPDATE_ACCOUNT_TYPE, PUBLISH_ACCOUNT } from '../../queries/accounts'
 import { GET_ANNOTATIONS_BY_ACCOUNT } from '../../queries/annotations'
 
 function getLessonColor(status) {
@@ -60,6 +60,8 @@ export const Lessons = () => {
   });
   const [updateAccountType] = useMutation(UPDATE_ACCOUNT_TYPE)
   const [enrollStudent] = useMutation(ENROLL_STUDENT)
+  const [publishAccount] = useMutation(PUBLISH_ACCOUNT)
+  const [publishLesson] = useMutation(PUBLISH_LESSON)
 
   const { loading: loadingHistory, data: dataHistory } = useQuery(GET_ANNOTATIONS_BY_ACCOUNT, {
     variables: {
@@ -102,6 +104,12 @@ export const Lessons = () => {
                 text: "You now have educator view access."
               })
               setAccessCode("");
+              /* Publish the record */
+              publishAccount({
+                variables: {
+                  ID: user.id
+                }
+              })
             })
             break;
           case "UPDATE_TYPE":
@@ -123,17 +131,26 @@ export const Lessons = () => {
                 text: "You now have educator access."
               })
               setAccessCode("");
+              /* Publish the record */
+              publishAccount({
+                variables: {
+                  ID: user.id
+                }
+              })
             })
             break;
           case "ENROLL_STUDENT":
             enrollStudent({
               variables: {
                 email: user.email,
-                lesson: {
-                  id: lessonID
-                }
+                lesson: [{
+                  where: {
+                    id: lessonID
+                  }
+                }]
               }
             }).then(response => {
+              console.log(response)
               setUser(prevState => ({
                 ...user,
                 type: 'student'
@@ -148,6 +165,17 @@ export const Lessons = () => {
                 text: `You have successfuly enrolled in <strong>${lessonTitle}</strong>`
               })
               setAccessCode("");
+              /* Publish the record */
+              publishAccount({
+                variables: {
+                  ID: user.id
+                }
+              })
+              publishLesson({
+                variables: {
+                  ID: lessonID
+                }
+              })
             })
             break;
           default:

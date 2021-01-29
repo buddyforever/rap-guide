@@ -13,7 +13,7 @@ import { UserContext } from '../../context/UserContext'
 import { useAuth0 } from "../../react-auth0-spa";
 
 import { useQuery, useMutation } from '@apollo/react-hooks'
-import { CREATE_REQUEST, GET_REQUESTS } from '../../queries/requests'
+import { CREATE_REQUEST, PUBLISH_REQUEST } from '../../queries/requests'
 import { SEARCH_VIDEOS } from '../../queries/guides'
 
 export const RequestForm = ({ refetchRequests, setMessage }) => {
@@ -38,6 +38,7 @@ export const RequestForm = ({ refetchRequests, setMessage }) => {
     }
   })
   const [createRequest] = useMutation(CREATE_REQUEST)
+  const [publishRequest] = useMutation(PUBLISH_REQUEST)
 
   function handleRapGuideInformation(content, editor) {
     setRapGuideInformation(content);
@@ -71,17 +72,23 @@ export const RequestForm = ({ refetchRequests, setMessage }) => {
         thumb: thumb || '',
         information: rapGuideInformation
       }
-    }).then(() => {
-      window.scrollTo(0, 0);
-      setRapGuideTitle("")
-      setRapGuideInformation("")
-      setUrls([])
-      setThumb(null)
-      setMessage({
-        autoDismiss: 10000,
-        type: "success",
-        title: "Thank You!",
-        text: "Your request has been received, your request will show up <a href='#requests'>down below</a> once it has been approved!"
+    }).then((response) => {
+      publishRequest({
+        variables: {
+          ID: response.data.createRequest.id
+        }
+      }).then(() => {
+        window.scrollTo(0, 0);
+        setRapGuideTitle("")
+        setRapGuideInformation("")
+        setUrls([])
+        setThumb(null)
+        setMessage({
+          autoDismiss: 10000,
+          type: "success",
+          title: "Thank You!",
+          text: "Your request has been received, your request will show up <a href='#requests'>down below</a> once it has been approved!"
+        })
       })
     })
   }

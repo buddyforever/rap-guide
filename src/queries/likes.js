@@ -6,7 +6,7 @@ export const CREATE_LIKE = gql`
     $account: AccountWhereUniqueInput!
   ){
     createLike(data: {
-      status:PUBLISHED
+      #status:PUBLISHED
       annotation: {
         connect:$annotation
       }
@@ -49,5 +49,13 @@ export const GET_LESSON_LIKES_BY_ACCOUNT = gql`
     ) {
 			id
     }
+  }
+`
+
+export const PUBLISH_LIKE = gql`
+  mutation publishLike($ID: ID!){
+    publishLike(where: { id: $ID }, to: PUBLISHED) {
+      id
+  	}
   }
 `

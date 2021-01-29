@@ -30,7 +30,7 @@ export const GET_ALL_GUIDES = gql`
       }
       lessons(where: {isLive:true}) {
         id
-        status
+        lessonStatus
         annotations(where: {isSubmitted:true}) {
           id
         }
@@ -102,7 +102,7 @@ export const CREATE_GUIDE = gql`
     $videoSlug: String!
     $topics:[TopicWhereUniqueInput!]){
       createGuide(data: {
-        status: PUBLISHED
+        #status: PUBLISHED
         videoTitle:$videoTitle
         videoUrl:$videoUrl
         videoId:$videoID
@@ -146,6 +146,14 @@ export const SEARCH_VIDEOS = gql`
           topic
         }
       }
+  	}
+  }
+`
+
+export const PUBLISH_GUIDE = gql`
+  mutation publishGuide($ID: ID!){
+    publishGuide(where: { id: $ID }, to: PUBLISHED) {
+      id
   	}
   }
 `

@@ -10,7 +10,7 @@ export const CREATE_REQUEST = gql`
   ){
     createRequest(
       data: {
-        status: PUBLISHED
+        #status: PUBLISHED
         title: $title
         account: {
           connect: { id: $account }
@@ -49,6 +49,16 @@ export const GET_REQUESTS = gql`
       }
       updatedAt
     }
+  }
+`
+
+export const PUBLISH_REQUEST = gql`
+  mutation publishRequest($ID: ID!){
+    publishRequest(where: { id: $ID }, to: PUBLISHED) {
+    	id
+      title
+      information
+  	}
   }
 `
 

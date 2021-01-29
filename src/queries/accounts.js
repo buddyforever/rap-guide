@@ -26,7 +26,7 @@ export const UPDATE_ACCOUNT_TYPE = gql`
     updateAccount(
       where: { email: $email }
       data: {
-      status: PUBLISHED
+      #status: PUBLISHED
       type: $type
       isViewOnly: $isViewOnly
     }) {
@@ -76,7 +76,7 @@ export const CREATE_ACCOUNT = gql`
     $image: String!,
     $type: String!) {
     createAccount(data: {
-      status: PUBLISHED
+      #status: PUBLISHED
       email: $email
       nameFirst: $nameFirst
       nameLast: $nameLast
@@ -104,7 +104,7 @@ export const UPDATE_ACCOUNT = gql`
     updateAccount(
       where: { email: $email }
       data: {
-      status: PUBLISHED
+      #status: PUBLISHED
       type: $type
       displayName: $displayName
       isPublic: $isPublic
@@ -114,5 +114,18 @@ export const UPDATE_ACCOUNT = gql`
       id
       displayName
     }
+  }
+`
+
+export const PUBLISH_ACCOUNT = gql`
+  mutation publishAccount($ID: ID!){
+    publishAccount(where: { id: $ID }, to: PUBLISHED) {
+      id
+      email
+      nameFirst
+      nameLast
+      image
+      type
+  	}
   }
 `
